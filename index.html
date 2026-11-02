@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="오늘도 적당히 덤덤한 고양이, 하로를 소개합니다."
+    />
+    <title>HARO — 오늘도 적당히 덤덤한 고양이</title>
+    <link rel="stylesheet" href="./css/tokens.css" />
+    <link rel="stylesheet" href="./css/base.css" />
+    <link rel="stylesheet" href="./css/layout.css" />
+    <link rel="stylesheet" href="./css/components.css" />
+    <link rel="stylesheet" href="./css/box.css" />
+    <link rel="stylesheet" href="./css/sections.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">본문 바로가기</a>
+
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-header__brand" href="#top" aria-label="HARO 맨 위로">
+          HARO
+        </a>
+        <nav class="site-nav" aria-label="주요 메뉴">
+          <span class="site-nav__item">ABOUT HARO</span>
+          <span class="site-nav__item">EMOTICON</span>
+          <span class="site-nav__item">STORY</span>
+          <span class="site-nav__item">GOODS</span>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <section class="hero" id="top" aria-labelledby="hero-title">
+        <div class="hero__room" aria-hidden="true">
+          <div class="hero__window">
+            <span class="hero__window-crossbar"></span>
+          </div>
+          <div class="hero__curtain"></div>
+          <div class="hero__shelf">
+            <span class="hero__shelf-books"></span>
+            <span class="hero__shelf-books hero__shelf-books--lower"></span>
+          </div>
+          <div class="hero__floor"></div>
+        </div>
+
+        <div class="hero__content">
+          <h1 class="hero__title" id="hero-title">HARO</h1>
+          <p class="hero__tagline">오늘도 적당히 덤덤하게</p>
+        </div>
+
+        <div class="hero__interaction" aria-label="상자 인터랙션 미리보기">
+          <p class="hero__prompt">열어볼래?</p>
+          <span class="hero__button-look">CLICK</span>
+        </div>
+
+        <div class="hero-box" aria-label="하로가 들어 있는 상자 모양">
+          <span class="hero-box__wordmark">HARO</span>
+          <span class="hero-box__paw" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span>
+          </span>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

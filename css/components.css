@@ -1,0 +1,52 @@
+.site-header__brand {
+  color: var(--color-ink-strong);
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.06em;
+  text-decoration: none;
+}
+
+.site-nav__item {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.hero__title {
+  margin: 0;
+  color: var(--color-brand-title);
+  font-family: var(--font-display);
+  font-size: clamp(56px, 6vw, 68px);
+  font-weight: 700;
+  letter-spacing: 0.035em;
+  line-height: 1.1;
+}
+
+.hero__tagline {
+  margin: 18px 0 0;
+  color: var(--color-brand-tagline);
+  font-size: clamp(19px, 2.2vw, 26px);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
+
+.hero__prompt {
+  margin: 0;
+  color: var(--color-brand-title);
+  font-size: 13px;
+}
+
+.hero__button-look {
+  display: grid;
+  width: 136px;
+  height: 48px;
+  place-items: center;
+  border: 1.5px solid var(--color-ink);
+  border-radius: 999px;
+  background: #ffffff;
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+}

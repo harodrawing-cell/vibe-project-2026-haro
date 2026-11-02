@@ -1,0 +1,137 @@
+.site-header {
+  position: relative;
+  z-index: 2;
+  height: var(--header-height);
+  border-bottom: 1px solid rgb(31 41 55 / 7%);
+  background: rgb(255 255 255 / 94%);
+}
+
+.site-header__inner {
+  display: flex;
+  width: min(100% - (var(--page-gutter) * 2), var(--content-max-width));
+  height: 100%;
+  margin-inline: auto;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.hero {
+  position: relative;
+  min-height: 560px;
+  height: min(640px, calc(100svh - var(--header-height) - 72px));
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.hero__room {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  overflow: hidden;
+  background: var(--color-room);
+}
+
+.hero__content {
+  position: absolute;
+  top: 13%;
+  left: 50%;
+  width: min(90%, 640px);
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.hero__interaction {
+  position: absolute;
+  top: 47%;
+  left: calc(50% + 180px);
+  display: grid;
+  justify-items: center;
+  gap: 20px;
+}
+
+.hero-box {
+  position: absolute;
+  top: 61%;
+  left: 49%;
+  transform: translateX(-50%);
+}
+
+@media (max-width: 760px) {
+  .site-header__inner {
+    width: calc(100% - (var(--page-gutter) * 2));
+  }
+
+  .site-nav {
+    gap: clamp(10px, 3vw, 22px);
+  }
+
+  .hero {
+    min-height: 560px;
+    height: calc(100svh - var(--header-height));
+  }
+
+  .hero__content {
+    top: 12%;
+  }
+
+  .hero__interaction {
+    top: auto;
+    right: 9%;
+    bottom: 23%;
+    left: auto;
+    gap: 12px;
+  }
+
+  .hero-box {
+    top: auto;
+    bottom: 15%;
+    left: 39%;
+  }
+}
+
+@media (max-width: 520px) {
+  :root {
+    --page-gutter: 18px;
+    --header-height: 58px;
+  }
+
+  .site-header__inner {
+    width: calc(100% - 36px);
+  }
+
+  .site-nav {
+    gap: 12px;
+  }
+
+  .site-nav__item {
+    font-size: 9px;
+    letter-spacing: 0;
+  }
+
+  .hero {
+    min-height: 540px;
+    height: calc(100svh - var(--header-height));
+  }
+
+  .hero__content {
+    top: 14%;
+  }
+
+  .hero__interaction {
+    right: 7%;
+    bottom: 19%;
+  }
+
+  .hero-box {
+    bottom: 13%;
+    left: 36%;
+    transform: translateX(-50%) scale(0.78);
+    transform-origin: bottom center;
+  }
+}
