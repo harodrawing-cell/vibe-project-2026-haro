@@ -31,6 +31,177 @@ main {
   display: none;
 }
 
+.site-search__toggle {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.search-overlay[hidden] {
+  display: none;
+}
+
+.search-overlay {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.search-overlay__topbar {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 116px;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: clamp(18px, 3vw, 48px);
+  padding: 20px max(24px, calc((100% - 1200px) / 2));
+  border-bottom: 1px solid var(--color-border);
+  background: #ffffff;
+}
+
+.search-overlay__form {
+  display: flex;
+  height: 64px;
+  flex: 1;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 3px solid var(--color-ink);
+}
+
+.search-overlay__input {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  outline: 0;
+  color: var(--color-ink);
+  background: transparent;
+  font: inherit;
+  font-size: 18px;
+}
+
+.search-overlay__input::placeholder {
+  color: #b7b7b7;
+}
+
+.search-overlay__input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.search-overlay__close {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.search-overlay__close span::before,
+.search-overlay__close span::after {
+  position: absolute;
+  top: 21px;
+  left: 5px;
+  width: 34px;
+  height: 1.5px;
+  background: var(--color-ink);
+  content: "";
+}
+
+.search-overlay__close span::before {
+  transform: rotate(45deg);
+}
+
+.search-overlay__close span::after {
+  transform: rotate(-45deg);
+}
+
+.search-overlay__scroll {
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.search-overlay__content {
+  width: min(100% - 48px, 1200px);
+  min-height: 220px;
+  margin: 0 auto;
+  padding: 32px 0 64px;
+}
+
+.search-overlay__footer {
+  display: grid;
+  justify-items: start;
+  gap: 20px;
+  padding: 48px max(24px, calc((100% - 1200px) / 2));
+  color: var(--color-text-secondary);
+  background: #f7f7f7;
+}
+
+.search-overlay__footer p,
+.search-overlay__footer-logo {
+  margin: 0;
+}
+
+.search-overlay__footer-logo {
+  color: var(--color-ink);
+  font-weight: 700;
+  font-size: 24px;
+}
+
+.search-overlay__footer-description {
+  max-width: 720px;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.search-overlay__footer a {
+  text-decoration: none;
+}
+
+.search-overlay__socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.search-overlay__socials span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-ink);
+  font-size: 13px;
+}
+
+.search-overlay__socials img {
+  display: block;
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
+.search-overlay__footer small {
+  font-size: 12px;
+}
+
+body.search-open {
+  overflow: hidden;
+}
+
 .hero {
   position: relative;
   min-height: 560px;
@@ -278,6 +449,15 @@ main {
     cursor: pointer;
   }
 
+  .site-nav__toggle {
+    order: 2;
+  }
+
+  .site-search__toggle {
+    order: 1;
+    margin-left: auto;
+  }
+
   .site-nav__toggle span {
     display: block;
     width: 22px;
@@ -311,6 +491,44 @@ main {
     border: 1px solid var(--color-border);
     background: #ffffff;
     box-shadow: 0 12px 30px rgb(31 41 55 / 12%);
+  }
+
+  .search-overlay__topbar {
+    min-height: 56px;
+    gap: 12px;
+    padding: 4px 14px 4px 22px;
+  }
+
+  .search-overlay__form {
+    height: 48px;
+    gap: 12px;
+    border-bottom-width: 1px;
+  }
+
+  .search-overlay__input {
+    font-size: 15px;
+  }
+
+  .search-overlay__close {
+    width: 28px;
+    height: 32px;
+  }
+
+  .search-overlay__close span::before,
+  .search-overlay__close span::after {
+    top: 15px;
+    left: 3px;
+    width: 22px;
+  }
+
+  .search-overlay__content {
+    width: 100%;
+    min-height: 180px;
+    padding: 28px 20px 44px;
+  }
+
+  .search-overlay__footer {
+    padding: 32px 20px;
   }
 
   .site-nav.is-open {

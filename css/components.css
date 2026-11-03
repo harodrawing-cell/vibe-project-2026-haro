@@ -15,6 +15,88 @@
   white-space: nowrap;
 }
 
+.search-icon {
+  position: relative;
+  display: block;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  color: var(--color-ink);
+}
+
+.search-icon::after {
+  position: absolute;
+  right: -5px;
+  bottom: -3px;
+  width: 8px;
+  height: 1.5px;
+  transform: rotate(48deg);
+  transform-origin: left center;
+  background: currentColor;
+  content: "";
+}
+
+.search-overlay__section-title {
+  margin: 0;
+  color: var(--color-ink);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.search-overlay__empty {
+  margin: 14px 0 0;
+  color: #8a8a8a;
+  font-size: 14px;
+}
+
+.search-overlay__products {
+  margin-top: 56px;
+}
+
+.search-overlay__product-grid {
+  display: grid;
+  margin-top: 20px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.search-product {
+  min-width: 0;
+  margin: 0;
+}
+
+.search-product img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+.search-product h3 {
+  margin: 12px 0 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.search-overlay__goods-link {
+  display: block;
+  min-width: 160px;
+  min-height: 48px;
+  margin: 32px auto 0;
+  padding: 10px 24px;
+  border: 1px solid var(--color-ink);
+  border-radius: 999px;
+  color: var(--color-ink);
+  background: #ffffff;
+  font: inherit;
+  cursor: not-allowed;
+}
+
+.search-overlay__goods-link:disabled {
+  opacity: 1;
+}
+
 .hero__title {
   margin: 0;
   color: var(--color-brand-title);
@@ -198,6 +280,15 @@
   .emoticon__description {
     font-size: clamp(20px, 3vw, 26px);
   }
+
+  .search-overlay__product-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .search-overlay__content {
+    width: calc(100% - 40px);
+  }
 }
 
 @media (max-width: 768px) {
@@ -239,5 +330,28 @@
     min-height: 46px;
     padding: 10px 18px;
     font-size: 14px;
+  }
+
+  .search-overlay__section-title {
+    font-size: 15px;
+  }
+
+  .search-overlay__empty {
+    margin-top: 12px;
+    font-size: 13px;
+  }
+
+  .search-overlay__products {
+    margin-top: 40px;
+  }
+
+  .search-overlay__product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .search-product h3 {
+    margin-top: 8px;
+    font-size: 13px;
   }
 }

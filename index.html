@@ -43,8 +43,154 @@
           <span class="site-nav__item">STORY</span>
           <span class="site-nav__item">GOODS</span>
         </nav>
+        <button
+          class="site-search__toggle"
+          id="site-search-toggle"
+          type="button"
+          aria-label="검색 열기"
+          aria-controls="search-overlay"
+          aria-expanded="false"
+        >
+          <span class="search-icon" aria-hidden="true"></span>
+        </button>
       </div>
     </header>
+
+    <section
+      class="search-overlay"
+      id="search-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-label="사이트 검색"
+      aria-hidden="true"
+      inert
+      hidden
+    >
+      <div class="search-overlay__topbar">
+        <form class="search-overlay__form" role="search">
+          <label class="visually-hidden" for="site-search-input">검색어 입력</label>
+          <input
+            class="search-overlay__input"
+            id="site-search-input"
+            type="search"
+            placeholder="검색어 입력"
+            autocomplete="off"
+          />
+          <span class="search-icon search-overlay__icon" aria-hidden="true"></span>
+        </form>
+        <button
+          class="search-overlay__close"
+          type="button"
+          aria-label="검색 닫기"
+        >
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+
+      <div class="search-overlay__scroll">
+        <div class="search-overlay__content">
+          <section class="search-overlay__history" aria-labelledby="search-history-title">
+            <h2 class="search-overlay__section-title" id="search-history-title">
+              최근 검색어
+            </h2>
+            <p class="search-overlay__empty">최근 검색어가 없습니다</p>
+          </section>
+
+          <section class="search-overlay__products" aria-labelledby="search-products-title">
+            <h2 class="search-overlay__section-title" id="search-products-title">
+              GOODS
+            </h2>
+            <div class="search-overlay__product-grid">
+              <article class="search-product">
+                <img
+                  src="./images/img-dt/img_14_item-1.png"
+                  alt="쿠션 위에서 늘어져 자는 하로"
+                  loading="lazy"
+                />
+                <h3>귀찮니스트</h3>
+              </article>
+              <article class="search-product">
+                <img
+                  src="./images/img-dt/img_15_item-2.png"
+                  alt="튜브 위에 누워있는 하로"
+                  loading="lazy"
+                />
+                <h3>나르니시즘</h3>
+              </article>
+              <article class="search-product">
+                <img
+                  src="./images/img-dt/img_16_item-3.png"
+                  alt="라면을 먹는 하로"
+                  loading="lazy"
+                />
+                <h3>라면인건가요</h3>
+              </article>
+              <article class="search-product">
+                <img
+                  src="./images/img-dt/img_17_item-4.png"
+                  alt="빔을 쏘는 하로 만화컷"
+                  loading="lazy"
+                />
+                <h3>받아라 빔</h3>
+              </article>
+              <article class="search-product">
+                <img
+                  src="./images/img-dt/img_18_item-5.png"
+                  alt="상품 이미지 업로드 전"
+                  loading="lazy"
+                />
+                <h3>상품 이름을 입력하세요</h3>
+              </article>
+              <article class="search-product">
+                <img
+                  src="./images/img-dt/img_19_item-6.png"
+                  alt="상품 이미지 업로드 전"
+                  loading="lazy"
+                />
+                <h3>상품 이름을 입력하세요</h3>
+              </article>
+              <article class="search-product">
+                <img
+                  src="./images/img-dt/img_20_item-7.png"
+                  alt="상품 이미지 업로드 전"
+                  loading="lazy"
+                />
+                <h3>상품 이름을 입력하세요</h3>
+              </article>
+              <article class="search-product">
+                <img
+                  src="./images/img-dt/img_21_item-8.png"
+                  alt="상품 이미지 업로드 전"
+                  loading="lazy"
+                />
+                <h3>상품 이름을 입력하세요</h3>
+              </article>
+            </div>
+            <button class="search-overlay__goods-link" type="button" disabled>
+              굿즈 보러가기
+            </button>
+          </section>
+        </div>
+
+        <footer class="search-overlay__footer">
+          <p class="search-overlay__footer-logo">HARO</p>
+          <p class="search-overlay__footer-description">
+            HARO는 오늘도 적당히 덤덤하게 살아가는 고양이의 이야기를 그립니다.
+            바쁘고 피곤한 일상 속에서 “왜?”, “어쩌라구”, “그럴 수도 있지” 하며
+            너무 애쓰지 않고 자기만의 속도로 하루를 살아가는 하로. 이모티콘과
+            그림, 작은 이야기를 통해 우리 모두의 평범한 하루에 가볍게 웃고
+            쉬어갈 순간을 전하고 싶습니다.
+          </p>
+          <a href="mailto:harodrowing@gmail.com">harodrowing@gmail.com</a>
+          <div class="search-overlay__socials">
+            <span><img src="./images/img-dt/img_22_icon-blog.png" alt="" />블로그</span>
+            <span><img src="./images/img-dt/img_23_icon-behance.png" alt="" />Behance</span>
+            <span><img src="./images/img-dt/img_24_icon-instagram.png" alt="" />Instagram</span>
+          </div>
+          <small>© 2026 HARO. All rights reserved.</small>
+        </footer>
+      </div>
+    </section>
 
     <main id="main-content">
       <section class="hero" id="top" aria-labelledby="hero-title">

@@ -32,6 +32,59 @@ if (menuToggle && siteNav) {
   });
 }
 
+const searchToggle = document.querySelector("#site-search-toggle");
+const searchOverlay = document.querySelector("#search-overlay");
+const searchClose = document.querySelector(".search-overlay__close");
+const searchInput = document.querySelector("#site-search-input");
+const searchForm = document.querySelector(".search-overlay__form");
+const siteHeader = document.querySelector(".site-header");
+const mainContent = document.querySelector("#main-content");
+
+if (
+  searchToggle &&
+  searchOverlay &&
+  searchClose &&
+  searchInput &&
+  searchForm &&
+  siteHeader &&
+  mainContent
+) {
+  const closeSearch = () => {
+    searchOverlay.hidden = true;
+    searchOverlay.inert = true;
+    searchOverlay.setAttribute("aria-hidden", "true");
+    searchToggle.setAttribute("aria-expanded", "false");
+    searchToggle.setAttribute("aria-label", "검색 열기");
+    siteHeader.inert = false;
+    mainContent.inert = false;
+    document.body.classList.remove("search-open");
+    searchToggle.focus();
+  };
+
+  searchToggle.addEventListener("click", () => {
+    searchOverlay.hidden = false;
+    searchOverlay.inert = false;
+    searchOverlay.setAttribute("aria-hidden", "false");
+    searchToggle.setAttribute("aria-expanded", "true");
+    searchToggle.setAttribute("aria-label", "검색 닫기");
+    siteHeader.inert = true;
+    mainContent.inert = true;
+    document.body.classList.add("search-open");
+    searchInput.focus();
+  });
+
+  searchClose.addEventListener("click", closeSearch);
+  searchForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (!searchOverlay.hidden && event.key === "Escape") {
+      closeSearch();
+    }
+  });
+}
+
 const boxButton = document.querySelector(".hero__button-look");
 const heroBox = document.querySelector("#hero-box");
 const boxFrame = document.querySelector("#hero-box-frame");
