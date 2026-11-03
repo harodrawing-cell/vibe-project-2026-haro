@@ -4,7 +4,7 @@
   --color-ink-strong: #1f2937;
   --color-text-secondary: #4b5563;
   --color-brand-title: #874e14;
-  --color-brand-tagline: #a8784f;
+  --color-brand-tagline: #8f603c;
   --color-room: #f7f3eb;
   --color-room-shadow: #e8dfd0;
   --color-box: #c99a5c;
@@ -22,7 +22,7 @@
   --space-6: 48px;
   --space-7: 64px;
 
-  --content-max-width: 840px;
+  --content-max-width: 1200px;
   --page-gutter: 32px;
   --header-height: 56px;
   --ease-standard: cubic-bezier(0.2, 0.65, 0.3, 1);

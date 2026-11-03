@@ -8,6 +8,11 @@
       content="오늘도 적당히 덤덤한 고양이, 하로를 소개합니다."
     />
     <title>HARO — 오늘도 적당히 덤덤한 고양이</title>
+    <link
+      rel="preload"
+      as="image"
+      href="./images/box-animation/transparent/BOX_001.png"
+    />
     <link rel="stylesheet" href="./css/tokens.css" />
     <link rel="stylesheet" href="./css/base.css" />
     <link rel="stylesheet" href="./css/layout.css" />
@@ -23,9 +28,18 @@
         <a class="site-header__brand" href="#top" aria-label="HARO 맨 위로">
           HARO
         </a>
-        <nav class="site-nav" aria-label="주요 메뉴">
-          <span class="site-nav__item">ABOUT HARO</span>
-          <span class="site-nav__item">EMOTICON</span>
+        <button
+          class="site-nav__toggle"
+          type="button"
+          aria-label="메뉴 열기"
+          aria-expanded="false"
+          aria-controls="site-nav"
+        >
+          <span></span><span></span><span></span>
+        </button>
+        <nav class="site-nav" id="site-nav" aria-label="주요 메뉴">
+          <a class="site-nav__item" href="#about">ABOUT HARO</a>
+          <a class="site-nav__item" href="#emoticon">EMOTICON</a>
           <span class="site-nav__item">STORY</span>
           <span class="site-nav__item">GOODS</span>
         </nav>
@@ -34,17 +48,7 @@
 
     <main id="main-content">
       <section class="hero" id="top" aria-labelledby="hero-title">
-        <div class="hero__room" aria-hidden="true">
-          <div class="hero__window">
-            <span class="hero__window-crossbar"></span>
-          </div>
-          <div class="hero__curtain"></div>
-          <div class="hero__shelf">
-            <span class="hero__shelf-books"></span>
-            <span class="hero__shelf-books hero__shelf-books--lower"></span>
-          </div>
-          <div class="hero__floor"></div>
-        </div>
+        <div class="hero__room" aria-hidden="true"></div>
 
         <div class="hero__content">
           <h1 class="hero__title" id="hero-title">HARO</h1>
@@ -53,16 +57,153 @@
 
         <div class="hero__interaction" aria-label="상자 인터랙션 미리보기">
           <p class="hero__prompt">열어볼래?</p>
-          <span class="hero__button-look">CLICK</span>
+          <button
+            class="hero__button-look"
+            type="button"
+            aria-label="상자를 열어 하로 만나기"
+            aria-controls="hero-box"
+          >
+            CLICK
+          </button>
+          <p class="hero__scroll-hint" aria-live="polite" hidden>
+            스크롤해서 하로를 만나보세요
+          </p>
         </div>
 
-        <div class="hero-box" aria-label="하로가 들어 있는 상자 모양">
-          <span class="hero-box__wordmark">HARO</span>
-          <span class="hero-box__paw" aria-hidden="true">
-            <span></span><span></span><span></span><span></span><span></span>
-          </span>
+        <div class="hero-box" id="hero-box">
+          <img
+            class="hero-box__image"
+            id="hero-box-frame"
+            src="./images/box-animation/transparent/BOX_001.png"
+            alt="닫힌 HARO 상자"
+            fetchpriority="high"
+          />
+        </div>
+      </section>
+
+      <section class="about" id="about" aria-labelledby="about-title">
+        <h2 class="about__title" id="about-title" data-reveal>ABOUT HARO</h2>
+        <span class="about__rule" aria-hidden="true"></span>
+
+        <div class="about__paws" aria-hidden="true">
+          <img
+            class="about__paw about__paw--one"
+            src="./images/used/paw-print-a.svg"
+            alt=""
+            data-reveal
+          />
+          <img
+            class="about__paw about__paw--two"
+            src="./images/used/paw-print-b.svg"
+            alt=""
+            data-reveal
+          />
+          <img
+            class="about__paw about__paw--three"
+            src="./images/used/paw-print-a.svg"
+            alt=""
+            data-reveal
+          />
+          <img
+            class="about__paw about__paw--four"
+            src="./images/used/paw-print-b.svg"
+            alt=""
+            data-reveal
+          />
+        </div>
+
+        <div class="about__layout">
+          <div class="about__portrait" data-reveal>
+            <img
+              class="about__character"
+              src="./images/used/haro-dt-7.png"
+              alt="무덤덤한 표정으로 서 있는 고양이 하로"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+
+          <div class="about__copy" data-reveal>
+            <h3 class="about__copy-title">
+              하로는 오늘도<br />
+              적당히 버티는<br />
+              무덤덤한 고양이에요.
+            </h3>
+            <p class="about__description">
+              박스 안의 아늑함을 가장 좋아하며<br class="about__desktop-break" />
+              늘 순간 순간 적당한 하루를 보내요.<br
+                class="about__desktop-break"
+              />
+              오늘도 하로와 함께 소소한 행복을 느껴보세요.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="emoticon"
+        id="emoticon"
+        aria-labelledby="emoticon-title"
+      >
+        <h2 class="emoticon__title" id="emoticon-title" data-reveal>EMOTICON</h2>
+        <span class="emoticon__rule" aria-hidden="true"></span>
+
+        <div class="emoticon__gallery" aria-label="하로 이모티콘 미리보기" data-reveal>
+          <img
+            class="emoticon__image"
+            src="./images/img-dt/img_6_tile-1.png"
+            alt="하로 고양이 이모티콘"
+            loading="lazy"
+            decoding="async"
+          />
+          <img
+            class="emoticon__image"
+            src="./images/img-dt/img_7_tile-2.png"
+            alt="몽돌·부싯돌 이모티콘"
+            loading="lazy"
+            decoding="async"
+          />
+          <img
+            class="emoticon__image"
+            src="./images/img-dt/img_8_tile-3.png"
+            alt="캐릭터 블로그 구분선 이미지"
+            loading="lazy"
+            decoding="async"
+          />
+          <img
+            class="emoticon__image"
+            src="./images/img-dt/img_9_tile-4.png"
+            alt="블로그용 리뷰·예약·주차 구분선 이미지"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+
+        <p class="emoticon__description" data-reveal>
+          오늘도 적당히 덤덤한 하로<br />
+          네이버 OGA에서 만나보세요!
+        </p>
+
+        <div class="emoticon__actions" data-reveal>
+          <a
+            class="emoticon__button"
+            href="https://ogqmarket.naver.com/search/artworks/stickers?keyword=%EB%A6%AC%EB%B2%A0%EB%A1%9C%EA%BD%83%EB%8F%BC%EC%A7%80"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            OGQ 이모티콘
+          </a>
+          <button
+            class="emoticon__button"
+            type="button"
+            disabled
+            aria-disabled="true"
+          >
+            카카오 이모티콘
+          </button>
         </div>
       </section>
     </main>
+    <script src="./js/main.js" defer></script>
   </body>
 </html>

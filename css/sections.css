@@ -1,162 +1,24 @@
-.hero__window {
-  position: absolute;
-  top: 0;
-  bottom: 27%;
-  left: -1%;
-  width: 34%;
-  border-right: 5px solid rgb(188 178 158 / 48%);
-  border-bottom: 10px solid rgb(188 178 158 / 45%);
-  background:
-    linear-gradient(90deg, transparent 48%, rgb(188 178 158 / 38%) 49% 50%, transparent 51%),
-    linear-gradient(180deg, transparent 72%, rgb(188 178 158 / 34%) 73% 75%, transparent 76%),
-    linear-gradient(135deg, rgb(220 227 208 / 46%), rgb(247 243 235 / 10%));
-  box-shadow: inset 0 0 0 5px rgb(255 255 255 / 55%);
+.hero__room {
+  background-color: var(--color-room);
+  background-image: url("../images/used/haro-dt-10.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
 }
 
-.hero__window::before,
-.hero__window::after {
-  position: absolute;
-  background: rgb(188 178 158 / 37%);
-  content: "";
-}
-
-.hero__window::before {
-  top: 0;
-  right: 24%;
-  width: 3px;
-  height: 100%;
-}
-
-.hero__window::after {
-  right: 0;
-  bottom: 12%;
-  left: 0;
-  height: 3px;
-}
-
-.hero__window-crossbar {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 8px;
-  background: rgb(255 255 255 / 56%);
-}
-
-.hero__curtain {
-  position: absolute;
-  top: 0;
-  bottom: 24%;
-  left: 28%;
-  width: 11%;
-  border-radius: 0 0 45% 28%;
-  background: linear-gradient(90deg, #eee7dc, #faf7f0 48%, #e8dfd2);
-  box-shadow: 8px 0 18px rgb(135 78 20 / 5%);
-  clip-path: polygon(0 0, 100% 0, 88% 100%, 12% 100%);
-}
-
-.hero__shelf {
-  position: absolute;
-  top: 13%;
-  right: -1%;
-  bottom: 12%;
-  width: 18%;
-  border: 7px solid rgb(167 140 106 / 54%);
-  background:
-    linear-gradient(
-      to bottom,
-      transparent 31%,
-      rgb(167 140 106 / 56%) 31% 33%,
-      transparent 33% 65%,
-      rgb(167 140 106 / 56%) 65% 67%,
-      transparent 67%
-    ),
-    rgb(229 219 202 / 42%);
-  box-shadow: inset 5px 0 10px rgb(135 78 20 / 7%);
-}
-
-.hero__shelf::before {
-  position: absolute;
-  inset: 0 auto 0 8%;
-  width: 8px;
-  background: rgb(167 140 106 / 48%);
-  content: "";
-}
-
-.hero__shelf-books {
-  position: absolute;
-  top: 8%;
-  right: 12%;
-  left: 22%;
-  height: 22%;
-  border-right: 4px solid rgb(167 140 106 / 38%);
-  border-left: 4px solid rgb(167 140 106 / 26%);
-  background: repeating-linear-gradient(
-    90deg,
-    #f6f1e8 0 18%,
-    #d8d0c2 18% 21%,
-    #f2ede4 21% 40%,
-    #cfc8ba 40% 43%
-  );
-}
-
-.hero__shelf-books--lower {
-  top: 40%;
-  height: 22%;
-}
-
-.hero__floor {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 27%;
-  border-top: 2px solid rgb(196 182 158 / 38%);
-  background:
-    repeating-linear-gradient(175deg, transparent 0 52px, rgb(196 182 158 / 15%) 53px 55px),
-    linear-gradient(180deg, rgb(239 232 219 / 75%), rgb(250 247 241 / 96%));
-}
-
-@media (max-width: 760px) {
-  .hero__window {
-    width: 45%;
-  }
-
-  .hero__curtain {
-    left: 35%;
-    width: 14%;
-  }
-
-  .hero__shelf {
-    right: -8%;
-    width: 27%;
-    opacity: 0.76;
+@media (max-width: 1024px) {
+  .hero__room {
+    background-image: url("../images/used/haro-tab-18.png");
   }
 }
 
-@media (max-width: 520px) {
-  .hero__window {
-    bottom: 24%;
-    left: -13%;
-    width: 58%;
-    opacity: 0.8;
+@media (max-width: 768px) {
+  .hero__room {
+    background-image: url("../images/used/haro-mob-16.png");
+    background-position: 55% center;
   }
+}
 
-  .hero__curtain {
-    left: 38%;
-    bottom: 23%;
-    width: 20%;
-  }
-
-  .hero__shelf {
-    top: 22%;
-    right: -17%;
-    bottom: 18%;
-    width: 35%;
-    opacity: 0.55;
-  }
-
-  .hero__floor {
-    height: 24%;
-  }
+.about__paws {
+  pointer-events: none;
 }
