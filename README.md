@@ -7,7 +7,7 @@
 ## 0. 가장 먼저 해야 할 일 — MUST
 
 1. 프로젝트 루트의 `README.md` 전체를 읽습니다.
-2. `spec-kit/HARO_SpecKit_v1_2.md` 파일의 존재를 확인하고 **전체 내용을 읽어 적용**합니다.
+2. `spec-kit/HHARO_SpecKit.md` 파일의 존재를 확인하고 **전체 내용을 읽어 적용**합니다.
 3. 루트 또는 문서 폴더에 `PRD.md`, 화면 명세, 디자인 가이드, 작업 지시서가 있다면 확인합니다. **존재하지 않는 문서는 임의로 가정하지 않습니다.**
 4. 현재 폴더 구조와 HTML·CSS·JavaScript 엔트리 파일, 이미지·폰트 경로, 연결 관계를 조사합니다.
 5. 현재 요청의 **작업 대상 / 수정 가능한 범위 / 보존해야 하는 기능 / 검증 기준**을 구분합니다.
@@ -32,21 +32,21 @@
 프로젝트-루트/
 ├── README.md                         # 첫 실행 안내 (이 문서)
 └── spec-kit/
-    └── HARO_SpecKit_v1_2.md          # Designer + Developer 통합 규약
+    └── HARO_SpecKit.md          # Designer + Developer 통합 규약
 ```
 
 위 트리는 **확정된 문서 배치만** 표시합니다. HTML·CSS·JS·이미지 폴더 및 PRD의 실제 위치는 프로젝트를 탐색해 확인합니다.
 
-**읽기 순서:** `README.md` → `spec-kit/HARO_SpecKit_v1_2.md` → 존재하는 PRD·시안·명세 → 실제 소스코드 → 이번 작업 지시의 적용 범위 확인.
+**읽기 순서:** `README.md` → `spec-kit/HARO_SpecKit.md` → 존재하는 PRD·시안·명세 → 실제 소스코드 → 이번 작업 지시의 적용 범위 확인.
 
-`HARO_SpecKit_v1_2.md` 내부에 과거 문서명인 `PROJECT_RULES.md`가 등장하더라도, **이 프로젝트에서 참조할 실제 규약 경로는 `spec-kit/HARO_SpecKit_v1_2.md`**입니다. 규약을 읽었다고 가정하거나 부분만 읽은 상태에서 전체 준수를 주장하지 않습니다.
+`HARO_SpecKit.md` 내부에 과거 문서명인 `PROJECT_RULES.md`가 등장하더라도, **이 프로젝트에서 참조할 실제 규약 경로는 `spec-kit/HARO_SpecKit.md`**입니다. 규약을 읽었다고 가정하거나 부분만 읽은 상태에서 전체 준수를 주장하지 않습니다.
 
 ## 3. 규칙 우선순위와 적용 범위
 
 1. 사용자로부터 받은 **현재 작업 지시와 수정 허용 범위**
 2. 승인된 프로젝트 PRD·화면 디자인·콘텐츠·기능 명세
 3. 현재 프로젝트에서 확인되어 정상 동작하는 HTML·CSS·JS 구조와 디자인 시스템
-4. `spec-kit/HARO_SpecKit_v1_2.md`의 공통 Designer·Developer 규약
+4. `spec-kit/HARO_SpecKit.md`의 공통 Designer·Developer 규약
 5. 일반적인 웹디자인·웹개발 관행
 
 - Spec Kit의 **HARO 실소스 분석값은 해당 레퍼런스/재현 작업에만 적용**합니다. 다른 사이트의 색상·폭·브레이크포인트에 무조건 복사하지 않습니다.
@@ -108,4 +108,4 @@
 ---
 
 **AI Agent 최종 시작 명령**  
-> `README.md`를 먼저 읽고 `spec-kit/HARO_SpecKit_v1_2.md` 전체를 확인하세요. 그다음 승인된 명세와 실제 HTML·CSS·JavaScript 구조를 조사하세요. 기존 구현을 보호하면서 사용자 요청 범위만 수정하고, 완료 후 변경 파일·검증 결과·미확인 사항을 구분해 보고하세요.
+> `README.md`를 먼저 읽고 `spec-kit/HARO_SpecKit.md` 전체를 확인하세요. 그다음 승인된 명세와 실제 HTML·CSS·JavaScript 구조를 조사하세요. 기존 구현을 보호하면서 사용자 요청 범위만 수정하고, 완료 후 변경 파일·검증 결과·미확인 사항을 구분해 보고하세요.
