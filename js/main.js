@@ -216,3 +216,71 @@ if ("IntersectionObserver" in window && revealElements.length > 0) {
     revealObserver.observe(element);
   });
 }
+
+const emoticonViewport = document.querySelector('[data-emoticon-swiper]');
+
+if (emoticonViewport && !emoticonViewport.swiper && typeof Swiper !== 'undefined') {
+  const emoticonGap = () => window.innerWidth <= 768
+    ? 8
+    : Math.min(18, Math.max(12, window.innerWidth * 0.014));
+
+  new Swiper(emoticonViewport, {
+    slidesPerView: 2,
+    grid: { rows: 2, fill: 'column' },
+    spaceBetween: emoticonGap(),
+    slidesPerGroup: 1,
+    loop: true,
+    speed: 600,
+    autoplay: { delay: 4000, disableOnInteraction: false },
+    navigation: {
+      prevEl: '[data-emoticon-prev]',
+      nextEl: '[data-emoticon-next]',
+    },
+    keyboard: { enabled: true, onlyInViewport: true },
+    a11y: {
+      prevSlideMessage: '\uC774\uC804 \uC774\uBAA8\uD2F0\uCF58',
+      nextSlideMessage: '\uB2E4\uC74C \uC774\uBAA8\uD2F0\uCF58',
+    },
+    breakpoints: {
+      769: { slidesPerView: 4, grid: { rows: 1 } },
+    },
+    on: {
+      beforeResize(swiper) {
+        swiper.params.spaceBetween = emoticonGap();
+      },
+    },
+  });
+}
+
+const goodsViewport = document.querySelector('[data-goods-swiper]');
+
+if (goodsViewport && !goodsViewport.swiper && typeof Swiper !== 'undefined') {
+  new Swiper(goodsViewport, {
+    slidesPerView: 1.1,
+    slidesPerGroup: 1,
+    loop: true,
+    autoplay: {
+      delay: 4000,
+      disableOnInteraction: false,
+    },
+    autoHeight: false,
+    spaceBetween: 24,
+    speed: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 350,
+    watchOverflow: true,
+    navigation: {
+      prevEl: '[data-goods-prev]',
+      nextEl: '[data-goods-next]',
+    },
+    keyboard: { enabled: true, onlyInViewport: true },
+    a11y: {
+      prevSlideMessage: '\uC774\uC804 \uC0C1\uD488',
+      nextSlideMessage: '\uB2E4\uC74C \uC0C1\uD488',
+      slideLabelMessage: '{{index}} / {{slidesLength}}',
+    },
+    breakpoints: {
+      769: { slidesPerView: 4, spaceBetween: 16 },
+      1025: { slidesPerView: 4, spaceBetween: 24 },
+      1441: { slidesPerView: 4, spaceBetween: 22 },
+    },
+  });
+}

@@ -13,6 +13,7 @@
       as="image"
       href="./images/box-animation/transparent/BOX_001.png"
     />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css" />
     <link rel="stylesheet" href="./css/tokens.css" />
     <link rel="stylesheet" href="./css/base.css" />
     <link rel="stylesheet" href="./css/layout.css" />
@@ -40,8 +41,8 @@
         <nav class="site-nav" id="site-nav" aria-label="주요 메뉴">
           <a class="site-nav__item" href="#about">ABOUT HARO</a>
           <a class="site-nav__item" href="#emoticon">EMOTICON</a>
-          <span class="site-nav__item">STORY</span>
-          <span class="site-nav__item">GOODS</span>
+          <a class="site-nav__item" href="#story">STORY</a>
+          <a class="site-nav__item" href="#goods">GOODS</a>
         </nav>
         <button
           class="site-search__toggle"
@@ -51,7 +52,12 @@
           aria-controls="search-overlay"
           aria-expanded="false"
         >
-          <span class="search-icon" aria-hidden="true"></span>
+          <img
+            class="search-icon"
+            src="./images/used/haro-search.png"
+            alt=""
+            aria-hidden="true"
+          />
         </button>
       </div>
     </header>
@@ -76,7 +82,12 @@
             placeholder="검색어 입력"
             autocomplete="off"
           />
-          <span class="search-icon search-overlay__icon" aria-hidden="true"></span>
+          <img
+            class="search-icon search-overlay__icon"
+            src="./images/used/haro-search.png"
+            alt=""
+            aria-hidden="true"
+          />
         </form>
         <button
           class="search-overlay__close"
@@ -89,12 +100,19 @@
 
       <div class="search-overlay__scroll">
         <div class="search-overlay__content">
-          <section class="search-overlay__history" aria-labelledby="search-history-title">
+          <div class="search-overlay__keywords">
+            <section class="search-overlay__history" aria-labelledby="search-history-title">
             <h2 class="search-overlay__section-title" id="search-history-title">
               최근 검색어
             </h2>
             <p class="search-overlay__empty">최근 검색어가 없습니다</p>
-          </section>
+  
+            <section class="search-overlay__popular" aria-labelledby="search-popular-title">
+              <h2 class="search-overlay__section-title" id="search-popular-title">인기 검색어</h2>
+  
+          </div>
+
+
 
           <section class="search-overlay__products" aria-labelledby="search-products-title">
             <h2 class="search-overlay__section-title" id="search-products-title">
@@ -169,7 +187,7 @@
             <button class="search-overlay__goods-link" type="button" disabled>
               굿즈 보러가기
             </button>
-          </section>
+
         </div>
 
         <footer class="search-overlay__footer">
@@ -294,7 +312,11 @@
         <h2 class="emoticon__title" id="emoticon-title" data-reveal>EMOTICON</h2>
         <span class="emoticon__rule" aria-hidden="true"></span>
 
-        <div class="emoticon__gallery" aria-label="하로 이모티콘 미리보기" data-reveal>
+        <div class="emoticon__carousel">
+          <button class="emoticon__arrow emoticon__arrow--prev" type="button" data-emoticon-prev aria-label="Previous emoticon"><span aria-hidden="true"></span></button>
+          <div class="emoticon__gallery swiper" aria-label="하로 이모티콘 미리보기" data-reveal data-emoticon-swiper>
+            <div class="swiper-wrapper">
+            <div class="swiper-slide">
           <img
             class="emoticon__image"
             src="./images/img-dt/img_6_tile-1.png"
@@ -302,6 +324,8 @@
             loading="lazy"
             decoding="async"
           />
+            </div>
+            <div class="swiper-slide">
           <img
             class="emoticon__image"
             src="./images/img-dt/img_7_tile-2.png"
@@ -309,6 +333,8 @@
             loading="lazy"
             decoding="async"
           />
+            </div>
+            <div class="swiper-slide">
           <img
             class="emoticon__image"
             src="./images/img-dt/img_8_tile-3.png"
@@ -316,6 +342,8 @@
             loading="lazy"
             decoding="async"
           />
+            </div>
+            <div class="swiper-slide">
           <img
             class="emoticon__image"
             src="./images/img-dt/img_9_tile-4.png"
@@ -323,6 +351,14 @@
             loading="lazy"
             decoding="async"
           />
+            </div>
+            <div class="swiper-slide"><img class="emoticon__image" src="./images/img-dt/img_10_image-1.png" alt="HARO emoticon 5" loading="lazy" decoding="async" /></div>
+            <div class="swiper-slide"><img class="emoticon__image" src="./images/img-dt/img_11_image-2.png" alt="HARO emoticon 6" loading="lazy" decoding="async" /></div>
+            <div class="swiper-slide"><img class="emoticon__image" src="./images/img-dt/img_12_image-3.png" alt="HARO emoticon 7" loading="lazy" decoding="async" /></div>
+            <div class="swiper-slide"><img class="emoticon__image" src="./images/img-dt/img_13_image-4.png" alt="HARO emoticon 8" loading="lazy" decoding="async" /></div>
+            </div>
+          </div>
+          <button class="emoticon__arrow emoticon__arrow--next" type="button" data-emoticon-next aria-label="Next emoticon"><span aria-hidden="true"></span></button>
         </div>
 
         <p class="emoticon__description" data-reveal>
@@ -349,7 +385,199 @@
           </button>
         </div>
       </section>
+
+      <section
+        class="story"
+        id="story"
+        aria-labelledby="story-title"
+      >
+        <div class="story__layout" data-reveal>
+          <div class="story__intro">
+            <h2 class="story__title" id="story-title">STORY</h2>
+            <span class="story__rule" aria-hidden="true"></span>
+            <h3 class="story__headline">
+              오늘도 적당히 덤덤한<br />
+              현생 고양이 하로
+            </h3>
+            <p class="story__description">
+              팬덤의 공감과 응원 속에 세대를 대변하는 아이콘으로 자리잡고 있는
+              무덤덤의 대표 캐릭터입니다.
+            </p>
+            <a
+              class="story__instagram"
+              href="https://www.instagram.com/liberoflowerpig/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Instagram
+            </a>
+            <img
+              class="story__character"
+              src="./images/img-dt/img_5_haro-cat.png"
+              alt="무덤덤한 표정의 하로 캐릭터"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+
+          <div
+            class="story__photo-grid"
+            data-story-grid
+            role="group"
+            aria-label="인스타툰 이미지 영역"
+          >
+            <div class="story__tile story__tile--one" data-story-slot="1" aria-hidden="true"></div>
+            <div class="story__tile story__tile--two" data-story-slot="2" aria-hidden="true"></div>
+            <div class="story__tile story__tile--three" data-story-slot="3" aria-hidden="true"></div>
+            <div class="story__tile story__tile--four" data-story-slot="4" aria-hidden="true"></div>
+          </div>
+        </div>
+
+        <p class="story__status visually-hidden" data-story-status role="status" aria-live="polite">
+          로컬 인스타툰 이미지 불러오는 중입니다.
+        </p>
+      </section>
+
+      <section class="goods" id="goods" aria-labelledby="goods-title">
+        <h2 class="goods__title" id="goods-title" data-reveal>GOODS</h2>
+        <span class="goods__rule" aria-hidden="true"></span>
+
+        <div class="goods__carousel" role="group" aria-label="굿즈 상품 캐러셀">
+          <button
+            class="goods__arrow goods__arrow--prev"
+            type="button"
+            data-goods-prev
+            aria-label="이전 상품"
+            disabled
+          >
+            <span aria-hidden="true"></span>
+          </button>
+
+          <div class="goods__viewport swiper" data-goods-swiper>
+          <div class="goods__track swiper-wrapper" data-goods-track>
+          <article class="goods-card swiper-slide">
+            <img class="goods-card__media" src="./images/img-dt/img_14_item-1.png" alt="쿠션 위에서 늘어져 자는 하로 스티커" loading="lazy" decoding="async" />
+            <div class="goods-card__copy">
+              <h3 class="goods-card__title">귀찮니스트 (79x79mm) _ sticker</h3>
+            </div>
+          </article>
+          <article class="goods-card swiper-slide">
+            <img class="goods-card__media" src="./images/img-dt/img_15_item-2.png" alt="튜브 위에 누워있는 하로 스티커" loading="lazy" decoding="async" />
+            <div class="goods-card__copy">
+              <h3 class="goods-card__title">나르니시즘 (79x79mm) _ sticker</h3>
+            </div>
+          </article>
+          <article class="goods-card swiper-slide">
+            <img class="goods-card__media" src="./images/img-dt/img_16_item-3.png" alt="라면을 먹는 하로 스티커" loading="lazy" decoding="async" />
+            <div class="goods-card__copy">
+              <h3 class="goods-card__title">라면인건가요 (79x79mm) _ sticker</h3>
+            </div>
+          </article>
+          <article class="goods-card swiper-slide">
+            <img class="goods-card__media" src="./images/img-dt/img_17_item-4.png" alt="빔을 쏘는 하로 만화컷 스티커" loading="lazy" decoding="async" />
+            <div class="goods-card__copy">
+              <h3 class="goods-card__title">받아라 빔 (79x79mm) _ sticker</h3>
+            </div>
+          </article>
+          <article class="goods-card swiper-slide">
+            <img class="goods-card__media" src="./images/img-dt/img_18_item-5.png" alt="상품 이미지 업로드 전" loading="lazy" decoding="async" />
+            <div class="goods-card__copy">
+              <h3 class="goods-card__title">이런 여유 좋고 (79x79mm) _ sticker</h3>
+            </div>
+          </article>
+          <article class="goods-card swiper-slide">
+            <img class="goods-card__media" src="./images/img-dt/img_19_item-6.png" alt="상품 이미지 업로드 전" loading="lazy" decoding="async" />
+            <div class="goods-card__copy">
+              <h3 class="goods-card__title">Matatabi Tea (79x79mm) _ sticker</h3>
+            </div>
+          </article>
+          <article class="goods-card swiper-slide">
+            <img class="goods-card__media" src="./images/img-dt/img_20_item-7.png" alt="상품 이미지 업로드 전" loading="lazy" decoding="async" />
+            <div class="goods-card__copy">
+              <h3 class="goods-card__title">Haro Note (105 × 148mm)</h3>
+            </div>
+          </article>
+          <article class="goods-card swiper-slide">
+            <img class="goods-card__media" src="./images/img-dt/img_21_item-8.png" alt="상품 이미지 업로드 전" loading="lazy" decoding="async" />
+            <div class="goods-card__copy">
+              <h3 class="goods-card__title">Sticky Cleaner (3.3 × 3.3mm)</h3>
+            </div>
+          </article>
+          </div>
+          </div>
+
+          <button
+            class="goods__arrow goods__arrow--next"
+            type="button"
+            data-goods-next
+            aria-label="다음 상품"
+          >
+            <span aria-hidden="true"></span>
+          </button>
+        </div>
+
+        <a
+          class="goods__shop-link"
+          href="https://marpple.shop/kr/mandac"
+          target="_blank"
+          rel="noopener noreferrer"
+          data-reveal
+        >
+          굿즈 보러가기
+        </a>
+      </section>
     </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <div class="site-footer__content">
+          <a class="site-footer__brand" href="#top" aria-label="HARO 맨 위로">HARO</a>
+          <p class="site-footer__description">
+            HARO는 오늘도 적당히 덤덤하게 살아가는 고양이의 이야기를 그립니다.
+            바쁘고 피곤한 일상 속에서 “왜?”, “어쩌라구”, “그럴 수도 있지” 하며
+            너무 애쓰지 않고 자기만의 속도로 하루를 살아가는 하로. 이모티콘과
+            그림, 작은 이야기를 통해 우리 모두의 평범한 하루에 가볍게 웃고
+            쉬어갈 순간을 전하고 싶습니다.
+          </p>
+          <a class="site-footer__email" href="mailto:harodrowing@gmail.com">
+            harodrowing@gmail.com
+          </a>
+        </div>
+
+        <div class="site-footer__bottom">
+          <small class="site-footer__copyright">© 2026 HARO. All rights reserved.</small>
+          <nav class="site-footer__socials" aria-label="공식 SNS">
+            <a
+              href="https://blog.naver.com/indikang"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="네이버 블로그 (새 탭)"
+            >
+              <img src="./images/img-dt/img_22_icon-blog.png" alt="" loading="lazy" />
+            </a>
+            <a
+              href="https://www.behance.net/indikang"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Behance (새 탭)"
+            >
+              <img src="./images/img-dt/img_23_icon-behance.png" alt="" loading="lazy" />
+            </a>
+            <a
+              href="https://www.instagram.com/liberoflowerpig/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram (새 탭)"
+            >
+              <img src="./images/img-dt/img_24_icon-instagram.png" alt="" loading="lazy" />
+            </a>
+          </nav>
+        </div>
+      </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js" defer></script>
     <script src="./js/main.js" defer></script>
+    <script src="./js/story-adapter.js" defer></script>
+    <script src="./js/story-feed.js" defer></script>
   </body>
 </html>

@@ -113,3 +113,173 @@
   3. **버튼 간격 및 호버 스타일:** 데스크톱/태블릿에서 두 버튼 간 간격을 디자인 참조에 맞추어 `16px`로 조정하고, 호버 시 부드러운 `#f7f3eb` 배경 변화 및 키보드 포커스 스타일(`:focus-visible`)을 적용.
   4. **스크롤 리빌 인터랙션:** `data-reveal` 속성을 타이틀, 갤러리, 문구, 버튼 영역에 적용하여 Progressive Enhancement 기반 등장 인터랙션 연결.
 - **변경 파일:** `index.html`, `css/layout.css`, `css/components.css`, `task-history/task.md`.
+
+## 004: STORY 섹션 임시 구현 및 다음 섹션 연결
+
+- **작업일:** 2026-11-04
+- **요청:** 제공된 데스크톱/태블릿/모바일 시안을 기준으로 STORY 소개와 2×2 컬러 플레이스홀더를 구현한다. Instagram 계정을 연결하고, API·랜덤 이미지 기능은 이번 범위에서 제외한다.
+- **완료 상태:** STORY 섹션과 반응형 배치 구현 완료. 이후 005 GOODS 섹션을 추가할 수 있도록 STORY를 `main` 마지막 섹션으로 두었다.
+- **구현:** 내비게이션 STORY 항목을 `#story`에 연결하고, EMOTICON 다음에 독립적인 `story` 섹션을 추가했다. 데스크톱은 좌측 소개/우측 2×2 컬러 타일, 1024px 이하 태블릿은 가로 배치를 유지하며, 768px 이하에서는 소개 아래에 타일 그리드를 배치한다. 4개 슬롯은 개별 클래스와 `data-story-slot` 식별자를 가지며 현재 색상 플레이스홀더로 남겼다. Instagram 버튼은 요청된 계정으로 새 탭 연결했다. API 및 이미지 로딩 기능은 추가하지 않았다.
+- **변경 파일:** `index.html`, `css/sections.css`, `task-history/task.md`.
+- **보존 사항:** 기존 섹션의 HTML/CSS/JavaScript와 기존 `curr-task` 프롬프트 파일은 수정하지 않았다. GOODS 섹션은 추가하지 않았다.
+- **검증:** 브라우저에서 1440, 1024, 769, 768, 390, 320px 너비를 확인했다. 769px까지 가로 2열, 768px부터 모바일 세로형으로 전환되고, 타일 4개와 Instagram 목적지, 가로 넘침 없음, 소개 콘텐츠의 넘침 없음을 확인했다. `#story` 직접 진입 시 고정 헤더 여백과 제목 표시를 확인했다. HTML/CSS 편집기 진단에서 오류 없음.
+- **미구현:** Instagram API, 랜덤 콘텐츠 로딩, 실제 인스타툰 이미지와 GOODS 섹션.
+
+## 005: GOODS 상품 캐러셀
+
+- **작업일:** 2026-11-04
+- **요청:** README 및 이전 작업 인계를 확인하고, PRD의 GOODS 섹션 요구사항을 기준으로 다음 작업을 시작한다.
+- **완료 상태:** GOODS 섹션의 반응형 시안 반영과 네이티브 가로 스크롤 캐러셀 구현 완료.
+- **구현:** GOODS 타이틀과 구분선을 중앙 정렬하고, 좌우 이동 버튼을 트랙 양옆에 배치했다. 상품 이미지에는 원본 비율을 유지하는 `contain`과 회색 배경/테두리를 적용하고, 카드명·규격을 아래 캡션에 표시한다. 데스크톱 및 1024px 이하 태블릿은 4개 카드가 보이며, 768px 이하에서는 한 카드와 다음 카드 일부가 보이는 터치 스크롤 트랙으로 전환한다. 스토어 버튼은 요청된 `https://marpple.shop/kr/mandac`로 연결한다.
+- **변경 파일:** `index.html`, `css/sections.css`, `js/main.js`, `task-history/task.md`.
+- **검증:** 1920, 1024, 769, 768, 390, 320px 너비에서 카드 노출 수와 가로 넘침을 확인했다. 실제 버튼 클릭으로 데스크톱/모바일 트랙 이동, 끝 위치의 화살표 비활성화, 역방향 이동을 검증했다. 모바일에서 다음 카드 일부 노출, 이미지 원본 비율, Marpple 링크 목적지를 확인했다. HTML/CSS/JavaScript 진단에서 오류 없음.
+- **미구현:** 실제 상품 상세 판매 URL은 제공되지 않아 카드별 링크는 추가하지 않았다. 상품 5~8 이미지는 저장소의 플레이스홀더 자산이다.
+
+## 006: FOOTER 반응형 구현
+
+- **작업일:** 2026-11-04
+- **완료 상태:** GOODS 바로 다음에 일반 문서 흐름의 FOOTER를 추가하고 반응형 정렬을 적용했다.
+- **구현:** 짙은 네이비 배경에 HARO 로고, 브랜드 소개, 이메일, 저작권과 SNS 아이콘을 배치했다. 데스크톱/태블릿은 본문 좌측 정렬, 저작권 좌하단, SNS 우하단 구조이며 모바일은 본문 좌측 정렬을 유지하고 저작권 및 SNS를 아래쪽 중앙으로 정렬한다. 네이버 블로그, Behance, Instagram 링크는 실제 확인된 채널 주소로 새 탭 연결했다.
+- **변경 파일:** `index.html`, `css/sections.css`, `task-history/task.md`.
+- **검증:** 1920, 1024, 768, 390, 320px에서 FOOTER 배치, 중앙 정렬, 정적 문서 흐름, 가로 넘침 없음을 확인했다. 외부 SNS 링크 3개와 이메일 링크를 확인했으며, 데스크톱·모바일 FOOTER를 시각 점검했다. HTML/CSS 진단에서 오류 없음.
+
+## 상단 메뉴 투명도 및 블러 보정
+
+- **작업일:** 2026-11-04
+- **요청:** 메뉴 글씨는 선명하게 유지하면서 뒤의 캐릭터와 이미지가 부드럽게 비치도록 상단 메뉴바를 조정한다.
+- **구현:** `.site-header` 배경을 흰색 62% 투명도로 낮추고, 배경에 `blur(14px) saturate(125%)`를 적용했다. 텍스트나 헤더 요소에는 투명도를 적용하지 않았다.
+- **변경 파일:** `css/layout.css`, `task-history/task.md`.
+- **검증:** 데스크톱 1440px과 모바일 390px에서 배경 알파·블러, 헤더와 메뉴 요소의 불투명도 1, 가로 넘침 없음을 확인했다. 컬러 타일 위에 헤더가 겹치는 브라우저 화면에서 배경 비침과 글자 선명도를 시각 확인했다. CSS 진단 오류 없음.
+
+## 004 후속: STORY Instagram 피드 연동 구조
+
+- **작업일:** 2026-11-04
+- **완료 상태:** 기본 테스트 모드, 랜덤 피드 렌더러, Instagram Login 서버리스 API 계약과 설정 문서를 추가했다. 실제 Meta API 실데이터 연결은 인증 및 배포 설정 전까지 미완료다.
+- **구현:** 기본 `test` 모드는 기존 네 컬러 플레이스홀더만 새로고침 시 랜덤 순서로 표시하고 API 미연결 상태를 알린다. `api` 모드는 동일 출처 `/api/instagram-posts`만 호출한다. 응답 어댑터는 이미지, 영상 썸네일, 캐러셀 대표 미디어와 실제 Instagram 게시물 permalink를 정규화·검증하고 중복 없는 최대 4개 선택 및 4개 미만 응답을 처리한다. 서버 함수는 Instagram Login 미디어 페이지네이션, 게시물 ID/해시태그 필터, 환경변수 토큰, CDN/프로세스 캐시, 마지막 정상 데이터의 제한된 stale fallback과 명시적 오류 상태를 제공한다. 설정 절차와 호스팅 제약을 `api/README.md`에 기록했다.
+- **변경 파일:** `index.html`, `css/sections.css`, `js/story-adapter.js`, `js/story-fixtures.js`, `js/story-feed.js`, `api/instagram-posts.js`, `api/README.md`, `tests/story-adapter.test.js`, `tests/instagram-route.test.js`, `task-history/task.md`.
+- **검증:** Node 테스트 9개 통과. 어댑터의 이미지/영상/캐러셀 변환, permalink 검증, 랜덤 중복 방지, 부족한 피드, 서버의 503/405 응답, 서버 헤더 토큰 사용과 캐시 동작을 검사했다. 브라우저에서 1920, 1024, 768, 390px STORY 레이아웃, resize 시 같은 선택 유지, 테스트 모드 상태, API 실패 시 컬러 플레이스홀더 복귀를 확인했다. HTML/CSS/JavaScript 진단 및 Node 구문 검사 오류 없음.
+- **미완료:** Instagram 프로 계정/Meta 앱 권한 및 `INSTAGRAM_ACCESS_TOKEN`, API 버전, 게시물 ID 또는 해시태그 설정. 저장소에 배포 설정이 없어 Vercel 호환 `/api/instagram-posts`를 준비했지만 서버리스 호스팅 배포와 실 API 인증은 검증하지 못했다. 현 상태는 GitHub Pages 등 정적 호스팅에서 테스트 모드만 작동한다. `curr-task/004/prompt.txt`는 수정하지 않았다.
+
+## GOODS 캐러셀 화살표 시안 보정
+
+- **작업일:** 2026-11-04
+- **구현:** 문자 화살표를 가는 CSS 꺾쇠 아이콘으로 교체하고 원형 테두리를 연한 회색으로 조정했다. 버튼 크기와 캐러셀 이벤트는 유지했다.
+- **변경 파일:** `index.html`, `css/sections.css`, `task-history/task.md`.
+- **검증:** 브라우저에서 양쪽 화살표 모양과 카드 양옆 배치를 시각 확인했으며 HTML/CSS 진단 오류 없음.
+
+## 004 후속: 로컬 인스타툰 이미지 랜덤 표시
+
+- **작업일:** 2026-11-04
+- **완료 상태:** Instagram API 및 서버리스 의존성을 제거하고 `data/story.json` 기반 로컬 이미지 렌더링으로 전환했다.
+- **구현:** `images/img-story/story-haro-1.jpg`~`story-haro-38.jpg`를 JSON 데이터로 등록했다. 로딩 시 38개 중 중복 없이 최대 4개를 선택하며, resize에서는 순서를 유지하고 새로고침에서 다시 선택한다. 게시물 URL은 저장소와 타겟 사이트에서 실제 permalink를 찾지 못해 `null`로 두었으며 해당 항목은 링크 없이 표시한다. 실제 Instagram 프로필 버튼과 STORY 반응형은 유지했다. 이미지 원본 비율을 보존하고 로딩 레이아웃을 고정했다.
+- **API 정리:** `data-story-source`/API URL 속성과 API 스크립트 연결을 제거했다. STORY 전용 서버리스 함수·API 설정 문서·fixture·API 테스트를 삭제했다. 공통 메인 스크립트와 다른 섹션 기능은 변경하지 않았다.
+- **변경 파일:** `index.html`, `css/sections.css`, `js/story-adapter.js`, `js/story-feed.js`, `data/story.json`, `tests/story-adapter.test.js`, `task-history/task.md`; 삭제: `js/story-fixtures.js`, `api/instagram-posts.js`, `api/README.md`, `tests/instagram-route.test.js`.
+- **검증:** JSON 38개 항목 파싱 및 이미지 경로 누락 0개. Node 테스트 5개 통과. 로컬 HTTP 브라우저에서 1920, 1024, 768, 390px 레이아웃, 이미지 4개 로드, resize 중 선택 유지, reload 시 새 랜덤 조합, 중복 없음, 가로 넘침 없음 확인. HTML/CSS/JavaScript 진단 오류 없음.
+- **남은 내용:** 이미지별 실제 Instagram 게시물 URL이 제공되지 않아 현재 모두 `null`이며 이미지 클릭 링크는 적용되지 않는다. 실제 URL을 `data/story.json`에 추가하면 해당 이미지에만 새 탭 링크가 생성된다. `curr-task/004/prompt.txt`는 수정하지 않았다.
+
+## 004 후속: STORY 레이아웃 리뉴얼
+
+- **작업일:** 2026-11-04
+- **요청:** STORY 레이아웃을 좌우 분할/모바일 세로 배치로 정리하면서 기존 사이트의 흰색·검정·회색 톤과 로컬 랜덤 이미지/조건부 Instagram 링크를 유지한다.
+- **구현:** STORY 제목·구분선을 컨테이너 왼쪽 상단으로 옮기고 메인 카피를 2줄로 정리했다. 기존 사이트와 어울리도록 흰 배경, 연회색 컨테이너, 검정 타이포, 아웃라인 Instagram 버튼을 사용하고 카드에만 은은한 그림자를 적용했다. 실제 프로젝트 원본 하로 이미지(`images/img-dt/img_5_haro-cat.png`)를 좌측 하단 장식으로 사용했다. 누워 있는 포즈 자산은 없어 서 있는 원본을 사용했으며 모바일에서는 장식을 숨긴다. STORY 외 섹션과 로컬 JSON/랜덤 로더는 변경하지 않았다.
+- **변경 파일:** `index.html`, `css/sections.css`, `task-history/task.md`.
+- **검증:** 1920, 1024, 768, 390px에서 가로/세로 전환, 정사각형 이미지 4개 로드, 원본 비율 `contain`, 텍스트/캐릭터 겹침 없음, 가로 넘침 없음을 확인했다. HTML/CSS 진단 오류 없음.
+- **주의:** 프로젝트의 실제 이미지 경로는 사용자가 언급한 `images/story/`가 아니라 `images/img-story/`다. `data/story.json`의 게시물 URL이 모두 `null`이므로 이미지 카드는 계속 비클릭이며, 실 URL을 등록하면 링크가 활성화된다. 디자인 시안 이미지는 이 요청에 첨부되지 않아 텍스트 명세를 기준으로 구현했다. `curr-task/004/prompt.txt`는 수정하지 않았다.
+
+## 검색 아이콘 이미지 적용
+
+- **작업일:** 2026-11-04
+- **구현:** 헤더와 검색 오버레이의 CSS 돋보기 도형을 `images/used/haro-search.png`로 교체했다.
+- **변경 파일:** `index.html`, `css/components.css`, `task-history/task.md`.
+- **검증:** 양쪽 이미지의 로드와 검색 오버레이 열림을 브라우저에서 확인했으며 HTML/CSS 진단 오류 없음.
+
+## 공통 버튼 검정/흰색 상호작용
+
+- **작업일:** 2026-11-04
+- **구현:** 사용 가능한 버튼과 버튼형 링크의 hover, active, focus-visible 상태를 검정 배경/흰색 전경으로 통일했다. 햄버거 선, 닫기 아이콘, 검색 이미지도 상호작용 중 흰색으로 보정했다. disabled 컨트롤은 기본 스타일을 유지한다.
+- **변경 파일:** `css/sections.css`, `task-history/task.md`.
+- **검증:** 브라우저에서 STORY, 이모티콘, GOODS, 검색 컨트롤의 hover 색과 아이콘 반전을 확인했고 비활성 카카오 버튼은 변경되지 않음을 확인했다. CSS 진단 오류 없음.
+
+## GOODS Swiper implementation
+
+- Date: 2026-11-04
+- Scope: GOODS section based on desktop, tablet, and mobile reference screenshots.
+- Replaced native scroll carousel with Swiper 12 bundle loaded from jsDelivr, following https://swiperjs.com/get-started.
+- Preserved all eight local product images and the existing shop URL. Combined product names and specifications into centered captions.
+- Desktop/tablet show four cards; mobile shows one card and part of the next. Navigation uses Swiper boundary disabling, touch gestures, keyboard support, accessibility labels, and reduced-motion handling.
+- Adjusted section spacing, square images, borders, caption heights, and outlined shop button for the supplied references.
+- Validation: JavaScript syntax check passed; eight slides and all image paths verified; carousel div tags balanced; existing story adapter tests passed (5/5).
+- Limitation: browser tooling is unavailable in this session, so visual rendering, touch gestures, and viewport overflow have not been verified in a browser. Swiper requires CDN access.
+- Files: index.html, css/sections.css, js/main.js, task-history/task.md. Prompt files unchanged.
+
+## 005. GOODS Swiper requirements and browser verification
+
+- Date: 2026-11-04
+- Added a guard against initializing an existing Swiper instance twice.
+- Explicitly configured one-card navigation, disabled loop/autoplay/autoHeight, and reduced tablet card spacing at 769-1024px.
+- Made cards flex columns with stretching caption areas so all eight cards keep equal heights even when titles wrap.
+- Validation in headless Chrome: 1920, 1025, 1024, 769, 768, 578, 390, and 320px widths passed. Desktop/tablet show 4 cards and mobile uses 1.1; all eight card heights match; next arrow click advances one card; first/last arrows disable; document and GOODS do not overflow horizontally. Emulated touch swipe advanced to the next card. JavaScript syntax check passed.
+- Existing eight images and shop link retained. No non-GOODS sections or prompt files changed. This browser verification supersedes the previous browser-tooling limitation for GOODS.
+- Files changed in this pass: js/main.js, css/sections.css, task-history/task.md.
+
+## GOODS loop and autoplay
+
+- Date: 2026-11-04
+- Enabled infinite looping and autoplay with a 4000ms delay per user request. Autoplay continues after arrow clicks and swipes. Loop mode keeps both navigation directions available.
+- Validation: node --check js/main.js passed.
+- Changed files: js/main.js, task-history/task.md.
+
+## 003. EMOTICON Swiper
+
+- Date: 2026-11-04
+- Added images/img-dt/img_10_image-1.png through img_13_image-4.png after the original four images.
+- Reused the existing Swiper bundle with a separate guarded EMOTICON instance and independent arrows. Enabled loop, 4000ms autoplay, 600ms animation, one-column navigation, and continued autoplay after interaction.
+- Preserved the 1080px gallery limit, responsive square card sizes, desktop/tablet four-column layout, and mobile two-column/two-row layout. Images use contain to preserve their proportions. Navigation buttons overlap the gallery edges to preserve card widths. Existing links are unchanged.
+- Chrome validation at 1920/1024/768/390px: eight images, four visible cards, original expected card widths (256.5/230.5/356/167px), square proportions, no horizontal page overflow. Arrow navigation and repeated loop moves worked; 4000ms autoplay advanced, and mobile touch swipe advanced. JavaScript syntax check passed.
+- GOODS options and other sections unchanged; prompt files unchanged.
+- Changed files: index.html, css/layout.css, js/main.js, task-history/task.md.
+
+## Button click colors
+
+- Date: 2026-11-04
+- Extended the shared button and button-link black background/white foreground states to include focus after clicks, matching the GOODS shop button. Updated menu, close, and search icon states consistently. Disabled buttons remain inactive.
+- Validation: reviewed shared selectors and icon rules; no JavaScript or layout changes.
+- Changed files: css/sections.css, task-history/task.md.
+
+## Consistent text button proportions
+
+- Date: 2026-11-04
+- Unified CLICK, EMOTICON actions, Instagram, GOODS shop, and search shop text buttons using the main CLICK dimensions: 48px height, 136px minimum width, 16px bold text, 24px horizontal padding, 1.5px rounded borders. Mobile uses 46px height, 132px minimum width, and 20px horizontal padding. Width expands to fit labels.
+- Icon controls retain their circular geometry. Existing action colors and section margins remain.
+- Validation: checked shared rule specificity against section and mobile overrides.
+- Changed files: css/sections.css, task-history/task.md.
+
+## GOODS shop button centering fix
+
+- Date: 2026-11-04
+- Restored the GOODS shop action to a block-level flex container with fit-content width and automatic inline margins. The shared inline-flex button rule had removed its automatic centering. Unified button dimensions remain in effect.
+- Validation: confirmed the centering override follows the shared button rule and applies at all viewport widths.
+- Changed files: css/sections.css, task-history/task.md.
+
+## Desktop section spacing aligned to reference
+
+- Date: 2026-11-04
+- Inspected https://www.mandaco.co.kr/ in Chrome at 1920px: content sections use 80px vertical padding and 114px top margins; footer uses 80px top and 40px bottom padding.
+- Applied those spacing values above 1024px to ABOUT, EMOTICON, STORY, GOODS, and footer. Set heading-to-gallery spacing to 80px, EMOTICON description spacing to 80px and actions to 44px, and GOODS shop spacing to 80px. Removed desktop ABOUT minimum height to avoid extra blank space beyond its padding. Existing section layouts, image/button sizes, and slider settings retained.
+- Validation: Chrome confirmed measured desktop section padding/margins at 1920px. At 1025px desktop spacing applies; at 1024px and 390px existing responsive padding remains. No page horizontal overflow at those boundary widths.
+- Changed files: css/sections.css, task-history/task.md. Prompt files unchanged.
+
+## STORY consistent image boxes across viewports
+
+- Date: 2026-11-04
+- Removed mobile-only 8px image-box padding and 18px corner override. All viewports now share desktop zero padding, 22px corners, square boxes, full-size images, and object-fit: contain. Existing tablet/mobile section layouts and grid spacing remain responsive.
+- Validation: checked all STORY image selectors; no breakpoint overrides remain for tile padding/corners or image sizing.
+- Changed files: css/sections.css, task-history/task.md.
+
+## HTTP preview for STORY images
+
+- Date: 2026-11-04
+- Added scripts/preview.cjs (Node built-in static HTTP server bound to 127.0.0.1:8080) and preview.cmd launcher. Documented usage in README.md. No dependencies or site design changes.
+- Started local HTTP preview and opened http://127.0.0.1:8080/#story in the external browser.
+- Validation: JSON and all 38 registered STORY images return HTTP 200. Chrome confirmed four randomly selected images rendered and loaded successfully.
+- spec-kit/AGENTS.md is absent; followed the available HARO specification and current implementation.
