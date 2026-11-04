@@ -261,11 +261,14 @@
     align-items: center;
     padding: 0;
     text-align: center;
+    padding-bottom: 15px;
   }
 
   .story__title {
     font-size: 26px;
     text-align: center;
+    font-size: clamp(24px, 6vw, 28px);
+    line-height: 1.4;
   }
 
   .story__rule {
@@ -406,7 +409,7 @@
   text-decoration: none;
 }
 @media (min-width: 769px) and (max-width: 1440px) {
-  .goods { padding-top: 48px; padding-bottom: 135px; }
+  .goods { padding-top: 48px; padding-bottom: 180px; }
   .goods__rule { width: 82px; margin-top: 38px; }
   .goods__carousel { margin-top: 90px; gap: 24px; }
   .goods-card__copy { min-height: 80px; padding: 14px 12px; }
@@ -551,28 +554,24 @@
   }
 
   .site-footer__bottom {
-    margin-top: 64px;
+    margin-top: 26px;
     flex-direction: column;
-    gap: 24px;
+    align-items: flex-start;
+    gap: 25px;
   }
 
   .site-footer__copyright {
+    order: 1;
     align-self: flex-start;
     text-align: left;
   }
 
   .site-footer__socials {
-    align-self: flex-end;
+    align-self: flex-start;
     gap: 6px;
   }
 }
 
-@media (max-width: 600px) {
-  .site-footer__copyright {
-    align-self: center;
-    text-align: center;
-  }
-}
 
 /* Shared section title sizing and underline spacing at every viewport width. */
 .about__title,

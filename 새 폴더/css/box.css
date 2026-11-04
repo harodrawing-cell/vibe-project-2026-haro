@@ -1,0 +1,9 @@
+.hero-box__image {
+  position: absolute;
+  top: 86%;
+  left: 50%;
+  width: 300%;
+  max-width: none;
+  height: auto;
+  transform: translate(-50%, -59.3%);
+}

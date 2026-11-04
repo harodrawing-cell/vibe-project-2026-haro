@@ -193,6 +193,9 @@ main {
   width: 26px;
   height: 26px;
   object-fit: contain;
+  /* Match the footer symbols in a dark tone for the light search panel. */
+  filter: brightness(0);
+  opacity: 0.85;
 }
 
 .search-overlay__footer small {
@@ -204,8 +207,10 @@ body.search-open {
 }
 
 .hero {
+  --hero-box-width: clamp(185px, 18.75vw, 262.5px);
   position: relative;
-  min-height: 560px;
+  /* Keep every painted frame inside the HERO on short desktops. */
+  min-height: max(560px, calc(var(--hero-box-width) * 2.85));
   height: max(560px, calc(100svh - var(--header-height)));
   overflow: hidden;
   isolation: isolate;
@@ -230,8 +235,9 @@ body.search-open {
 
 .hero__interaction {
   position: absolute;
+  z-index: 1;
   top: 54%;
-  left: 66%;
+  left: calc(50% + max(175px, 16vw));
   display: grid;
   justify-items: center;
   gap: 16px;
@@ -239,9 +245,10 @@ body.search-open {
 
 .hero-box {
   position: absolute;
+  pointer-events: none;
   top: 61%;
   left: 50%;
-  width: clamp(180px, 16vw, 250px);
+  width: var(--hero-box-width);
   aspect-ratio: 1.4;
   transform: translateX(-50%);
 }
@@ -349,7 +356,7 @@ body.search-open {
 .emoticon__carousel {
   position: relative;
   width: min(100%, 1080px);
-  margin: 64px auto 0;
+  margin: 80px auto 0;
 }
 
 .emoticon__gallery {
@@ -405,16 +412,7 @@ body.search-open {
   }
 
   .hero__interaction {
-    top: 48%;
-    left: 50%;
     gap: 14px;
-    transform: translateX(-50%);
-  }
-
-  .hero-box {
-    top: auto;
-    bottom: 7%;
-    width: clamp(100px, 11vw, 150px);
   }
 
   .about {
@@ -572,24 +570,28 @@ body.search-open {
   }
 
   .hero {
-    height: max(560px, calc(100svh - var(--header-height)));
+    --hero-box-width: clamp(140px, 45vw, 185px);
+    /* Reserve space for the opened frame, the revealed hint, and floor padding. */
+    min-height: 720px;
+    height: max(720px, calc(100svh - var(--header-height)));
   }
 
   .hero__content {
-    top: 27%;
+    top: 18%;
     width: calc(100% - 40px);
   }
 
   .hero__interaction {
-    top: 48%;
+    top: 37%;
     left: 50%;
     gap: 16px;
+    transform: translateX(-50%);
   }
 
   .hero-box {
-    left: 50%;
-    bottom: 19%;
-    width: clamp(90px, 20vw, 112px);
+    /* Painted frame starts ~0.55 box widths above the container's top.
+       126px includes prompt, button, revealed hint, and a 16px safe gap. */
+    top: max(61%, calc(38% + 126px + var(--hero-box-width) * 0.55));
   }
 
   .about {
@@ -628,7 +630,7 @@ body.search-open {
   }
 
   .emoticon__carousel {
-    margin-top: 88px;
+    margin-top: 64px;
   }
 
   .emoticon__gallery {
