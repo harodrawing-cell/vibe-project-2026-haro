@@ -341,7 +341,7 @@ body.search-open {
 }
 
 .emoticon {
-  padding: clamp(72px, 8vw, 112px) 24px 96px;
+  padding: clamp(72px, 8vw, 112px) 24px 85px;
   background: #ffffff;
   scroll-margin-top: var(--header-height);
 }
@@ -419,7 +419,7 @@ body.search-open {
 
   .about {
     min-height: 0;
-    padding: 24px 24px 80px;
+    padding: 113px 24px 80px;
   }
 
   .about__paws {
@@ -593,7 +593,7 @@ body.search-open {
   }
 
   .about {
-    padding: 22px 20px 64px;
+    padding: 70px 20px 64px;
   }
 
   .about__layout {

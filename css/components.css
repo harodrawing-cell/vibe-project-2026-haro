@@ -130,7 +130,7 @@
 }
 
 .hero__scroll-hint {
-  margin: 8px 0 0;
+  margin: -1px 0 0;
   color: var(--color-text-secondary);
   font-size: 12px;
   line-height: 1.5;

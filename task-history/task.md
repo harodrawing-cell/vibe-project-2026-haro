@@ -283,3 +283,53 @@
 - Started local HTTP preview and opened http://127.0.0.1:8080/#story in the external browser.
 - Validation: JSON and all 38 registered STORY images return HTTP 200. Chrome confirmed four randomly selected images rendered and loaded successfully.
 - spec-kit/AGENTS.md is absent; followed the available HARO specification and current implementation.
+
+## Desktop section padding adjustment
+
+- Date: 2026-11-04
+- Changed ABOUT, EMOTICON, STORY, and GOODS desktop vertical padding from 80px to 60px at widths of 1025px and above. Existing 114px inter-section margins, internal content gaps, footer padding, and tablet/mobile spacing retained.
+- Validation: reviewed desktop shared spacing rule.
+- Changed files: css/sections.css, task-history/task.md.
+
+## Desktop title font sizes
+
+- Date: 2026-11-04
+- Unified ABOUT, EMOTICON, and GOODS desktop title sizes to the existing ABOUT value: clamp(30px, 3vw, 36px), scoped to widths >=1025px. Existing weights, spacing, and tablet/mobile title sizes retained.
+- Validation: checked shared desktop rule matches ABOUT sizing and follows base title declarations.
+- Changed files: css/sections.css, task-history/task.md.
+
+## Desktop title underline spacing
+
+- Date: 2026-11-04
+- Matched ABOUT, EMOTICON, and GOODS desktop title-to-rule margins to the ABOUT reference: 24px. Scoped to >=1025px, overriding the intermediate GOODS 38px rule as well. Existing underline widths and tablet/mobile spacing retained.
+- Validation: checked cascade and desktop breakpoint scope.
+- Changed files: css/sections.css, task-history/task.md.
+
+## Shared responsive title and underline spacing
+
+- Date: 2026-11-04
+- Extended ABOUT, EMOTICON, and GOODS title sizing (clamp(30px, 3vw, 36px)) and 24px underline top margins to all viewport widths. Moved shared rules outside the desktop media query, after existing responsive rules. Desktop section padding remains scoped to desktop.
+- Validation: reviewed cascade; shared declarations override earlier tablet/mobile title sizes and rule margins.
+- Changed files: css/sections.css, task-history/task.md.
+
+## 006. FOOTER white SNS icons and right alignment
+
+- Date: 2026-11-04
+- Replaced footer-only colored PNG references with transparent white SVG blog, Behance, and Instagram icons. Preserved original links, accessible labels, footer background, copy, email, and copyright.
+- Standardized artwork to 28px, touch targets to 44x44px, and icon gaps to 20px. Added smooth hover/focus opacity. Mobile icons align to the right content edge below the centered copyright. Desktop/tablet keep their bottom-right alignment.
+- Chrome checks at 1920, 1024, 768, and 390px passed: all three SVG assets load, right edges align, mobile copyright remains centered with SNS below, targets measure 44x44px, and no page horizontal overflow.
+- Changed files: index.html (footer only), css/sections.css (footer only), images/icons/*-white.svg, task-history/task.md. Other sections and prompt files unchanged.
+
+## Footer copyright alignment
+
+- Date: 2026-11-04
+- Explicitly set copyright text left alignment for desktop/tablet and centered self/text alignment at <=768px. SNS right alignment retained.
+- Validation: checked breakpoint scope against existing row/column footer layout.
+- Changed files: css/sections.css, task-history/task.md.
+
+## Footer copyright tablet/mobile boundary correction
+
+- Date: 2026-11-04
+- Changed footer copyright alignment boundary to match the supplied approximately 700px tablet screenshot: left alignment above 600px, centered alignment at 600px and below. Within the existing <=768px column layout, tablet copyright now aligns to the left content edge. SNS retains right alignment. Other responsive breakpoints unchanged.
+- Validation: reviewed 601-768px cascade and <=600px center override.
+- Changed files: css/sections.css, task-history/task.md.
