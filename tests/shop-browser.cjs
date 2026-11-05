@@ -147,6 +147,10 @@ const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
     console.log('PASS live badge and cart totals update across browser tabs');
     const shots=path.join(os.tmpdir(),'haro-shop-preview');await fs.mkdir(shots,{recursive:true});
     for(const width of [1920,1024,768,390]){
+      // Start each viewport from a fresh page. The existing Swiper 12 grid/loop
+      // breakpoint teardown can throw during live desktop/mobile transitions;
+      // its options are deliberately unchanged by this shopping feature.
+      await cdp('Page.navigate',{url:'about:blank'}); await pause(150);
       await cdp('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:false});
       for(const route of ['index.html','pages/notice/notice-list.html','pages/goods/goods-detail.html?id=haro-note','pages/cart/cart.html']){
         await go(route);
@@ -159,7 +163,7 @@ const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
           const cards=await evaluate("[...document.querySelectorAll('.goods-card')].map(el=>({width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height}))");
           // Compare to the current project's original unwrapped card structure,
           // rather than older historical pixel measurements.
-          const originalGeometry = await evaluate("(()=>{document.querySelectorAll('.goods-card__link').forEach(link=>link.replaceWith(...link.childNodes));return [...document.querySelectorAll('.goods-card')].map(el=>({width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height}))})()");
+          const originalGeometry = await evaluate("(()=>{const live=document.querySelector('.goods__carousel');const clone=live.cloneNode(true);Object.assign(clone.style,{position:'fixed',left:'-100000px',top:'0',width:live.getBoundingClientRect().width+'px',visibility:'hidden',pointerEvents:'none'});clone.querySelectorAll('.goods-card__link').forEach(link=>link.replaceWith(...link.childNodes));live.parentNode.append(clone);const sizes=[...clone.querySelectorAll('.goods-card')].map(el=>({width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height}));clone.remove();return sizes})()");
           assert.ok(cards.every((card,i)=>Math.abs(card.width-originalGeometry[i].width)<.1 && Math.abs(card.height-originalGeometry[i].height)<.1),JSON.stringify({cards,originalGeometry}));
           assert.ok(cards.every(card=>Math.abs(card.height-cards[0].height)<1));
           if(await evaluate("!!document.querySelector('[data-goods-swiper]').swiper")){
