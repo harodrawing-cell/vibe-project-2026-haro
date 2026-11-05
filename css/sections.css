@@ -573,17 +573,32 @@
 }
 
 
-/* Shared section title sizing and underline spacing at every viewport width. */
+/* NOTICE reference: consistent section typography and underline geometry. */
 .about__title,
 .emoticon__title,
-.goods__title {
-  font-size: clamp(30px, 3vw, 36px);
+.story__title,
+.goods__title,
+.notice-page__heading h1 {
+  margin: 0;
+  color: var(--color-ink);
+  font-family: var(--font-primary);
+  font-size: var(--section-title-size);
+  font-weight: var(--section-title-weight);
+  line-height: var(--section-title-line-height);
+  letter-spacing: var(--section-title-letter-spacing);
 }
 
 .about__rule,
 .emoticon__rule,
-.goods__rule {
-  margin-top: 24px;
+.story__rule,
+.goods__rule,
+.notice-page__rule {
+  display: block;
+  width: var(--section-rule-width);
+  height: var(--section-rule-height);
+  margin-top: var(--section-rule-gap);
+  border-radius: 0;
+  background: var(--color-brand-title);
 }
 
 /* Desktop section spacing; reference adjusted to the requested 60px padding. */

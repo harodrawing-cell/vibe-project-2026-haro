@@ -200,148 +200,331 @@
 - **변경 파일:** `css/sections.css`, `task-history/task.md`.
 - **검증:** 브라우저에서 STORY, 이모티콘, GOODS, 검색 컨트롤의 hover 색과 아이콘 반전을 확인했고 비활성 카카오 버튼은 변경되지 않음을 확인했다. CSS 진단 오류 없음.
 
-## GOODS Swiper implementation
+## GOODS Swiper 구현
 
-- Date: 2026-11-04
-- Scope: GOODS section based on desktop, tablet, and mobile reference screenshots.
-- Replaced native scroll carousel with Swiper 12 bundle loaded from jsDelivr, following https://swiperjs.com/get-started.
-- Preserved all eight local product images and the existing shop URL. Combined product names and specifications into centered captions.
-- Desktop/tablet show four cards; mobile shows one card and part of the next. Navigation uses Swiper boundary disabling, touch gestures, keyboard support, accessibility labels, and reduced-motion handling.
-- Adjusted section spacing, square images, borders, caption heights, and outlined shop button for the supplied references.
-- Validation: JavaScript syntax check passed; eight slides and all image paths verified; carousel div tags balanced; existing story adapter tests passed (5/5).
-- Limitation: browser tooling is unavailable in this session, so visual rendering, touch gestures, and viewport overflow have not been verified in a browser. Swiper requires CDN access.
-- Files: index.html, css/sections.css, js/main.js, task-history/task.md. Prompt files unchanged.
+- 작업일: 2026-11-04
+- 작업 범위: 데스크톱, 태블릿, 모바일 참고 화면 기준 GOODS 섹션.
+- https://swiperjs.com/get-started 안내에 따라 기본 스크롤 캐러셀을 jsDelivr에서 불러오는 Swiper 12 번들로 교체했다.
+- 로컬 상품 이미지 8개와 기존 쇼핑몰 URL을 유지하고 상품명과 사양을 가운데 정렬 캡션으로 통합했다.
+- 데스크톱/태블릿은 카드 4개, 모바일은 카드 1개와 다음 카드 일부를 표시한다. Swiper의 처음/끝 탐색 비활성화, 터치 제스처, 키보드 지원, 접근성 레이블, 모션 감소 설정을 적용했다.
+- 참고 화면에 맞춰 섹션 간격, 정사각형 이미지, 테두리, 캡션 높이, 아웃라인 쇼핑몰 버튼을 조정했다.
+- 검증: JavaScript 구문 검사 통과. 슬라이드 8개와 모든 이미지 경로, 캐러셀 div 태그 짝을 확인했다. 기존 STORY 어댑터 테스트 통과(5/5).
+- 제한 사항: 해당 세션에서 브라우저 도구를 사용할 수 없어 실제 렌더링, 터치 제스처, 뷰포트 넘침을 브라우저에서 검증하지 못했다. Swiper는 CDN 접근이 필요하다.
+- 변경 파일: index.html, css/sections.css, js/main.js, task-history/task.md. 프롬프트 파일은 수정하지 않았다.
 
-## 005. GOODS Swiper requirements and browser verification
+## 005. GOODS Swiper 요구사항 및 브라우저 검증
 
-- Date: 2026-11-04
-- Added a guard against initializing an existing Swiper instance twice.
-- Explicitly configured one-card navigation, disabled loop/autoplay/autoHeight, and reduced tablet card spacing at 769-1024px.
-- Made cards flex columns with stretching caption areas so all eight cards keep equal heights even when titles wrap.
-- Validation in headless Chrome: 1920, 1025, 1024, 769, 768, 578, 390, and 320px widths passed. Desktop/tablet show 4 cards and mobile uses 1.1; all eight card heights match; next arrow click advances one card; first/last arrows disable; document and GOODS do not overflow horizontally. Emulated touch swipe advanced to the next card. JavaScript syntax check passed.
-- Existing eight images and shop link retained. No non-GOODS sections or prompt files changed. This browser verification supersedes the previous browser-tooling limitation for GOODS.
-- Files changed in this pass: js/main.js, css/sections.css, task-history/task.md.
+- 작업일: 2026-11-04
+- 기존 Swiper 인스턴스의 중복 초기화를 방지했다.
+- 한 번에 카드 1개씩 이동하도록 명시하고 loop/autoplay/autoHeight를 비활성화했다. 769-1024px에서 태블릿 카드 간격을 줄였다.
+- 카드를 세로 flex로 구성하고 캡션 영역을 늘려 제목이 줄바꿈되어도 카드 8개의 높이를 같게 했다.
+- 헤드리스 Chrome 검증: 1920, 1025, 1024, 769, 768, 578, 390, 320px 너비에서 통과했다. 데스크톱/태블릿은 카드 4개, 모바일은 1.1개를 표시한다. 카드 8개의 높이가 같고 다음 화살표 클릭 시 카드 1개씩 이동하며 처음/끝 화살표가 비활성화된다. 문서와 GOODS에 가로 넘침이 없다. 모의 터치 스와이프로 다음 카드 이동을 확인했다. JavaScript 구문 검사 통과.
+- 기존 이미지 8개와 쇼핑몰 링크를 유지했다. GOODS 외 섹션과 프롬프트 파일은 수정하지 않았다. 이 브라우저 검증으로 앞선 GOODS의 브라우저 도구 부재에 따른 검증 제한을 해소했다.
+- 이번 변경 파일: js/main.js, css/sections.css, task-history/task.md.
 
-## GOODS loop and autoplay
+## GOODS 무한 반복 및 자동 재생
 
-- Date: 2026-11-04
-- Enabled infinite looping and autoplay with a 4000ms delay per user request. Autoplay continues after arrow clicks and swipes. Loop mode keeps both navigation directions available.
-- Validation: node --check js/main.js passed.
-- Changed files: js/main.js, task-history/task.md.
+- 작업일: 2026-11-04
+- 사용자 요청에 따라 무한 반복과 4000ms 간격 자동 재생을 활성화했다. 화살표 클릭과 스와이프 후에도 자동 재생이 계속된다. 반복 모드에서는 양방향 탐색을 항상 사용할 수 있다.
+- 검증: node --check js/main.js 통과.
+- 변경 파일: js/main.js, task-history/task.md.
 
-## 003. EMOTICON Swiper
+## 003. EMOTICON Swiper 구현
 
-- Date: 2026-11-04
-- Added images/img-dt/img_10_image-1.png through img_13_image-4.png after the original four images.
-- Reused the existing Swiper bundle with a separate guarded EMOTICON instance and independent arrows. Enabled loop, 4000ms autoplay, 600ms animation, one-column navigation, and continued autoplay after interaction.
-- Preserved the 1080px gallery limit, responsive square card sizes, desktop/tablet four-column layout, and mobile two-column/two-row layout. Images use contain to preserve their proportions. Navigation buttons overlap the gallery edges to preserve card widths. Existing links are unchanged.
-- Chrome validation at 1920/1024/768/390px: eight images, four visible cards, original expected card widths (256.5/230.5/356/167px), square proportions, no horizontal page overflow. Arrow navigation and repeated loop moves worked; 4000ms autoplay advanced, and mobile touch swipe advanced. JavaScript syntax check passed.
-- GOODS options and other sections unchanged; prompt files unchanged.
-- Changed files: index.html, css/layout.css, js/main.js, task-history/task.md.
+- 작업일: 2026-11-04
+- 기존 이미지 4개 뒤에 images/img-dt/img_10_image-1.png부터 img_13_image-4.png까지 추가했다.
+- 기존 Swiper 번들을 재사용하고 중복 초기화를 방지하는 별도 EMOTICON 인스턴스와 독립 화살표를 구성했다. 무한 반복, 4000ms 자동 재생, 600ms 애니메이션, 한 열씩 이동, 상호작용 후 자동 재생 유지를 적용했다.
+- 갤러리 최대 너비 1080px, 반응형 정사각형 카드 크기, 데스크톱/태블릿 4열, 모바일 2열/2행 배치를 유지했다. 이미지는 contain으로 원본 비율을 보존한다. 카드 너비를 유지하도록 탐색 버튼을 갤러리 가장자리에 겹쳐 배치했다. 기존 링크는 유지했다.
+- Chrome 검증(1920/1024/768/390px): 이미지 8개, 표시 카드 4개, 기존 예상 카드 너비(256.5/230.5/356/167px), 정사각형 비율, 페이지 가로 넘침 없음을 확인했다. 화살표 탐색과 반복 이동, 4000ms 자동 재생, 모바일 터치 스와이프가 작동했다. JavaScript 구문 검사 통과.
+- GOODS 설정, 다른 섹션, 프롬프트 파일은 수정하지 않았다.
+- 변경 파일: index.html, css/layout.css, js/main.js, task-history/task.md.
 
-## Button click colors
+## 버튼 클릭 색상
 
-- Date: 2026-11-04
-- Extended the shared button and button-link black background/white foreground states to include focus after clicks, matching the GOODS shop button. Updated menu, close, and search icon states consistently. Disabled buttons remain inactive.
-- Validation: reviewed shared selectors and icon rules; no JavaScript or layout changes.
-- Changed files: css/sections.css, task-history/task.md.
+- 작업일: 2026-11-04
+- 공통 버튼과 버튼형 링크의 검정 배경/흰색 전경 상태를 클릭 후 포커스에도 적용하여 GOODS 쇼핑몰 버튼과 일치시켰다. 메뉴, 닫기, 검색 아이콘도 동일하게 조정했다. 비활성 버튼은 비활성 상태를 유지한다.
+- 검증: 공통 선택자와 아이콘 규칙을 검토했다. JavaScript와 레이아웃 변경은 없다.
+- 변경 파일: css/sections.css, task-history/task.md.
 
-## Consistent text button proportions
+## 텍스트 버튼 비율 통일
 
-- Date: 2026-11-04
-- Unified CLICK, EMOTICON actions, Instagram, GOODS shop, and search shop text buttons using the main CLICK dimensions: 48px height, 136px minimum width, 16px bold text, 24px horizontal padding, 1.5px rounded borders. Mobile uses 46px height, 132px minimum width, and 20px horizontal padding. Width expands to fit labels.
-- Icon controls retain their circular geometry. Existing action colors and section margins remain.
-- Validation: checked shared rule specificity against section and mobile overrides.
-- Changed files: css/sections.css, task-history/task.md.
+- 작업일: 2026-11-04
+- CLICK, EMOTICON 동작 버튼, Instagram, GOODS 쇼핑몰, 검색 쇼핑몰 텍스트 버튼을 메인 CLICK 기준으로 통일했다. 높이 48px, 최소 너비 136px, 16px 굵은 글자, 좌우 패딩 24px, 두께 1.5px의 모서리가 둥근 테두리를 적용했다. 모바일은 높이 46px, 최소 너비 132px, 좌우 패딩 20px를 사용한다. 너비는 문구 길이에 맞춰 늘어난다.
+- 아이콘 컨트롤은 원형을 유지한다. 기존 상호작용 색상과 섹션 바깥 여백은 유지했다.
+- 검증: 공통 규칙의 우선순위를 섹션별·모바일 재정의 규칙과 대조했다.
+- 변경 파일: css/sections.css, task-history/task.md.
 
-## GOODS shop button centering fix
+## GOODS 쇼핑몰 버튼 가운데 정렬 수정
 
-- Date: 2026-11-04
-- Restored the GOODS shop action to a block-level flex container with fit-content width and automatic inline margins. The shared inline-flex button rule had removed its automatic centering. Unified button dimensions remain in effect.
-- Validation: confirmed the centering override follows the shared button rule and applies at all viewport widths.
-- Changed files: css/sections.css, task-history/task.md.
+- 작업일: 2026-11-04
+- GOODS 쇼핑몰 버튼을 fit-content 너비와 좌우 자동 여백을 사용하는 블록 수준 flex 컨테이너로 복원했다. 공통 inline-flex 버튼 규칙 때문에 자동 가운데 정렬이 해제되었던 문제를 수정했다. 통일된 버튼 크기는 계속 적용한다.
+- 검증: 가운데 정렬 재정의가 공통 버튼 규칙 뒤에 있으며 모든 뷰포트 너비에 적용됨을 확인했다.
+- 변경 파일: css/sections.css, task-history/task.md.
 
-## Desktop section spacing aligned to reference
+## 참고 사이트에 맞춘 데스크톱 섹션 간격
 
-- Date: 2026-11-04
-- Inspected https://www.mandaco.co.kr/ in Chrome at 1920px: content sections use 80px vertical padding and 114px top margins; footer uses 80px top and 40px bottom padding.
-- Applied those spacing values above 1024px to ABOUT, EMOTICON, STORY, GOODS, and footer. Set heading-to-gallery spacing to 80px, EMOTICON description spacing to 80px and actions to 44px, and GOODS shop spacing to 80px. Removed desktop ABOUT minimum height to avoid extra blank space beyond its padding. Existing section layouts, image/button sizes, and slider settings retained.
-- Validation: Chrome confirmed measured desktop section padding/margins at 1920px. At 1025px desktop spacing applies; at 1024px and 390px existing responsive padding remains. No page horizontal overflow at those boundary widths.
-- Changed files: css/sections.css, task-history/task.md. Prompt files unchanged.
+- 작업일: 2026-11-04
+- Chrome 1920px에서 https://www.mandaco.co.kr/ 을 확인했다. 콘텐츠 섹션은 상하 패딩 80px와 상단 바깥 여백 114px, 푸터는 상단 패딩 80px와 하단 패딩 40px를 사용한다.
+- 1024px 초과에서 ABOUT, EMOTICON, STORY, GOODS, 푸터에 해당 간격을 적용했다. 제목과 갤러리 간격은 80px, EMOTICON 설명 간격은 80px와 동작 버튼 간격 44px, GOODS 쇼핑몰 간격은 80px로 설정했다. 패딩 외 불필요한 빈 공간을 없애기 위해 데스크톱 ABOUT 최소 높이를 제거했다. 기존 섹션 배치, 이미지/버튼 크기, 슬라이더 설정은 유지했다.
+- 검증: Chrome 1920px에서 데스크톱 섹션 패딩과 바깥 여백 실측값을 확인했다. 1025px에서는 데스크톱 간격이 적용되고 1024px와 390px에서는 기존 반응형 패딩이 유지된다. 해당 경계 너비에서 페이지 가로 넘침이 없다.
+- 변경 파일: css/sections.css, task-history/task.md. 프롬프트 파일은 수정하지 않았다.
 
-## STORY consistent image boxes across viewports
+## 모든 뷰포트에서 STORY 이미지 상자 통일
 
-- Date: 2026-11-04
-- Removed mobile-only 8px image-box padding and 18px corner override. All viewports now share desktop zero padding, 22px corners, square boxes, full-size images, and object-fit: contain. Existing tablet/mobile section layouts and grid spacing remain responsive.
-- Validation: checked all STORY image selectors; no breakpoint overrides remain for tile padding/corners or image sizing.
-- Changed files: css/sections.css, task-history/task.md.
+- 작업일: 2026-11-04
+- 모바일 전용 이미지 상자 패딩 8px와 모서리 반경 18px 재정의를 제거했다. 모든 뷰포트에서 데스크톱과 동일하게 패딩 0, 모서리 반경 22px, 정사각형 상자, 전체 크기 이미지, object-fit: contain을 적용한다. 기존 태블릿/모바일 섹션 배치와 그리드 간격은 반응형으로 유지한다.
+- 검증: STORY 이미지 선택자를 모두 검토했다. 타일 패딩/모서리와 이미지 크기를 바꾸는 브레이크포인트 재정의가 남아 있지 않다.
+- 변경 파일: css/sections.css, task-history/task.md.
 
-## HTTP preview for STORY images
+## STORY 이미지용 HTTP 미리보기
 
-- Date: 2026-11-04
-- Added scripts/preview.cjs (Node built-in static HTTP server bound to 127.0.0.1:8080) and preview.cmd launcher. Documented usage in README.md. No dependencies or site design changes.
-- Started local HTTP preview and opened http://127.0.0.1:8080/#story in the external browser.
-- Validation: JSON and all 38 registered STORY images return HTTP 200. Chrome confirmed four randomly selected images rendered and loaded successfully.
-- spec-kit/AGENTS.md is absent; followed the available HARO specification and current implementation.
+- 작업일: 2026-11-04
+- scripts/preview.cjs(127.0.0.1:8080에 바인딩되는 Node 내장 정적 HTTP 서버)와 preview.cmd 실행 파일을 추가했다. README.md에 사용법을 기록했다. 의존성과 사이트 디자인 변경은 없다.
+- 로컬 HTTP 미리보기를 시작하고 외부 브라우저에서 http://127.0.0.1:8080/#story 를 열었다.
+- 검증: JSON과 등록된 STORY 이미지 38개 모두 HTTP 200을 반환했다. Chrome에서 무작위로 선택된 이미지 4개가 정상 로드·렌더링됨을 확인했다.
+- spec-kit/AGENTS.md가 없어 확인 가능한 HARO 명세와 현재 구현을 따랐다.
 
-## Desktop section padding adjustment
+## 데스크톱 섹션 패딩 조정
 
-- Date: 2026-11-04
-- Changed ABOUT, EMOTICON, STORY, and GOODS desktop vertical padding from 80px to 60px at widths of 1025px and above. Existing 114px inter-section margins, internal content gaps, footer padding, and tablet/mobile spacing retained.
-- Validation: reviewed desktop shared spacing rule.
-- Changed files: css/sections.css, task-history/task.md.
+- 작업일: 2026-11-04
+- 1025px 이상에서 ABOUT, EMOTICON, STORY, GOODS의 데스크톱 상하 패딩을 80px에서 60px로 변경했다. 기존 섹션 간 바깥 여백 114px, 내부 콘텐츠 간격, 푸터 패딩, 태블릿/모바일 간격은 유지했다.
+- 검증: 데스크톱 공통 간격 규칙을 검토했다.
+- 변경 파일: css/sections.css, task-history/task.md.
 
-## Desktop title font sizes
+## 데스크톱 제목 글자 크기
 
-- Date: 2026-11-04
-- Unified ABOUT, EMOTICON, and GOODS desktop title sizes to the existing ABOUT value: clamp(30px, 3vw, 36px), scoped to widths >=1025px. Existing weights, spacing, and tablet/mobile title sizes retained.
-- Validation: checked shared desktop rule matches ABOUT sizing and follows base title declarations.
-- Changed files: css/sections.css, task-history/task.md.
+- 작업일: 2026-11-04
+- 너비 >=1025px에서 ABOUT, EMOTICON, GOODS의 데스크톱 제목 크기를 기존 ABOUT 값인 clamp(30px, 3vw, 36px)로 통일했다. 기존 굵기, 간격, 태블릿/모바일 제목 크기는 유지했다.
+- 검증: 데스크톱 공통 규칙이 ABOUT 크기와 일치하고 기본 제목 선언 뒤에 있는지 확인했다.
+- 변경 파일: css/sections.css, task-history/task.md.
 
-## Desktop title underline spacing
+## 데스크톱 제목 밑줄 간격
 
-- Date: 2026-11-04
-- Matched ABOUT, EMOTICON, and GOODS desktop title-to-rule margins to the ABOUT reference: 24px. Scoped to >=1025px, overriding the intermediate GOODS 38px rule as well. Existing underline widths and tablet/mobile spacing retained.
-- Validation: checked cascade and desktop breakpoint scope.
-- Changed files: css/sections.css, task-history/task.md.
+- 작업일: 2026-11-04
+- ABOUT, EMOTICON, GOODS의 데스크톱 제목과 구분선 사이 바깥 여백을 ABOUT 기준인 24px로 통일했다. >=1025px에 적용하며 중간 GOODS 규칙의 38px도 재정의한다. 기존 밑줄 너비와 태블릿/모바일 간격은 유지했다.
+- 검증: 스타일 적용 우선순위와 데스크톱 브레이크포인트 범위를 확인했다.
+- 변경 파일: css/sections.css, task-history/task.md.
 
-## Shared responsive title and underline spacing
+## 반응형 공통 제목 및 밑줄 간격
 
-- Date: 2026-11-04
-- Extended ABOUT, EMOTICON, and GOODS title sizing (clamp(30px, 3vw, 36px)) and 24px underline top margins to all viewport widths. Moved shared rules outside the desktop media query, after existing responsive rules. Desktop section padding remains scoped to desktop.
-- Validation: reviewed cascade; shared declarations override earlier tablet/mobile title sizes and rule margins.
-- Changed files: css/sections.css, task-history/task.md.
+- 작업일: 2026-11-04
+- ABOUT, EMOTICON, GOODS 제목 크기(clamp(30px, 3vw, 36px))와 밑줄 상단 바깥 여백 24px를 모든 뷰포트 너비에 적용했다. 공통 규칙을 데스크톱 미디어 쿼리 밖으로 이동하고 기존 반응형 규칙 뒤에 배치했다. 데스크톱 섹션 패딩은 데스크톱에만 적용한다.
+- 검증: 스타일 적용 우선순위를 검토했다. 공통 선언이 앞선 태블릿/모바일 제목 크기와 구분선 바깥 여백을 재정의한다.
+- 변경 파일: css/sections.css, task-history/task.md.
 
-## 006. FOOTER white SNS icons and right alignment
+## 006. FOOTER 흰색 SNS 아이콘 및 오른쪽 정렬
 
-- Date: 2026-11-04
-- Replaced footer-only colored PNG references with transparent white SVG blog, Behance, and Instagram icons. Preserved original links, accessible labels, footer background, copy, email, and copyright.
-- Standardized artwork to 28px, touch targets to 44x44px, and icon gaps to 20px. Added smooth hover/focus opacity. Mobile icons align to the right content edge below the centered copyright. Desktop/tablet keep their bottom-right alignment.
-- Chrome checks at 1920, 1024, 768, and 390px passed: all three SVG assets load, right edges align, mobile copyright remains centered with SNS below, targets measure 44x44px, and no page horizontal overflow.
-- Changed files: index.html (footer only), css/sections.css (footer only), images/icons/*-white.svg, task-history/task.md. Other sections and prompt files unchanged.
+- 작업일: 2026-11-04
+- 푸터의 컬러 PNG 참조만 투명 배경 흰색 SVG 블로그, Behance, Instagram 아이콘으로 교체했다. 기존 링크, 접근성 레이블, 푸터 배경, 문구, 이메일, 저작권 표시는 유지했다.
+- 아이콘 그림 크기 28px, 터치 영역 44x44px, 아이콘 간격 20px로 통일했다. hover/focus 시 부드러운 투명도 변화를 추가했다. 모바일 아이콘은 가운데 정렬된 저작권 표시 아래에서 콘텐츠 오른쪽 끝에 맞춘다. 데스크톱/태블릿은 오른쪽 하단 정렬을 유지한다.
+- Chrome 1920, 1024, 768, 390px 검증 통과: SVG 자산 3개 모두 로드되고 오른쪽 끝이 정렬된다. 모바일 저작권 표시는 가운데 정렬되며 SNS는 아래에 배치된다. 터치 영역은 44x44px이며 페이지 가로 넘침이 없다.
+- 변경 파일: index.html(푸터만), css/sections.css(푸터만), images/icons/*-white.svg, task-history/task.md. 다른 섹션과 프롬프트 파일은 수정하지 않았다.
 
-## Footer copyright alignment
+## 푸터 저작권 표시 정렬
 
-- Date: 2026-11-04
-- Explicitly set copyright text left alignment for desktop/tablet and centered self/text alignment at <=768px. SNS right alignment retained.
-- Validation: checked breakpoint scope against existing row/column footer layout.
-- Changed files: css/sections.css, task-history/task.md.
+- 작업일: 2026-11-04
+- 데스크톱/태블릿에서 저작권 텍스트를 왼쪽 정렬하고 <=768px에서 요소 자체와 텍스트를 가운데 정렬하도록 명시했다. SNS 오른쪽 정렬은 유지했다.
+- 검증: 기존 푸터 가로/세로 배치에 맞춰 브레이크포인트 적용 범위를 확인했다.
+- 변경 파일: css/sections.css, task-history/task.md.
 
-## Footer copyright tablet/mobile boundary correction
+## 푸터 저작권 표시 태블릿/모바일 경계 보정
 
-- Date: 2026-11-04
-- Changed footer copyright alignment boundary to match the supplied approximately 700px tablet screenshot: left alignment above 600px, centered alignment at 600px and below. Within the existing <=768px column layout, tablet copyright now aligns to the left content edge. SNS retains right alignment. Other responsive breakpoints unchanged.
-- Validation: reviewed 601-768px cascade and <=600px center override.
-- Changed files: css/sections.css, task-history/task.md.
+- 작업일: 2026-11-04
+- 제공된 약 700px 태블릿 화면에 맞춰 저작권 표시 정렬 경계를 변경했다. 600px 초과에서는 왼쪽 정렬, 600px 이하에서는 가운데 정렬한다. 기존 <=768px 세로 배치에서 태블릿 저작권 표시는 콘텐츠 왼쪽 끝에 맞춘다. SNS 오른쪽 정렬과 다른 반응형 브레이크포인트는 유지했다.
+- 검증: 601-768px 구간 스타일 우선순위와 <=600px 가운데 정렬 재정의를 검토했다.
+- 변경 파일: css/sections.css, task-history/task.md.
 
-## 001. HERO box responsive size and position
+## 001. HERO 상자 반응형 크기 및 위치
 
-- Date: 2026-11-05
-- Changed files: css/layout.css, task-history/task.md. HTML, JavaScript, image assets, other sections, and prompt.txt unchanged.
-- Desktop: replaced clamp(180px, 16vw, 250px) with a shared --hero-box-width: clamp(185px, 18.75vw, 262.5px). Maximum width increases exactly 5%. Kept the 61% top anchor and existing PNG image transform/aspect ratio. Minimum HERO height now also accounts for the lowest painted animation frame on short desktop screens.
-- Tablet: removed the conflicting top:auto / bottom:7% / clamp(100px, 11vw, 150px) override. Inherits the desktop top anchor and fluid width, eliminating the 1025/1024 position discontinuity. Controls remain on the right with a minimum 175px offset from center to clear the opened artwork; tablet control gap remains 14px.
-- Mobile: replaced clamp(90px, 20vw, 112px) and bottom:19% with clamp(140px, 45vw, 185px) and top:max(61%, calc(38% + 126px + var(--hero-box-width) * 0.55)). Controls are centered at 38%, title at 20%, and HERO minimum height is 720px, reserving space for the revealed scroll hint and all animation frames. The image frame is deliberately allowed to extend beyond its box container, as before.
-- Duplicate/conflicting breakpoint declarations were removed from their original rules, rather than adding later override media queries. Removed tablet bottom positioning and box width rule, redundant mobile left positioning, and mobile bottom/width overrides. Desktop First max-width:1024px and max-width:768px structure retained.
-- Width calculations (container CSS pixels): 1920=262.5; 1025=192.1875; 1024=192; 963=185; 768=185; 639=185; 390=175.5. At 769/768 both widths are 185px. The 1025/1024 top remains 61% of the same HERO height.
-- Static validation: all 12 source frames are 1024x1024; alpha bounds scanned at alpha>16. Last frame has the highest artwork (y=216), while frame 001 has the lowest artwork (y=772). Existing width:300%, top:86%, translate(-50%,-59.3%) produce an artwork envelope approximately -0.533 to +1.100 box widths from the anchor. At the minimum 720px mobile HERO height and maximum 185px width, the opened top is about 403px, the lowest frame bottom about 706px, and the control/hint area has a reserved 16px gap. Frame geometry is independent of the image source and state classes; animation filenames, order, speed, and click handling were not changed.
-- Browser validation: attempted Edge checks at all seven requested widths. Node execution was blocked by sandbox EPERM; the required escalation request was rejected by the user. Consequently actual browser screenshots, click playback, font-dependent text overlap, and page-wide horizontal overflow are NOT verified. Width/position results above are static CSS/image calculations, not browser test results. Temporary browser-check script removed.
+- 작업일: 2026-11-05
+- 변경 파일: css/layout.css, task-history/task.md. HTML, JavaScript, 이미지 자산, 다른 섹션, prompt.txt는 수정하지 않았다.
+- 데스크톱: clamp(180px, 16vw, 250px)를 공통 --hero-box-width: clamp(185px, 18.75vw, 262.5px)로 교체했다. 최대 너비는 정확히 5% 증가한다. 상단 위치 기준 61%와 기존 PNG 이미지 변환/종횡비를 유지했다. 높이가 낮은 데스크톱 화면을 위해 HERO 최소 높이 계산에 애니메이션 프레임의 가장 아래쪽 그림 영역도 반영했다.
+- 태블릿: 충돌하던 top:auto / bottom:7% / clamp(100px, 11vw, 150px) 재정의를 제거했다. 데스크톱 상단 위치 기준과 유동 너비를 상속하여 1025/1024 경계의 위치 급변을 없앴다. 조작부는 오른쪽에 유지하며 열린 그림과 겹치지 않도록 중앙에서 최소 175px 떨어지게 했다. 태블릿 조작부 간격은 14px를 유지한다.
+- 모바일: clamp(90px, 20vw, 112px)와 bottom:19%를 clamp(140px, 45vw, 185px)와 top:max(61%, calc(38% + 126px + var(--hero-box-width) * 0.55))로 교체했다. 조작부 중심은 38%, 제목은 20%, HERO 최소 높이는 720px로 설정하여 펼쳐진 스크롤 안내와 모든 애니메이션 프레임 공간을 확보했다. 이미지 프레임은 기존처럼 상자 컨테이너 밖으로 확장될 수 있도록 했다.
+- 후속 재정의 미디어 쿼리를 추가하지 않고 기존 규칙에서 중복·충돌하는 브레이크포인트 선언을 제거했다. 태블릿 하단 위치와 상자 너비 규칙, 불필요한 모바일 왼쪽 위치, 모바일 하단 위치/너비 재정의를 제거했다. Desktop First 방식의 max-width:1024px와 max-width:768px 구조는 유지했다.
+- 너비 계산(컨테이너 CSS 픽셀): 1920=262.5; 1025=192.1875; 1024=192; 963=185; 768=185; 639=185; 390=175.5. 769/768에서 너비는 모두 185px다. 1025/1024에서 상단 위치는 동일한 HERO 높이의 61%를 유지한다.
+- 정적 검증: 원본 프레임 12개 모두 1024x1024이며 alpha>16 기준으로 불투명 영역 경계를 조사했다. 마지막 프레임은 그림의 가장 위쪽 지점(y=216), 프레임 001은 가장 아래쪽 지점(y=772)을 가진다. 기존 width:300%, top:86%, translate(-50%,-59.3%)를 적용하면 그림 전체 범위는 위치 기준점에서 상자 너비의 약 -0.533배부터 +1.100배까지다. 모바일 HERO 최소 높이 720px와 최대 너비 185px에서 열린 그림 상단은 약 403px, 가장 낮은 프레임 하단은 약 706px이며 조작부/안내 영역과 16px 간격을 확보한다. 프레임 기하 구조는 이미지 소스와 상태 클래스에 영향을 받지 않는다. 애니메이션 파일명, 순서, 속도, 클릭 처리는 변경하지 않았다.
+- 브라우저 검증: 요청된 7개 너비 모두에서 Edge 검증을 시도했다. Node 실행이 샌드박스 EPERM으로 차단되었으며 필요한 권한 확대 요청은 사용자가 거절했다. 따라서 실제 브라우저 스크린샷, 클릭 재생, 폰트에 따른 텍스트 겹침, 페이지 전체 가로 넘침은 검증하지 못했다. 위 너비/위치 결과는 정적 CSS/이미지 계산이며 브라우저 테스트 결과가 아니다. 임시 브라우저 검증 스크립트는 제거했다.
+
+## 작업 이력 문서 한국어 번역
+
+- 작업일: 2026-11-05
+- 변경 파일: task-history/task.md.
+- 수정 내용: 영어 작업 기록의 제목과 설명을 한국어로 번역했다. 기존 한국어 내용, 문서 구조, 경로, 날짜, 수치, 검증 및 미검증 상태를 유지했다.
+- 검증: 기존 한국어 영역 보존, 번역 전후 기록 수와 URL 일치를 확인했다. 문서만 수정하여 화면 검증은 수행하지 않았다.
+
+## 007. NOTICE 기본 게시판 및 게시글 수정 기능
+
+- 작업일: 2026-11-05
+- 작업 범위: 기존 저장소에 NOTICE 기능이 없음을 확인하고, 사용자 추가 승인에 따라 목록·검색·페이지네이션·상세·글쓰기·수정과 관리자 테스트 모드를 함께 추가했다. README, 작업 이력, HARO 규약 및 관련 개발 문서를 확인했다. spec-kit/AGENTS.md는 현재 저장소에 없다.
+- 화면: 첨부 HARO_NOTICE_Edit_Demo.html을 디자인 참고 자료로만 사용했다. notice.html에서 쿼리 매개변수로 목록/상세/작성/수정을 구분한다. 기존 HEADER, 검색 오버레이, FOOTER 마크업과 공통 CSS 및 main.js를 재사용했다. 별도 notice.css로 최대 너비 900px와 Desktop First 반응형을 적용했다. 홈페이지에는 NOTICE 메뉴 링크만 추가했다.
+- 수정 기능: 상세의 수정 버튼은 관리자 테스트 모드에서만 표시한다. 기존 카테고리·제목·작성자·본문·첨부 이미지를 불러오고 작성자는 읽기 전용으로 표시한다. 제목/본문 필수 검증, 이미지 확인·변경·삭제, 변경 후 취소 확인 및 페이지 이탈 경고를 구현했다. 성공하면 같은 ID의 상세 화면으로 이동한다. 수정은 기존 ID·작성자·최초 작성일과 게시글 수를 유지한다. 없는 글과 잘못된 주소는 안내 후 목록으로 돌아갈 수 있다. 저장 실패 시 오류를 표시하고 입력 내용을 유지한다.
+- 데이터/권한: notice-data.js에 데이터 처리를 분리했다. localStorage에 게시글과 이미지를 저장하고 sessionStorage로 관리자 테스트 상태를 관리한다. 실제 저장 직전에도 관리자 상태와 입력을 검사한다. 누구나 켤 수 있는 테스트 전환이므로 실제 서버 인증/보안이 아님을 화면과 문서에 명시했다. 실제 서버 저장·로그인은 미연결이며, 향후 비동기 API 어댑터와 서버 권한 검사로 교체해야 한다. 최초 테스트 글은 1개이며 저장 데이터를 임의 초기화하지 않는다.
+- 변경 파일: index.html(메뉴 링크), notice.html, css/notice.css, js/notice-data.js, js/notice.js, tests/notice-data.test.js, tests/notice-browser.cjs, tests/notice-screenshots/edit-1920.png, tests/notice-screenshots/edit-1024.png, tests/notice-screenshots/edit-768.png, tests/notice-screenshots/edit-390.png, README.md, document/NOTICE_Test_Mode.md, task-history/task.md. 기존 prompt.txt와 다른 홈페이지 섹션·공통 CSS는 수정하지 않았다. 기존 파일 삭제나 구조 변경은 없다.
+- 데이터 검증: node --check로 신규 JavaScript 구문을 확인했다. NOTICE 데이터 테스트 6개와 기존 STORY 테스트 5개, 총 11개가 통과했다. 비관리자 저장 차단 및 권한 해제 후 차단, 수정 시 ID/작성자/작성일/건수 유지와 재조회, 필수 값/이미지 형식 검증, 없는 글, 이미지 변경·삭제, 생성·검색·페이지네이션, 저장 실패 시 기존 데이터 보존, 손상된 저장 데이터 오류를 검사했다.
+- 브라우저 검증: 샌드박스에서 Chrome CDP 연결이 응답하지 않아 권한 확대 후 별도 임시 프로필로 실행했고 통과했다. Chrome 1920/1024/768/390px에서 수정 폼 너비가 900px 이하이며 가로 넘침이 없고, 768px 이하 입력 항목이 세로 배치되며 하단 버튼 높이가 48px임을 확인했다. 네 화면의 전체 스크린샷을 저장하고 데스크톱/모바일 이미지를 시각 확인했다. 목록/상세/글쓰기 화면도 네 너비에서 가로 넘침이 없었다.
+- 브라우저 기능 검증: 비관리자 수정 버튼 숨김 및 수정 화면 제한, 기존 값·읽기 전용 작성자, 공백 필수 검증과 포커스, 저장 실패 시 입력 유지, 같은 ID 저장/상세 이동, 실제 PNG 선택·미리보기·저장·재진입·삭제, 취소 확인 거절/승인과 미저장 유지, 글쓰기, 검색, 두 번째 페이지, 없는 글 안내, 관리자 해제 후 저장 차단을 확인했다. 처리되지 않은 JavaScript 예외는 없었다. 검사에 사용한 서버와 Chrome은 종료했다.
+- 남은 범위: 실제 서버/DB 저장, 서버 관리자 인증, 다중 기기 동기화는 테스트 모드 범위 밖이며 미구현이다. 실기기 터치, Chrome 외 브라우저 및 보조공학 검증은 수행하지 않았다. 실행 방법과 서버 연결 안내는 document/NOTICE_Test_Mode.md에 기록했다.
+
+## 섹션 제목 글꼴·간격·밑줄 통일
+
+- 작업일: 2026-11-05
+- 요청: 첨부 NOTICE 제목 이미지에 맞춰 내부 섹션 제목의 글자 크기, 간격, 밑줄 크기를 통일한다.
+- 구현: ABOUT HARO, EMOTICON, STORY, GOODS, NOTICE에 공통 제목 토큰을 적용했다. 기본 글꼴, 34px/700, 행간 1.2, 자간 -0.04em, 제목과 밑줄 간격 24px, 밑줄 74x2px와 브랜드 갈색으로 통일했다. 기존 섹션 정렬과 본문·카드·HEADER·FOOTER 구성은 유지했다. NOTICE의 별도 44px/모바일 34px 및 55px 밑줄 선언을 제거해 공통 규칙을 사용한다.
+- 변경 파일: css/tokens.css, css/sections.css, css/notice.css, tests/notice-browser.cjs, task-history/task.md. prompt.txt는 수정하지 않았다.
+- 검증: node tests/notice-browser.cjs --titles-only 실행 통과. Chrome 1920/1024/768/390px에서 홈페이지와 NOTICE의 실제 계산 스타일이 모두 34px/700, 행간 40.8px, 자간 -1.36px, 밑줄 74x2px, 상단 간격 24px로 일치함을 확인했다. 두 페이지 모두 해당 너비에서 가로 넘침이 없었다. 기능 로직은 변경하지 않았다.
+
+## NOTICE 비동기 Repository 구조 및 Firebase 이전 준비
+
+- 작업일: 2026-11-05
+- 선행 분석: README, 이전 작업 이력, HARO 규약, 기존 notice.html/notice-data.js/notice.js/notice.css와 첨부 curr-task/005-공지사항/localstorage_to_firebase_guidelines.md를 확인했다. 루트 지침 파일, spec-kit/AGENTS.md 및 css/common.css는 없어 첨부 경로 지침과 현재 공통 CSS를 사용했다. 기존 단일 화면·동기 저장·body/image 구조를 확인하고, 페이지 분리 및 기존 데이터 이전 방식을 설명한 후 수정했다.
+- 페이지: notice-list.html, notice-detail.html, notice-write.html, notice-edit.html을 추가했다. 기존 공통 HEADER/검색 오버레이/FOOTER와 CSS를 재사용하고, NOTICE 공통 스크립트는 common → auth → repository → 화면 JS 순서로 연결했다. body data-mode=write/edit로 공용 폼을 구분한다. index.html의 NOTICE 링크를 새 목록으로 변경했다. 기존 notice.html은 쿼리를 유지한 새 경로 연결, notice.js는 경로 호환 처리로 변경하고 notice-data.js는 구버전 안내 파일로 남겼다. 기존 파일을 삭제하지 않았다.
+- 저장소: js/notice-repository.js에 localStorage 접근을 집중하고 Promise 기반 getList({category})/getById/create/update/remove와 seedIfNeeded를 제공한다. STORAGE_KEYS 상수와 시드 플래그를 도입했다. 최초 샘플 외 기존 haro-notices-test-v1 데이터를 자동 이전하며 id/author/createdAt과 기존 이미지·본문을 보존하고 content/imageUrl 구조로 변환한다. 기존 키는 백업 참고용으로 남긴다. 모든 글을 삭제해도 재시드하지 않는다. 문서는 id/category/title/content/author/imageUrl/createdAt/updatedAt이며 날짜는 ISO 문자열이다. 수정은 불변 필드를 유지한다.
+- 권한/공통: notice-auth.js에 비동기 isAdmin/getCurrentUserName/requireAdmin과 개발용 devSetAdmin을 분리했다. 일반 사용자의 작성·수정·삭제 버튼을 숨기고 저장 직전 관리자 검사를 수행한다. 개발용 전환은 목록 하단에만 배치하고 배포 전 제거 주석을 남겼다. 실제 서버 인증이 아니며 Firestore/Storage 보안 규칙에서 재검증해야 함을 코드와 안내 문서에 명시했다. Firebase 교체 지점에 TODO 주석을 추가했다.
+- 기능: 카테고리 탭 4종/전체, 검색, 10개 단위 페이지네이션, 상세, 작성, 수정, 삭제와 삭제 확인을 구현했다. 제목/내용 공백 검증, 작성자 읽기 전용, 취소 및 링크 이동 확인, beforeunload 경고, 비동기 로딩/오류, 중복 제출 차단을 적용했다. 본문은 textContent와 white-space: pre-wrap으로 출력한다.
+- 이미지: notice-common.js의 fileToImageUrl에서 JPG/PNG/WebP 5MB 이하 검증, 실제 이미지 디코딩, canvas 최대 1200px 축소, WebP 변환을 수행하고 imageUrl 문자열로 반환한다. 기존 이미지 유지/교체/제거를 저장 데이터에 반영한다. QuotaExceededError 발생 시 용량 안내와 입력 보존을 제공한다. 변환 중 저장과 제출 중 중복 요청을 차단한다.
+- 변경 파일: 신규 notice-list.html/notice-detail.html/notice-write.html/notice-edit.html, js/notice-common.js/notice-auth.js/notice-repository.js/notice-list.js/notice-detail.js/notice-form.js. 수정 index.html, notice.html, css/notice.css, js/notice.js, js/notice-data.js, tests/notice-data.test.js, tests/notice-browser.cjs, tests/notice-screenshots/edit-1920.png/edit-1024.png/edit-768.png/edit-390.png, README.md, document/NOTICE_Test_Mode.md, task-history/task.md. 기존 prompt.txt와 사용자 첨부 지침/학습 예제는 수정하지 않았다.
+- 구문/데이터 검증: 학습 예제를 포함한 프로젝트 전체 JS/CJS 17개 node --check 통과. NOTICE 테스트 7개와 기존 STORY 5개, 총 12개 통과. 비동기 API, 관리자 쓰기 제한, 기존 데이터 이전/원본 보존, 불변 필드와 날짜, 일부 필드 수정, 이미지 3상태, 필수 값, 없는 글, 카테고리, 동시 생성 직렬화, 삭제/재시드 방지, 용량 실패와 손상 데이터 보존, 이미지 파일 검증을 확인했다.
+- 브라우저 검증: 별도 로컬 Chrome 프로필에서 실행 통과. 1920/1024/768/390px 수정 폼 900px 이하, 모바일 세로 배치, 48px 버튼, 목록/상세/작성 가로 넘침 없음을 확인했다. 네 화면의 수정 스크린샷을 갱신하고 모바일 화면을 시각 확인했다. 실제 화면에서 공백 검증/포커스, QuotaExceededError 입력 유지, 같은 ID 상세 이동, textContent XSS 차단, 2400x1800 PNG → 1200x900 WebP, 이미지 유지/교체/제거 저장, 취소 확인과 beforeunload, 중복 제출 차단, 카테고리/검색/10개 단위 페이지네이션, 글 생성/삭제, 비관리자 버튼·화면 차단, 권한 해제 후 저장 거절, 없는 글, 전체 삭제 후 재시드 없음, 기존 URL 연결을 확인했다. 처리되지 않은 JS 예외 없음. 검사 서버·브라우저 종료.
+- 정적 확인: 네 신규 HTML 및 호환 HTML의 로컬 링크/자산, ID 중복 없음, 스크립트 순서, 공통 푸터 일치와 write/edit body 모드를 확인했다.
+- 미연결: Firebase SDK/Firestore/Firebase Storage/실제 관리자 인증은 아직 연결하지 않았다. 로컬 브라우저 저장이므로 기기 간 동기화와 여러 탭의 원자적 동시 수정은 제공하지 않는다. 실기기 터치와 Chrome 외 브라우저는 검증하지 않았다. Firebase 이전 파일·함수 요약 5줄을 document/NOTICE_Test_Mode.md에 기록했다.
+
+## 007. NOTICE 디자인 리뉴얼 — 기능·데이터 유지
+
+- 작업일: 2026-11-05
+- 선행 확인: README, 작업 이력, HARO 규약, 기존 NOTICE HTML/CSS 및 목록 렌더링 구조를 확인했다. 새 시안 이미지 파일은 대화와 프로젝트 내에서 확인되지 않았고, 추가 답변에도 파일 경로가 없어 사용자가 작성한 색감·카드·타이포그래피·반응형 명세를 기준으로 적용했다. 시안과의 직접 시각 대조는 수행하지 못했다.
+- 변경 파일: css/notice.css, notice-list.html, task-history/task.md. JavaScript, 데이터 파일, localStorage 연결, 공통 CSS, index.html, 다른 NOTICE HTML, prompt.txt는 수정하지 않았다. 파일 삭제나 데이터 초기화는 없다.
+- 공통 디자인: NOTICE 전용 변수를 사용해 화이트/따뜻한 아이보리 배경, 최대 너비 1100px 중앙 카드, 연한 베이지 테두리, 28px 라운드와 부드러운 그림자를 적용했다. 기존 제목·짧은 브라운 밑줄·안내 문구 및 프로젝트 글꼴을 유지하고 상하 간격을 정리했다. 테스트 모드 안내 문구를 삭제하지 않고 작은 배너로 표시한다. 목록의 중복 경로 표시는 CSS로 간결하게 하고 기존 목록 이동 링크와 DOM 후크를 유지했다.
+- 목록 디자인: 카테고리 필, 검색창/검색/전체 목록 컨트롤, 현재 페이지 브라운 강조, 하단 글쓰기·관리자 테스트 컨트롤을 정리했다. notice-list.html에 정적 표형 헤더와 표현용 클래스를 추가했다. 기존 ul/li 렌더링과 제목·분류·작성자·작성일 문자열을 그대로 두고 CSS Grid로 번호/제목/게시 정보 컬럼을 정렬했다. 번호는 데이터 ID가 아닌 페이지 안의 표시 순서다. 행 hover/키보드 focus 배경, 베이지 헤더와 얇은 행 구분선을 적용했다. 모바일은 번호를 숨기고 제목 아래 기존 게시 정보를 표시하여 날짜와 다른 정보를 삭제하지 않았다.
+- 상세/폼 디자인: 공통 CSS로 상세 본문 화이트 박스, 제목/작성 정보 위계, 첨부 이미지 여백, 입력창·점선 첨부 영역, 브라운 주요 버튼·아웃라인 보조 버튼을 통일했다. 작성/수정 폼 내부는 기존 900px 이하 너비와 2열/모바일 1열 구성을 유지한다. 데이터나 입력 검증은 변경하지 않았다.
+- 반응형: Desktop First의 기존 1024px/768px 경계를 유지했다. 태블릿에서 카드 패딩과 컬럼 폭을 축소하고, 모바일은 20px 라운드·줄바꿈 카테고리·검색 입력과 두 버튼의 재배치·세로 폼으로 적용했다. 텍스트 말줄임/숨김으로 실제 게시글을 자르지 않는다.
+- 코드/데이터 보존 검증: 변경 전후 SHA256 비교로 JavaScript·data 파일·홈페이지·공통 CSS·프롬프트 26개가 동일함을 확인했다. 공통 FOOTER 마크업 일치, HTML ID 중복 없음, 기존 목록 렌더링 후크 유지도 확인했다. HEADER/FOOTER 마크업과 공통 스타일은 변경하지 않았다. 사용자 브라우저나 실제 localStorage에 접근하지 않았다.
+- 브라우저 검증: 기존 브라우저 테스트의 임시 복사본을 OS 임시 폴더에서 사용하고, 별도 Chrome 프로필에서 실행했다. 영구 테스트 코드와 프로젝트의 기존 스크린샷은 변경하지 않았다. 1920/1024/768/390px에서 목록/상세/작성/수정 가로 넘침 없음, 카드 1100px 이하, 수정 폼 900px 이하, 모바일 세로 입력, 하단 48px 버튼, 데스크톱 검색 컨트롤 한 줄 정렬 및 겹침 없음을 확인했다. 목록/상세/수정 스크린샷을 임시 폴더에 저장하고 데스크톱·모바일 목록을 시각 확인했다.
+- 기능 회귀 검증: 기존 JS 그대로 검색·카테고리·10개 단위 페이징, 목록→상세→수정 및 목록 이동, 생성·동일 ID 수정·삭제 확인, 관리자 표시/권한 해제, 입력 검증, 취소 확인과 beforeunload, 중복 제출 방지, 용량 실패 시 입력 유지, 이미지 축소/유지/교체/제거, XSS 안전 출력, 없는 글 안내, 전체 삭제 후 재시드 방지, 구주소 연결을 확인했다. 처리되지 않은 JS 예외 없음. 테스트 데이터는 임시 브라우저 프로필에만 생성·변경했으며 실제 저장 데이터는 수정하지 않았다. 검사 브라우저와 서버 종료.
+- 미검증: 새 첨부 시안 원본과의 직접 비교, 실기기 터치, Chrome 외 브라우저 검증은 수행하지 않았다. 임의 시안 게시글·SNS 아이콘·캐릭터 그림을 콘텐츠로 추가하지 않았다.
+
+## 007. NOTICE 실제 디자인 시안 반영
+
+- 작업일: 2026-11-05
+- 참고: 사용자가 첨부한 Downloads/하로 감성 공지사항 페이지.png를 직접 열어 확인했다. 이전 작업에서 확인하지 못한 시안의 아이보리 배경, 상단 NOTICE 비율, 카드 밖 테스트 안내, 검색창, 라운드 컨테이너 및 촘촘한 목록 간격을 반영했다.
+- 변경 파일: css/notice.css, notice-list.html, notice-detail.html, notice-write.html, notice-edit.html, notice.html, task-history/task.md.
+- 디자인: NOTICE 제목 크기를 화면에 따라 36~56px로 조정하고, 전체 배경을 따뜻한 아이보리로 맞췄다. 장식은 CSS의 연한 곡면으로만 표현했다. 기존 테스트 안내 문구를 유지한 채 카드 위 작은 필 배너로 이동했다. 카드 패딩·반경·그림자, 카테고리 필, 검색 영역, 목록 행 높이·타이포그래피·구분선과 페이지네이션 간격을 시안에 맞게 조정했다. 목록의 중복 경로는 시각적으로 숨기되 키보드 포커스 시 접근 가능하게 유지했다.
+- HTML: NOTICE 각 페이지에서 기존 테스트 안내 요소를 카드 밖으로 이동했다. 목록 검색 label 텍스트는 접근 가능한 visually-hidden 요소로 유지하고 프로젝트의 기존 검색 아이콘 이미지를 장식으로 재사용했다. 기존 ID, 폼 필드, 링크와 스크립트 순서는 유지했다.
+- 콘텐츠/기능 보존: 시안의 가상 게시글·날짜·SNS 아이콘·캐릭터 그림을 복사하거나 기존 데이터로 대체하지 않았다. HEADER/FOOTER와 홈페이지 섹션, JavaScript, 데이터 파일, localStorage 연결 및 prompt.txt는 변경하지 않았다. 변경 전후 보존 대상 26개 파일 해시 일치 확인. 실제 사용자 브라우저 데이터에는 접근하지 않았다.
+- 검증: 기존 브라우저 검사 임시 복사본을 별도 Chrome 프로필에서 실행해 통과했다. 1920/1024/768/390px에서 목록·상세·작성·수정 가로 넘침 없음, 카드 1100px 이하, 폼 900px 이하, 모바일 세로 배치, 48px 하단 버튼, 데스크톱 검색 컨트롤 겹침 없음을 확인했다. 데스크톱·모바일 목록 스크린샷을 시안과 시각 비교했다.
+- 회귀 검사: 검색·카테고리·10개 단위 페이지네이션, 생성·동일 ID 수정·삭제, 관리자 권한, 필수 값, 취소 확인·beforeunload, 중복 제출 차단, 저장 실패 입력 유지, 이미지 축소·유지·교체·제거, 없는 글·구주소 연결과 전체 삭제 후 재시드 방지를 확인했다. 처리되지 않은 JS 예외 없음. 검사 서버와 브라우저 종료. 테스트 스크린샷은 OS 임시 폴더에만 저장했다.
+- 미검증: 실기기 터치와 Chrome 외 브라우저. 시안 HEADER/FOOTER는 기존 유지 요청에 따라 재현하지 않았고, 누워 있는 캐릭터 그림도 임의로 추가하지 않았다.
+
+## 007. NOTICE 디자인 시안 대비 최종 UI 보정
+
+- 작업일: 2026-11-05
+- 변경 파일: css/notice.css, notice-list.html, notice-detail.html, notice-write.html, notice-edit.html, notice.html, task-history/task.md.
+- 디자인: 카드 최대 너비를 1100px에서 1020px로 변경하고 데스크톱 내부 여백을 36px/40px/32px로 정리했다. 화이트·크림 그라데이션과 20px 라운드를 유지하며, 좌측 상단 장식을 최대 210x90px/낮은 불투명도로 축소했다. 카드 밖 테스트 캡슐 문구를 유지하고 상단 여백을 조정했다.
+- 원본 장식: 프로젝트의 images/img-dt/img_5_haro-cat.png를 직접 확인한 후 제목 위에 64px(모바일 48px) 장식으로 재사용했다. 장식 이미지에 빈 alt/aria-hidden을 적용했다. 시안 속 누워 있는 그림을 새로 만들거나 복사하지 않았다.
+- 컨트롤: 검색 입력과 검색·전체 목록 버튼 높이를 50px로 통일했다. 카테고리는 44px 높이/14px 글자로 정리했다. 기존 글쓰기 링크는 ID/href/hidden 상태를 그대로 두고 게시판 제목 오른쪽으로 옮겼다. 선택 페이지는 44px 브라운 원형으로 강조했다.
+- 목록: 데스크톱 기본 행 최소 높이를 56px로 맞추고 제목 굵기를 높여 보조 메타 정보보다 강조했다. 제목·분류·작성자·날짜 원문과 기존 렌더링 구조는 유지했다. 긴 텍스트와 모바일에서는 자르지 않고 필요한 만큼 높이가 늘어난다. 1024px/768px 미디어쿼리를 각각 하나로 정리해 중복 재정의를 제거했다.
+- 검증: 임시 Chrome 프로필에서 기존 기능 회귀 검사와 1920/1024/768/390px 검증 통과. 카드 1020px 이하, 폼 900px 이하, 검색 세 컨트롤 50px 높이와 한 줄 정렬, 모바일 세로 입력·가로 넘침 없음 및 48px 하단 폼 버튼을 확인했다. 데스크톱·모바일 스크린샷을 직접 확인했다. 검색·카테고리·페이징·생성·동일 ID 수정·삭제·권한·입력 검증·이미지·취소·중복 제출·기존 경로가 유지되며 처리되지 않은 JS 예외가 없었다. 검사 서버와 브라우저는 종료했다.
+- 보존: JavaScript·data·공통 CSS·index.html·prompt 파일 26개 SHA256 동일. HEADER/FOOTER 마크업 유지와 HTML ID 중복 없음, 글쓰기 링크 단일 존재를 정적으로 확인했다. 실제 사용자 localStorage에 접근하거나 게시글을 추가하지 않았다. 브라우저 회귀 검사에만 별도 임시 데이터를 사용했다.
+- 미검증: 실기기 터치 및 Chrome 외 브라우저. 시안의 가상 게시글, 날짜, HEADER/FOOTER 아이콘은 실제 콘텐츠로 대체하지 않았다.
+
+## NOTICE 관리자 전환·글쓰기 버튼 상단 통합
+
+- 작업일: 2026-11-05
+- 요청: 하로 공지사항 페이지 UI mock업.png의 글쓰기 영역을 참고하고 기존 푸터와 상단 캐릭터를 유지한다.
+- 변경 파일: notice-list.html, css/notice.css, README.md, document/NOTICE_Test_Mode.md, task-history/task.md.
+- 수정: 기존 관리자 테스트 전환 버튼을 하단에서 게시판 제목 오른쪽으로 옮겨 글쓰기 버튼과 한 그룹으로 배치했다. 두 버튼의 기존 ID/링크/hidden/aria-pressed와 JavaScript는 유지했다. 관리자 컨트롤은 크림 캡슐과 톱니 장식, 글쓰기는 브라운 버튼과 펜 장식으로 구분한다. 하단 개발 안내 문구는 유지한다. 모바일에서는 제목 아래에 두 컨트롤을 한 줄로 재배치한다.
+- 보존: 푸터와 상단 캐릭터 마크업·이미지, 공통 헤더, 게시글 데이터와 모든 JavaScript를 변경하지 않았다. 관리자 모드를 켜야 글쓰기 버튼이 표시되는 기존 권한 동작을 유지한다. 안내 문서에서 전환 버튼 위치를 상단으로 갱신했다.
+- 검증: 별도 임시 Chrome 프로필에서 기존 기능 회귀 검사 통과. 1920/1024/768/390px에서 관리자 전환과 글쓰기 버튼의 겹침 없음 및 카드 내부 배치, 목록/상세/작성/수정 가로 넘침 없음을 확인했다. 관리자 전환 후 글쓰기 표시, 비관리자 숨김, 작성·수정·삭제·검색·카테고리·페이징과 기존 입력/이미지/취소 검증 모두 통과했다. 모바일 스크린샷을 직접 확인했다. 사용자 브라우저 저장소에는 접근하지 않았고 검사 브라우저·서버를 종료했다.
+
+## NOTICE HTML을 pages/notice로 정리
+
+- 작업일: 2026-11-05
+- 선행 확인: README, HARO 규약, 작업 이력을 확인했다. AGENTS.md는 저장소에서 찾지 못했다. Git 실행 파일은 PATH 및 일반 설치/번들 경로에서 발견되지 않아 git status는 실행하지 못했다. 대신 Git index v2(220개 엔트리)를 읽기 전용으로 분석해 작업 파일과 비교했다. 기존 수정은 README.md, css/sections.css, css/tokens.css, index.html, task-history/task.md였고, NOTICE 파일과 관련 JS/테스트 등은 index에 없는 파일이었다. 스테이징 상태와 HEAD 차이는 이 대체 검사로 확인하지 않았다. 기존 수정 사항을 초기화하거나 덮어쓰지 않았다.
+- 발견 사항: 사용자가 HTML 5개를 이미 루트에서 pages/로 옮긴 상태였다. 루트 파일을 재생성하지 않고 현재 pages/notice.html, pages/notice-list.html, pages/notice-detail.html, pages/notice-edit.html, pages/notice-write.html을 pages/notice/의 같은 파일명으로 이동했다. 이동 전 기존 URL의 정적 호스팅 중단 가능성과 호환 방식에 대해 설명했다. 대상 경로가 작업공간 내부이며 같은 이름의 파일을 덮어쓰지 않는지 확인 후 Move-Item으로 이동했다.
+- 경로 수정: 이동 HTML의 ./css/, ./js/, ./images/와 ./index.html을 ../../ 기준으로 변경했다. NOTICE 내부의 형제 HTML 링크는 그대로 유지했다. index.html의 NOTICE 메뉴 href만 ./pages/notice/notice-list.html로 바꿨다. 모든 문서의 ID/본문/HEADER/FOOTER/캐릭터/스타일 클래스/스크립트 순서는 유지했다. 공지사항 JavaScript 및 저장소·API 로직은 변경하지 않았다.
+- 기존 URL: scripts/preview.cjs에 /notice*.html 및 /pages/notice*.html → /pages/notice/notice*.html 308 리다이렉트를 추가했다. 기존 id/view/q/page 쿼리를 그대로 전달한다. 새 폴더의 notice.html은 원래 호환 JS를 통해 상세/목록 등으로 연결한다. Node 미리보기 이외의 정적 호스팅에서는 서버 리다이렉트가 별도로 필요하며, 리다이렉트 기능이 없는 호스팅은 기존 URL이 404가 될 수 있다. 루트에 호환 HTML을 남기지 않는 이유와 URL 매핑을 README에 기록했다. 실제 배포 설정은 제공되지 않아 변경하지 않았다.
+- 수정 파일: 이동 HTML 5개, index.html(메뉴 href), scripts/preview.cjs(구주소 리다이렉트 및 실제 할당 포트 표시), tests/notice-browser.cjs(새 경로에서 브라우저 검증), 신규 tests/notice-paths.test.cjs, README.md, task-history/task.md. curr-task/document/spec-kit의 위치와 내용은 그대로 유지했다. task-history는 기존 내용을 유지한 채 이번 기록만 추가했다.
+- 정적 보존: 이동 전 HTML 원본과 비교해 경로 치환 이외 내용이 동일함을 확인했다. JavaScript·data·CSS·curr-task·document·spec-kit 57개 파일 SHA256 일치. 루트 HTML은 index.html 1개이고 pages/notice에는 지정한 5개 파일이 존재한다. 기존 pages/*.html은 중복으로 남기지 않았다. localStorage 키·데이터 모델·인증 상태·호스트/포트는 변경하지 않았다.
+- 테스트: NOTICE 경로 검사 2개, 데이터 검사 7개, 기존 STORY 5개 등 총 14개 통과. 새 5개 HTML의 모든 정적 로컬 링크/자산 파일 존재, HTTP 200, 루트/중간 URL 총 10개 리다이렉트와 쿼리 보존, HEAD/없는 페이지 상태를 확인했다. js/scripts/tests의 JS/CJS 16개 node --check 통과.
+- 브라우저: 임시 Chrome 프로필로 새 canonical 경로에서 목록·검색·카테고리·10개 페이징·작성·같은 ID 수정·삭제·권한·취소·이미지·입력 보존·구주소 연결 검사 통과. 1920/1024/768/390px에서 목록/상세/작성/수정 가로 넘침 없음을 확인했다. 사용자 브라우저 저장소에는 접근하지 않았고 검사 서버·Chrome을 종료했다. 영구 스크린샷을 덮어쓰지 않도록 임시 검사 복사본을 사용했다.
+- 제한: git status 및 HEAD 대비 staged 차이는 Git 실행 파일 부재로 확인하지 못했다. 실제 배포 서버의 리다이렉트 적용과 실기기/Chrome 외 브라우저 검증은 수행하지 않았다. 동일 출처의 localStorage는 URL 폴더 이동과 무관하게 유지된다.
+
+## 008. HEADER 아래 공지 롤링 배너
+
+- 작업일: 2026-11-05
+- 선행 확인: README·작업 이력·HARO 규약, 기존 HEADER/모바일 메뉴/검색 오버레이 및 NOTICE 저장소를 확인했다. AGENTS.md는 현재 저장소에 없다. HEADER는 고정형이며 기존에 스크롤 숨김 기능은 없다. 저장소에도 고정 공지 필드는 없어 기본 최신 작성일 정렬을 그대로 사용했다.
+- 구현: 신규 js/notice-banner.js와 css/notice-banner.css를 메인 index.html 및 pages/notice의 HTML 5개에 연결했다. 기존 notice-repository.js의 getList({})만 호출해 필터와 무관한 최대 3개를 읽는다. 배너 전용 데이터 키/샘플/복사 저장소는 만들지 않았다. 1개일 때 자동 전환 버튼을 비활성화하고 0개 또는 읽기 실패 시 숨긴다. 제목은 textContent로 표시하고 실제 ID를 이용해 pages/notice/notice-detail.html로 연결한다. 스크립트 위치 기준 URL 계산으로 하위 폴더와 프로젝트 하위 경로 배포를 지원한다.
+- 디자인/위치: 연한 아이보리 #F8F2EB와 브라운 #94531E, 데스크톱 48px/모바일 44px 높이, 한 줄 말줄임 제목, NOTICE 아이콘·라벨, 현재/전체 표시, Pause/Play/Close 버튼을 구현했다. HEADER 아래 z-index 4로 배치해 HEADER(5)와 검색 오버레이(20)보다 낮게 유지한다. HEADER 실측 하단 위치를 관찰해 transform/스크롤/크기 변화에 따라 위치를 갱신한다. 검색·모바일 메뉴가 열리면 배너를 시각적으로 가리고 inert로 조작을 막되 본문 여백은 유지한다.
+- 동작: 4초 간격 순환, 약 360ms 페이드 전환, Pause/Play 및 닫기를 제공한다. 닫힘은 sessionStorage의 haro-notice-banner-closed-v1에 현재 탭 동안 유지하고 배너 여백을 0으로 복원한다. 모션 감소 설정 시 최초 자동 재생을 중단하고 명시적으로 재생을 선택하면 전환 효과 없이 순환한다. 제목 링크 포커스/문서 비활성/오버레이 중에는 타이머를 멈춘다. 중복 초기화 방지, 단일 자동 전환 타이머, 전환 타이머 정리, pagehide/pageshow 대응과 destroy 시 리스너·관찰자 해제를 구현했다. 다른 탭의 데이터 변경 및 창 복귀 시 저장소를 다시 읽는다.
+- 변경 파일: 신규 css/notice-banner.css, js/notice-banner.js, tests/notice-banner-browser.cjs, tests/banner-screenshots/banner-1920.png/banner-1024.png/banner-768.png/banner-390.png. 수정 index.html, pages/notice/notice.html, pages/notice/notice-list.html, pages/notice/notice-detail.html, pages/notice/notice-write.html, pages/notice/notice-edit.html(배너 CSS/JS 연결 및 메인 저장소 모듈 연결), README.md, task-history/task.md.
+- 보존: 기존 JS·저장소·데이터·CSS 19개는 이전 체크포인트와 SHA256이 동일하다. HEADER/FOOTER 내용과 기존 HERO/Swiper/STORY 및 게시판 처리 코드는 변경하지 않았다. 공통 FOOTER 마크업은 경로 정규화 후 일치하고, 배너 스크립트가 각 페이지에 1회만 로드되며 저장소 다음에 실행되는지 확인했다. prompt.txt와 prompt_001.txt를 수정하지 않았으며 사용자 작업을 덮어쓰지 않았다. 이전 체크포인트와 사용자 prompt_001.txt의 차이가 발견됐지만 이 작업에서 수정한 파일이 아니므로 그대로 보존했다.
+- 자동 검사: js/scripts/tests의 JS/CJS 18개 node --check 통과. 기존 경로 2개/NOTICE 데이터 7개/STORY 5개 총 14개 테스트 통과. 최종 배너 전용 Chrome 검사 전체 통과: 기존 정렬 상위 3개, 0/1개 처리, 실제 4초 간격·순서·무한 반복, Pause 유지/재생 재개, 배너 표시 중 게시글 데이터 비변경, 네 화면의 HEADER/배너 위치와 본문 콘텐츠 시작점, 말줄임, 버튼 겹침 없음, 검색/모바일 메뉴, HEADER transform 숨김/복귀, 모션 감소, 닫기 여백 제거/탭 내 페이지 이동 후 숨김 유지, 세션 플래그 초기화 후 재표시, 카테고리 필터와 독립 선택, 실제 ID 상세 이동, 작성/수정 페이지 공통 배너, destroy 정리를 확인했다. 처리되지 않은 JS 예외 없음.
+- 회귀/반응형: 기존 NOTICE 브라우저 검사도 임시 복사본으로 실행해 통과했다. 1920/1024/768/390px에서 목록·상세·작성·수정 가로 넘침 없고 기존 작성·같은 ID 수정·삭제·검색·페이징·권한·이미지·취소/입력 검증이 유지된다. 데스크톱/모바일 메인 배너 스크린샷을 직접 확인했다. 모든 검사 데이터는 별도 임시 Chrome 프로필에서만 만들었고 사용자 브라우저 데이터에는 접근하지 않았다. 검사 브라우저와 서버는 종료했다.
+- 미검증: 실기기 터치, Chrome 외 브라우저와 실제 배포 환경. 고정 공지 데이터 필드는 현재 없으며 추가하지 않았다. 실제 새 브라우저 프로세스에서의 세션 재시작은 별도로 검사하지 않았고, sessionStorage 초기화 후 새 페이지에서 재표시됨을 검증했다.
+
+## 공지 배너 높이 44px 통일
+
+- 작업일: 2026-11-05
+- 수정 파일: css/notice-banner.css, tests/notice-banner-browser.cjs, tests/banner-screenshots/banner-1920.png/banner-1024.png/banner-768.png/banner-390.png, task-history/task.md.
+- 수정 내용: 데스크톱 배너 높이를 48px에서 44px로 줄여 모든 화면에서 얇은 공지 띠로 통일했다. 모바일의 중복 높이 선언은 제거했다. 실제 게시글이 1개면 그 글만 표시하고 자동 타이머를 생성하지 않으며 재생 버튼을 비활성화하는 기존 로직은 유지했다. 데이터·JavaScript 기능은 변경하지 않았다.
+- 검증: Chrome 배너 전용 검사 통과. 1920/1024/768/390px 모두 높이 44px, HEADER 위치/본문 여백/메뉴/검색/닫기 정상. 0개 숨김·1개 자동 전환 비활성화·최대 3개 순환, Pause/Play, 세션 닫힘, 모션 감소 및 상세 이동 검사 통과. 스크린샷 갱신. 기존 prompt.txt는 수정하지 않았다.
+
+## 카테고리별 샘플 글 3개 및 목록 hover 배경
+
+- 작업일: 2026-11-05
+- 사용자 요청: 공지사항/이모티콘/굿즈/사이트 소식에 각각 글 3개를 만들고 목록 마우스 오버 배경을 #ccc로 변경한다. 이전 샘플 생성 금지 조건은 이번 명시적 요청 범위에서 변경되었다.
+- 수정: js/notice-repository.js에 카테고리별 [샘플] 글 3개씩 총 12개를 한 번 추가하는 로컬 데이터 이전을 구현했다. 기존 글은 ID·내용·작성일을 유지하며 덮어쓰지 않는다. 다음 페이지 접속 시 추가되며 기존 공지 글이 있으면 해당 카테고리는 총 3개보다 많다. 완료 플래그를 STORAGE_KEYS.CATEGORY_SAMPLES로 관리하고, 재접속/삭제 후에는 다시 생성하지 않는다. 플래그 저장 실패 시에도 카테고리·제목으로 중복 추가를 방지한다. UUID·ISO 날짜·기존 문서 구조와 일반 CRUD의 관리자 검사를 유지한다. 샘플 본문에 실제 출시·운영 일정 공지가 아님을 명시했다.
+- 디자인: css/notice.css의 기존 행 hover/focus-within 배경을 #ccc로 변경했다. 다른 UI·데이터 연결은 유지한다.
+- 변경 파일: js/notice-repository.js, css/notice.css, tests/notice-data.test.js, tests/notice-browser.cjs, tests/notice-banner-browser.cjs, README.md, task-history/task.md. prompt.txt는 수정하지 않았다.
+- 검증: 단위/경로/STORY 테스트 총 15개 통과. 12개 추가/각 카테고리 샘플 3개/기존 글 보존/재접속 중복 없음/삭제·전체 삭제 후 재생성 없음을 확인했다. Chrome에서 실제 4개 카테고리에 샘플이 3개씩 추가되고, 마우스 이동 시 행 배경이 rgb(204,204,204)임을 확인했다. 기존 목록·검색·페이징·작성·수정·삭제·이미지·취소·권한 검사 및 1920/1024/768/390px 반응형 검증 통과. 별도 임시 프로필에서만 검사했고 사용자 브라우저는 직접 조작하지 않았다. 스크린샷은 임시 폴더에 저장했다.
+
+## 공지 롤링 배너 index 전용 및 정렬 변경
+
+- 작업일: 2026-11-05
+- 요청: 공지 배너를 index 페이지 전용으로 변경하고 제목은 중앙, 닫기 등 컨트롤은 오른쪽 정렬한다.
+- 수정: pages/notice HTML 5개에서 notice-banner.css와 notice-banner.js 연결만 제거했다. index.html의 기존 배너 연결은 유지했다. 배너 내부를 좌우 같은 너비의 CSS Grid로 구성하여 제목 영역의 중심이 화면 콘텐츠의 중심에 맞도록 하고 컨트롤을 오른쪽 끝에 정렬했다. 44px 높이·말줄임·Pause/Play·닫기와 본문 여백 처리는 유지한다.
+- 변경 파일: css/notice-banner.css, pages/notice/notice.html, pages/notice/notice-list.html, pages/notice/notice-detail.html, pages/notice/notice-write.html, pages/notice/notice-edit.html, tests/notice-banner-browser.cjs, tests/banner-screenshots/banner-1920.png/banner-1024.png/banner-768.png/banner-390.png, README.md, task-history/task.md. 저장소/게시판/배너 JavaScript 로직과 prompt.txt는 변경하지 않았다.
+- 검증: 기존 단위/경로/STORY 15개 통과. 배너 Chrome 검사 통과. 1920/1024/768/390px에서 제목 영역 중심과 배너 내부 중심 일치, 컨트롤 오른쪽 끝 정렬, HEADER/배너 위치, 가로 넘침 없음과 검색/메뉴 정상 작동을 확인했다. NOTICE 목록·상세 이동·작성·수정에는 배너가 없고 index에서만 표시됨을 확인했다. 자동 순환/Pause/Play/닫기/세션 유지/모션 감소/실제 ID 상세 이동도 통과했다. 별도 임시 브라우저 프로필로 검사했고 실제 사용자 데이터는 수정하지 않았다.
+
+## index 공지 배너 배경 반투명 적용
+
+- 작업일: 2026-11-05
+- 변경 파일: css/notice-banner.css, task-history/task.md.
+- 수정: 사용자가 현재 지정한 배경색 #D9DEBF를 유지하면서 rgb(217 222 191 / 75%)로 반투명 처리했다. 전체 요소 opacity를 적용하지 않아 제목·버튼은 선명하게 유지한다. index 전용 표시 및 44px 높이·기존 반응형 규칙은 그대로다.
+- 확인: 배너 CSS/JS 연결이 index.html에만 있고 pages/notice에는 없음을 검색으로 확인했다. 배경색 속성 한 곳만 변경했으며 이번 색상 변경에 대한 추가 브라우저 검사는 수행하지 않았다.
+
+## index 공지 배너 Multiply 블렌딩
+
+- 작업일: 2026-11-05
+- 변경 파일: css/notice-banner.css, task-history/task.md.
+- 수정: 요청한 mudifly를 Multiply(곱하기) 효과로 해석해 .notice-banner에 mix-blend-mode: multiply를 적용했다. 기존 배경색과 75% 불투명도, 44px 높이, 제목 중앙/컨트롤 오른쪽 정렬 및 index 전용 연결은 유지했다.
+- 확인: index.html에만 배너 CSS/JS가 연결됨을 검색으로 확인했다. CSS 합성 속성만 추가했으며 JavaScript·데이터·반응형 레이아웃은 변경하지 않았다. 이번 합성 효과의 추가 브라우저 시각 검증은 수행하지 않았다.
+
+## 공지 배너 메뉴 위 배치 및 불투명 배경
+
+- 작업일: 2026-11-05
+- 변경 파일: css/notice-banner.css, js/notice-banner.js, tests/notice-banner-browser.cjs, tests/banner-screenshots/banner-1920.png/banner-1024.png/banner-768.png/banner-390.png, README.md, task-history/task.md.
+- 수정: index 전용 배너를 화면 top:0/z-index:6으로 배치하고 HEADER를 배너 높이 44px 아래로 이동했다. DOM 순서도 HEADER 앞에 배너를 삽입하도록 변경했다. 닫힘/빈 글 상태에서는 기존 클래스 해제로 HEADER와 본문 여백이 복원된다. 배경은 기존 색 #D9DEBF의 완전 불투명 색으로 변경하고 Multiply 블렌딩은 제거했다. 제목 중앙·컨트롤 오른쪽 정렬과 게시글 데이터/롤링 기능은 유지한다.
+- 검증: Chrome 1920/1024/768/390px에서 배너 top:0/HEADER top:44px, 본문 가림 및 가로 넘침 없음, 닫기 시 HEADER top:0 및 추가 여백 제거를 확인했다. 전체 배너 검사(자동 순환·Pause/Play·검색/메뉴·모션 감소·탭 닫힘 유지·index 전용·상세 이동) 통과. JS 구문 검사 통과. 배경 반투명·블렌딩 속성은 제거했고 사용자 prompt.txt는 수정하지 않았다.
+
+## 공지 배너 브라운 #765039 적용
+
+- 작업일: 2026-11-05
+- 변경 파일: css/notice-banner.css, task-history/task.md.
+- 수정: 제안한 #765039를 불투명 배너 배경에 적용했다. 어두운 브라운 위에서 읽기 쉽도록 제목·NOTICE 라벨·컨트롤을 #FFF8F0, 페이지 표시는 #F2E3D6로 변경하고 hover 배경도 브라운 계열로 맞췄다. index 전용·메뉴 위 배치·44px 높이·정렬·기능은 유지했다.
+- 확인: 기존 CSS 색상 선언만 수정했다. 반응형 레이아웃과 JavaScript는 변경하지 않았으며 이번 색상 변경에 별도 브라우저 검사는 수행하지 않았다.
+
+## 배너 닫기 시 전체 하단 콘텐츠 상승 확인·보완
+
+- 작업일: 2026-11-05
+- 변경 파일: css/notice-banner.css, js/notice-banner.js, 신규 tests/notice-banner-collapse.cjs, task-history/task.md.
+- 확인: 기존 구현에서도 닫기 시 메뉴·HERO·푸터가 44px 위로 이동함을 실측했다. 닫힌 상태 HEADER의 top:0을 배너 CSS에 명시하고, 닫기 후 메뉴로 포커스를 돌릴 때 preventScroll:true를 적용해 스크롤 위치 변화 없이 콘텐츠가 올라오도록 보완했다. 배너의 추가 본문 여백은 기존처럼 0으로 제거된다.
+- 검증: 수정 전후 모두 Chrome 1920/1024/768/390px에서 페이지 맨 위 및 300px 스크롤 상태로 검사했다. 닫기 후 메뉴 top:0, HERO·푸터의 실제 화면 위치가 각각 정확히 44px 상승하고 scrollY는 유지됨을 총 8개 경우에서 확인했다. JS 구문 검사 통과. index 전용·기존 데이터·공지 기능·prompt.txt는 유지했다.
+
+## 배너 NOTICE 목록 링크 및 새로고침 재표시
+
+- 작업일: 2026-11-05
+- 변경 파일: js/notice-banner.js, css/notice-banner.css, tests/notice-banner-browser.cjs, tests/banner-screenshots/banner-1920.png/banner-1024.png/banner-768.png/banner-390.png, README.md, task-history/task.md.
+- 수정: 배너 왼쪽 NOTICE 라벨을 실제 공지사항 목록 링크로 변경했다. 게시글 제목은 기존처럼 실제 ID의 상세 화면으로 이동한다. 제목 요소 조회를 명시적인 클래스 선택자로 변경해 라벨 링크와 구분했다. 닫힘 상태의 sessionStorage 읽기/쓰기를 제거하여 현재 페이지에서만 닫히며 새로고침이나 index 재접속 때 다시 표시되도록 했다. 기존에 저장된 닫힘 키는 읽지 않으므로 이전 닫힘 상태도 재표시를 방해하지 않는다.
+- 보존: index 전용·메뉴 위 배치·44px 불투명 #765039·제목 중앙/컨트롤 오른쪽·닫기 시 전체 하단 콘텐츠 상승·기존 데이터와 권한은 유지한다.
+- 검증: JS 구문 검사와 Chrome 배너 전체 검사 통과. NOTICE 라벨 클릭 후 /pages/notice/notice-list.html 이동, 제목 클릭 후 해당 ID의 상세 이동, 닫기 후 실제 Page.reload로 배너 재표시와 메뉴 top:44px 복원을 확인했다. 1920/1024/768/390px의 정렬·겹침·가로 넘침, 롤링/Pause/Play/닫기/모션 감소/검색·메뉴 검사도 통과했다. 검사 데이터는 임시 프로필에만 사용했고 prompt.txt는 수정하지 않았다.

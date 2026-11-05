@@ -8,6 +8,24 @@ Node.js가 설치된 환경에서 `preview.cmd`를 실행하거나 프로젝트 
 
 STORY 이미지는 JSON을 불러오므로 `index.html` 파일을 직접 열지 않고 위 HTTP 주소를 사용합니다. 수정 후 브라우저를 새로고침하면 반영됩니다.
 
+NOTICE 게시판은 홈페이지의 NOTICE 메뉴 또는 `http://127.0.0.1:8080/pages/notice/notice-list.html`에서 확인합니다. 목록 상단의 관리자 테스트 모드를 켜면 글쓰기·수정·삭제를 확인할 수 있습니다. 현재는 브라우저 저장을 사용하며 실제 서버 저장 및 관리자 인증은 연결되지 않았습니다. 사용법과 Firebase 이전 지점은 [NOTICE 테스트 모드 안내](./document/NOTICE_Test_Mode.md)를 참고하세요.
+
+공지사항 HTML 5개는 `pages/notice/`에 있습니다. 같은 폴더의 목록·상세·작성·수정 링크는 유지하며, 공통 CSS·JavaScript·이미지 및 홈페이지는 `../../` 경로로 참조합니다. 동일한 출처(프로토콜·호스트·포트)에서 접속하면 기존 localStorage 데이터를 그대로 사용합니다.
+
+메인 index.html의 HEADER 위에만 같은 게시판 저장소의 최신 글을 최대 3개까지 표시하는 고정 공지 배너가 있습니다. 4초마다 순환하며 제목을 누르면 해당 상세 페이지로 이동합니다. 1개일 때는 자동 전환하지 않고, 글이 없거나 데이터를 읽지 못하면 숨깁니다. 일시정지/재생을 지원하며 모션 감소 설정에서는 자동 전환을 시작하지 않습니다. NOTICE 라벨은 목록으로, 게시글 제목은 해당 상세 페이지로 이동합니다. 닫으면 배너 여백이 제거되며 새로고침하거나 index에 다시 접속하면 다시 표시됩니다. 게시글 데이터 복사본이나 배너용 샘플 글을 만들지 않습니다. 현재 저장소에는 고정 공지 필드가 없어 기존 기본 정렬(최신 작성일)을 그대로 사용합니다.
+
+사용자 요청으로 카테고리별 `[샘플]` 게시글 3개씩(총 12개)을 추가합니다. 다음 페이지 접속 시 기존 글을 보존한 채 한 번만 추가하며, 완료 플래그 `haro-notices-category-samples-20261105`로 새로고침·삭제 후 재생성을 방지합니다. 기존 공지 글이 있으면 해당 카테고리의 전체 글 수는 3개보다 많을 수 있습니다. 샘플도 같은 게시판 데이터로 저장되어 목록·검색·상단 배너에 반영됩니다.
+
+로컬 미리보기 서버는 기존 `/notice*.html` 및 중간 경로 `/pages/notice*.html`을 `/pages/notice/notice*.html`로 308 리다이렉트하며 게시글 ID·검색어 등 쿼리를 유지합니다. `notice.html?view=detail&id=...`도 새 폴더의 호환 페이지를 통해 상세 화면으로 연결됩니다. 일반 정적 호스팅에는 이 Node 서버 규칙이 적용되지 않으므로, 배포 서버에서도 아래 5개 매핑과 `/pages/` 중간 경로에 동일한 쿼리 보존 리다이렉트를 설정해야 합니다. 별도 규칙이 없는 GitHub Pages 등에서는 기존 URL이 404가 될 수 있습니다. 루트에 HTML 리다이렉트 파일을 남기면 `index.html`만 유지하는 목표와 충돌하므로 추가하지 않았습니다.
+
+| 기존 URL | 새 URL |
+|---|---|
+| `/notice.html` | `/pages/notice/notice.html` |
+| `/notice-list.html` | `/pages/notice/notice-list.html` |
+| `/notice-detail.html` | `/pages/notice/notice-detail.html` |
+| `/notice-edit.html` | `/pages/notice/notice-edit.html` |
+| `/notice-write.html` | `/pages/notice/notice-write.html` |
+
 ## 작업 시작 전 필독
 
 README를 읽고 작업을 시작할 때는 **가장 먼저 [`task-history/task.md`](./task-history/task.md)도 이어서 읽으세요.** 이 파일에는 이전 작업과 미완료 사항이 기록되어 있으므로, 현재 저장소 상태와 대조해 중복 작업을 방지합니다.
@@ -45,6 +63,8 @@ README를 읽고 작업을 시작할 때는 **가장 먼저 [`task-history/task.
 ├── README.md
 ├── README-1.md                 # Discovery Expedition 참고 문서
 ├── index.html                 # HARO 단일 페이지 엔트리
+├── pages/
+│   └── notice/                # NOTICE 목록·상세·작성·수정 및 구주소 연결 HTML
 ├── css/
 │   ├── tokens.css             # 공통 디자인 토큰
 │   ├── base.css               # 리셋 및 기본 요소

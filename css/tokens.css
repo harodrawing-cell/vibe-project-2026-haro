@@ -14,6 +14,14 @@
   --font-primary: Pretendard, "Noto Sans KR", "Malgun Gothic", sans-serif;
   --font-display: "Trebuchet MS", "Malgun Gothic", sans-serif;
 
+  --section-title-size: 34px;
+  --section-title-weight: 700;
+  --section-title-line-height: 1.2;
+  --section-title-letter-spacing: -0.04em;
+  --section-rule-width: 74px;
+  --section-rule-height: 2px;
+  --section-rule-gap: 24px;
+
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 16px;

@@ -20,7 +20,18 @@ const server = http.createServer(async (request, response) => {
     return;
   }
   try {
-    const pathname = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
+    const requestUrl = new URL(request.url, 'http://localhost');
+    const pathname = decodeURIComponent(requestUrl.pathname);
+    // Keep old root URLs and the intermediate pages/ URLs working after relocation.
+    // Other static hosts need equivalent redirect rules (see README).
+    const legacyNotice = pathname.match(/^\/(?:pages\/)?(notice(?:-(?:list|detail|edit|write))?\.html)$/);
+    if (legacyNotice) {
+      response.writeHead(308, {
+        Location: `/pages/notice/${legacyNotice[1]}${requestUrl.search}`,
+        'Cache-Control': 'no-store',
+      }).end();
+      return;
+    }
     const file = path.resolve(root, '.' + (pathname === '/' ? '/index.html' : pathname));
     const relative = path.relative(root, file);
     if (relative.startsWith('..') || path.isAbsolute(relative) || relative.split(/[\\/]/).some(part => part.startsWith('.'))) {
@@ -51,5 +62,5 @@ server.on('error', error => {
   process.exitCode = 1;
 });
 server.listen(port, '127.0.0.1', () => {
-  console.log(`HARO preview: http://127.0.0.1:${port}/ (Ctrl+C to stop)`);
+  console.log(`HARO preview: http://127.0.0.1:${server.address().port}/ (Ctrl+C to stop)`);
 });
