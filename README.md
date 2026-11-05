@@ -8,6 +8,8 @@ Node.js가 설치된 환경에서 `preview.cmd`를 실행하거나 프로젝트 
 
 STORY 이미지는 JSON을 불러오므로 `index.html` 파일을 직접 열지 않고 위 HTTP 주소를 사용합니다. 수정 후 브라우저를 새로고침하면 반영됩니다.
 
+GOODS 카드 8개는 로컬 상품 상세(`pages/goods/goods-detail.html?id=상품ID`)로 연결됩니다. 장바구니는 `pages/cart/cart.html`이며 모든 페이지 상단 아이콘에서 열 수 있습니다. 상품은 `data/products.json`, 장바구니는 localStorage `haro-cart-v1`로 관리합니다. 무지노트는 첨부 화면에서 확인한 4,500원을 사용하고, 가격이 확인되지 않은 7개 상품은 ‘가격 미등록’으로 표시해 담기를 막습니다. 실제 결제·주문·배송은 제공하지 않습니다. [상품/장바구니 안내](./document/GOODS_CART.md)를 참고하세요.
+
 NOTICE 게시판은 홈페이지의 NOTICE 메뉴 또는 `http://127.0.0.1:8080/pages/notice/notice-list.html`에서 확인합니다. 목록 상단의 관리자 테스트 모드를 켜면 글쓰기·수정·삭제를 확인할 수 있습니다. 현재는 브라우저 저장을 사용하며 실제 서버 저장 및 관리자 인증은 연결되지 않았습니다. 사용법과 Firebase 이전 지점은 [NOTICE 테스트 모드 안내](./document/NOTICE_Test_Mode.md)를 참고하세요.
 
 공지사항 HTML 5개는 `pages/notice/`에 있습니다. 같은 폴더의 목록·상세·작성·수정 링크는 유지하며, 공통 CSS·JavaScript·이미지 및 홈페이지는 `../../` 경로로 참조합니다. 동일한 출처(프로토콜·호스트·포트)에서 접속하면 기존 localStorage 데이터를 그대로 사용합니다.
@@ -64,7 +66,9 @@ README를 읽고 작업을 시작할 때는 **가장 먼저 [`task-history/task.
 ├── README-1.md                 # Discovery Expedition 참고 문서
 ├── index.html                 # HARO 단일 페이지 엔트리
 ├── pages/
-│   └── notice/                # NOTICE 목록·상세·작성·수정 및 구주소 연결 HTML
+│   ├── notice/                # NOTICE 목록·상세·작성·수정 및 구주소 연결 HTML
+│   ├── goods/                 # JSON 기반 공통 상품 상세 템플릿
+│   └── cart/                  # localStorage 장바구니
 ├── css/
 │   ├── tokens.css             # 공통 디자인 토큰
 │   ├── base.css               # 리셋 및 기본 요소

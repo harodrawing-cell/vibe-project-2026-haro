@@ -1,0 +1,173 @@
+{
+  "currency": "KRW",
+  "shipping": {
+    "fee": 3000,
+    "description": "첨부 화면 기준의 수업용 배송비. 상품이 있을 때 주문당 1회 합산하며 실제 배송은 제공하지 않습니다."
+  },
+  "products": [
+    {
+      "id": "lazy-sticker",
+      "name": "귀찮니스트 (79x79mm) _ sticker",
+      "price": null,
+      "images": [
+        "images/img-dt/img_14_item-1.png"
+      ],
+      "options": [
+        {
+          "id": "default",
+          "label": "기본 / 79 × 79 mm"
+        }
+      ],
+      "description": "메인 GOODS에 소개된 하로 상품입니다. 제공된 이미지와 기본 규격을 확인해 주세요.",
+      "specifications": [
+        "규격은 기존 GOODS 카드 표기를 기준으로 합니다."
+      ],
+      "priceSource": "가격 자료 미제공",
+      "sourceUrl": null
+    },
+    {
+      "id": "narcissism-sticker",
+      "name": "나르니시즘 (79x79mm) _ sticker",
+      "price": null,
+      "images": [
+        "images/img-dt/img_15_item-2.png"
+      ],
+      "options": [
+        {
+          "id": "default",
+          "label": "기본 / 79 × 79 mm"
+        }
+      ],
+      "description": "메인 GOODS에 소개된 하로 상품입니다. 제공된 이미지와 기본 규격을 확인해 주세요.",
+      "specifications": [
+        "규격은 기존 GOODS 카드 표기를 기준으로 합니다."
+      ],
+      "priceSource": "가격 자료 미제공",
+      "sourceUrl": null
+    },
+    {
+      "id": "ramen-sticker",
+      "name": "라면인건가요 (79x79mm) _ sticker",
+      "price": null,
+      "images": [
+        "images/img-dt/img_16_item-3.png"
+      ],
+      "options": [
+        {
+          "id": "default",
+          "label": "기본 / 79 × 79 mm"
+        }
+      ],
+      "description": "메인 GOODS에 소개된 하로 상품입니다. 제공된 이미지와 기본 규격을 확인해 주세요.",
+      "specifications": [
+        "규격은 기존 GOODS 카드 표기를 기준으로 합니다."
+      ],
+      "priceSource": "가격 자료 미제공",
+      "sourceUrl": null
+    },
+    {
+      "id": "beam-sticker",
+      "name": "받아라 빔 (79x79mm) _ sticker",
+      "price": null,
+      "images": [
+        "images/img-dt/img_17_item-4.png"
+      ],
+      "options": [
+        {
+          "id": "default",
+          "label": "기본 / 79 × 79 mm"
+        }
+      ],
+      "description": "메인 GOODS에 소개된 하로 상품입니다. 제공된 이미지와 기본 규격을 확인해 주세요.",
+      "specifications": [
+        "규격은 기존 GOODS 카드 표기를 기준으로 합니다."
+      ],
+      "priceSource": "가격 자료 미제공",
+      "sourceUrl": null
+    },
+    {
+      "id": "relax-sticker",
+      "name": "이런 여유 좋고 (79x79mm) _ sticker",
+      "price": null,
+      "images": [
+        "images/img-dt/img_18_item-5.png"
+      ],
+      "options": [
+        {
+          "id": "default",
+          "label": "기본 / 79 × 79 mm"
+        }
+      ],
+      "description": "메인 GOODS에 소개된 하로 상품입니다. 제공된 이미지와 기본 규격을 확인해 주세요.",
+      "specifications": [
+        "규격은 기존 GOODS 카드 표기를 기준으로 합니다."
+      ],
+      "priceSource": "가격 자료 미제공",
+      "sourceUrl": null
+    },
+    {
+      "id": "matatabi-sticker",
+      "name": "Matatabi Tea (79x79mm) _ sticker",
+      "price": null,
+      "images": [
+        "images/img-dt/img_19_item-6.png"
+      ],
+      "options": [
+        {
+          "id": "default",
+          "label": "기본 / 79 × 79 mm"
+        }
+      ],
+      "description": "메인 GOODS에 소개된 하로 상품입니다. 제공된 이미지와 기본 규격을 확인해 주세요.",
+      "specifications": [
+        "규격은 기존 GOODS 카드 표기를 기준으로 합니다."
+      ],
+      "priceSource": "가격 자료 미제공",
+      "sourceUrl": null
+    },
+    {
+      "id": "haro-note",
+      "name": "Haro Note (105 × 148mm)",
+      "price": 4500,
+      "images": [
+        "images/img-dt/img_20_item-7.png",
+        "images/used/haro-note(900x900)-002.jpg",
+        "images/used/haro-note(900x900)-001.jpg"
+      ],
+      "options": [
+        {
+          "id": "white-105-148",
+          "label": "화이트 / 10.5 × 14.8 cm"
+        }
+      ],
+      "description": "초록색 표지에 하로의 티타임 그림을 담은 실 제본 무지노트입니다.",
+      "specifications": [
+        "실 제본 무지노트",
+        "크기: 10.5 × 14.8 cm",
+        "옵션: 화이트"
+      ],
+      "priceSource": "사용자 제공 상품 상세 및 장바구니 화면 (4,500원)",
+      "sourceUrl": "https://marpple.shop/kr/mandaco/products/25573294"
+    },
+    {
+      "id": "sticky-cleaner",
+      "name": "Sticky Cleaner (3.3 × 3.3mm)",
+      "price": null,
+      "images": [
+        "images/img-dt/img_21_item-8.png"
+      ],
+      "options": [
+        {
+          "id": "default",
+          "label": "기본 / 3.3 × 3.3 mm"
+        }
+      ],
+      "description": "메인 GOODS에 소개된 하로 상품입니다. 제공된 이미지와 기본 규격을 확인해 주세요.",
+      "specifications": [
+        "규격은 기존 GOODS 카드 표기를 기준으로 합니다."
+      ],
+      "priceSource": "가격 자료 미제공",
+      "sourceUrl": null
+    }
+  ]
+}
