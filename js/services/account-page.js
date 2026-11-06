@@ -1,6 +1,9 @@
 (() => {
   'use strict';
   const $ = id => document.getElementById(id);
+  // Only a fixed local destination is accepted; never redirect to arbitrary query URLs.
+  const returnToQna = new URLSearchParams(location.search).get('next') === 'qna-write.html';
+  if (returnToQna) document.querySelectorAll('a[href="./signup.html"], a[href="./login.html"]').forEach(link => { link.href += '?next=qna-write.html'; });
   const message = (text, error = false) => {
     $('account-message').textContent = text;
     $('account-message').dataset.error = String(error);
@@ -33,7 +36,7 @@
     const username = $('login-username').value, password = $('login-password').value;
     void submit($('login-form'), async () => {
       await HaroAccount.login(username, password);
-      location.href = './notice-list.html';
+      location.href = returnToQna ? './qna-write.html' : './notice-list.html';
     });
   });
   $('signup-form')?.addEventListener('submit', event => {
@@ -47,7 +50,7 @@
       $('signup-id-status').textContent = '';
       message('회원가입이 완료되었습니다. 로그인해 주세요.');
       const loginLink = document.createElement('a');
-      loginLink.href = './login.html';
+      loginLink.href = './login.html' + (returnToQna ? '?next=qna-write.html' : '');
       loginLink.textContent = '로그인 화면으로 이동';
       $('account-message').append(' ', loginLink);
     });

@@ -1,7 +1,25 @@
 {
   "indexes": [],
   "fieldOverrides": [
-    { "collectionGroup": "notices", "fieldPath": "imageUrl", "indexes": [] },
-    { "collectionGroup": "notices", "fieldPath": "content", "indexes": [] }
+    {
+      "collectionGroup": "notices",
+      "fieldPath": "imageUrl",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "notices",
+      "fieldPath": "content",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "qnaDetails",
+      "fieldPath": "content",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "qnaAnswers",
+      "fieldPath": "content",
+      "indexes": []
+    }
   ]
 }

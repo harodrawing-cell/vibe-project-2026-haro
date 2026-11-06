@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="하로에게 질문하고 관리자 답변을 확인하는 묻고 답하기 게시판입니다."
+    />
+    <title>묻고 답하기 Q&amp;A | HARO</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="../../css/tokens.css" />
+    <link rel="stylesheet" href="../../css/base.css" />
+    <link rel="stylesheet" href="../../css/layout.css" />
+    <link rel="stylesheet" href="../../css/components.css" />
+    <link rel="stylesheet" href="../../css/box.css" />
+    <link rel="stylesheet" href="../../css/sections.css" />
+    <link rel="stylesheet" href="../../css/notice.css" />
+    <link rel="stylesheet" href="../../css/shop.css" />
+  <link rel="stylesheet" href="../../css/account.css" />
+<link rel="stylesheet" href="../../css/qna.css" />
+</head>
+  <body data-qna="detail">
+    <a class="skip-link" href="#main-content">본문 바로가기</a>
+
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-header__brand" href="../../index.html#top" aria-label="HARO 맨 위로">
+          HARO
+        </a>
+        <button
+          class="site-nav__toggle"
+          type="button"
+          aria-label="메뉴 열기"
+          aria-expanded="false"
+          aria-controls="site-nav"
+        >
+          <span></span><span></span><span></span>
+        </button>
+        <nav class="site-nav" id="site-nav" aria-label="주요 메뉴">
+          <a class="site-nav__item" href="../../index.html#about">ABOUT HARO</a>
+          <a class="site-nav__item" href="../../index.html#emoticon">EMOTICON</a>
+          <a class="site-nav__item" href="../../index.html#story">STORY</a>
+          <a class="site-nav__item" href="../../index.html#goods">GOODS</a>
+          <a class="site-nav__item" href="./notice-list.html">NOTICE</a>
+          <a class="site-nav__item" href="./qna.html" aria-current="page">Q&amp;A</a>
+        </nav>
+        <button
+          class="site-search__toggle"
+          id="site-search-toggle"
+          type="button"
+          aria-label="검색 열기"
+          aria-controls="search-overlay"
+          aria-expanded="false"
+        >
+          <img
+            class="search-icon"
+            src="../../images/used/haro-search.png"
+            alt=""
+            aria-hidden="true"
+          />
+        </button>
+      </div>
+    </header>
+
+    <section
+      class="search-overlay"
+      id="search-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-label="사이트 검색"
+      aria-hidden="true"
+      inert
+      hidden
+    >
+      <div class="search-overlay__topbar">
+        <form class="search-overlay__form" role="search">
+          <label class="visually-hidden" for="site-search-input">검색어 입력</label>
+          <input
+            class="search-overlay__input"
+            id="site-search-input"
+            type="search"
+            placeholder="검색어 입력"
+            autocomplete="off"
+          />
+          <img
+            class="search-icon search-overlay__icon"
+            src="../../images/used/haro-search.png"
+            alt=""
+            aria-hidden="true"
+          />
+        </form>
+        <button
+          class="search-overlay__close"
+          type="button"
+          aria-label="검색 닫기"
+        >
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+
+      <div class="search-overlay__scroll">
+        <div class="search-overlay__content">
+          <div class="search-overlay__keywords">
+            <section class="search-overlay__history" aria-labelledby="search-history-title">
+            <h2 class="search-overlay__section-title" id="search-history-title">
+              최근 검색어
+            </h2>
+            <p class="search-overlay__empty">최근 검색어가 없습니다</p>
+  
+            <section class="search-overlay__popular" aria-labelledby="search-popular-title">
+              <h2 class="search-overlay__section-title" id="search-popular-title">인기 검색어</h2>
+  
+          </div>
+
+
+
+          <section class="search-overlay__products" aria-labelledby="search-products-title">
+            <h2 class="search-overlay__section-title" id="search-products-title">
+              GOODS
+            </h2>
+            <div class="search-overlay__product-grid">
+              <article class="search-product">
+                <img
+                  src="../../images/img-dt/img_14_item-1.png"
+                  alt="쿠션 위에서 늘어져 자는 하로"
+                  loading="lazy"
+                />
+                <h3>귀찮니스트</h3>
+              </article>
+              <article class="search-product">
+                <img
+                  src="../../images/img-dt/img_15_item-2.png"
+                  alt="튜브 위에 누워있는 하로"
+                  loading="lazy"
+                />
+                <h3>나르니시즘</h3>
+              </article>
+              <article class="search-product">
+                <img
+                  src="../../images/img-dt/img_16_item-3.png"
+                  alt="라면을 먹는 하로"
+                  loading="lazy"
+                />
+                <h3>라면인건가요</h3>
+              </article>
+              <article class="search-product">
+                <img
+                  src="../../images/img-dt/img_17_item-4.png"
+                  alt="빔을 쏘는 하로 만화컷"
+                  loading="lazy"
+                />
+                <h3>받아라 빔</h3>
+              </article>
+              <article class="search-product">
+                <img
+                  src="../../images/img-dt/img_18_item-5.png"
+                  alt="상품 이미지 업로드 전"
+                  loading="lazy"
+                />
+                <h3>상품 이름을 입력하세요</h3>
+              </article>
+              <article class="search-product">
+                <img
+                  src="../../images/img-dt/img_19_item-6.png"
+                  alt="상품 이미지 업로드 전"
+                  loading="lazy"
+                />
+                <h3>상품 이름을 입력하세요</h3>
+              </article>
+              <article class="search-product">
+                <img
+                  src="../../images/img-dt/img_20_item-7.png"
+                  alt="상품 이미지 업로드 전"
+                  loading="lazy"
+                />
+                <h3>상품 이름을 입력하세요</h3>
+              </article>
+              <article class="search-product">
+                <img
+                  src="../../images/img-dt/img_21_item-8.png"
+                  alt="상품 이미지 업로드 전"
+                  loading="lazy"
+                />
+                <h3>상품 이름을 입력하세요</h3>
+              </article>
+            </div>
+            <button class="search-overlay__goods-link" type="button" disabled>
+              굿즈 보러가기
+            </button>
+
+        </div>
+
+        <footer class="search-overlay__footer">
+          <p class="search-overlay__footer-logo">HARO</p>
+          <p class="search-overlay__footer-description">
+            HARO는 오늘도 적당히 덤덤하게 살아가는 고양이의 이야기를 그립니다.
+            바쁘고 피곤한 일상 속에서 “왜?”, “어쩌라구”, “그럴 수도 있지” 하며
+            너무 애쓰지 않고 자기만의 속도로 하루를 살아가는 하로. 이모티콘과
+            그림, 작은 이야기를 통해 우리 모두의 평범한 하루에 가볍게 웃고
+            쉬어갈 순간을 전하고 싶습니다.
+          </p>
+          <a href="mailto:harodrowing@gmail.com">harodrowing@gmail.com</a>
+          <div class="search-overlay__socials">
+            <span><img src="../../images/icons/blog-white.svg" alt="" /></span>
+            <span><img src="../../images/icons/behance-white.svg" alt="" /></span>
+            <span><img src="../../images/icons/instagram-white.svg" alt="" /></span>
+          </div>
+          <small>© 2026 HARO. All rights reserved.</small>
+        </footer>
+      </div>
+    </section>
+
+<main id="main-content" class="notice-page qna-page"><div class="notice-page__heading"><img class="notice-heading__art" src="../../images/img-dt/img_5_haro-cat.png" width="64" height="64" alt="" aria-hidden="true" /><h1>Q&amp;A</h1><span class="notice-page__rule" aria-hidden="true"></span><p>하로에게 궁금한 점을 남겨주세요.</p></div><aside class="notice-test"><p>비공개 질문은 작성자와 관리자만 열람할 수 있습니다. 질문 수정·삭제는 작성자 본인만 가능합니다.</p></aside><div class="notice-content"><p id="qna-message" class="notice-message" role="status" aria-live="polite" tabindex="-1"></p><section id="qna-detail-panel" hidden aria-labelledby="qna-title"><h2 id="qna-title" class="notice-detail__title"></h2><p id="qna-meta" class="notice-meta"></p><div id="qna-body" class="notice-body"></div>
+<section class="qna-answer" aria-labelledby="qna-answer-title"><h3 id="qna-answer-title">관리자 답변</h3><p id="qna-answer-meta" class="notice-meta"></p><div id="qna-answer-body" class="notice-body"></div><div class="notice-actions"><button id="qna-answer-open" type="button" class="notice-button notice-button--primary" hidden>답변 작성</button><button id="qna-answer-delete" type="button" class="notice-button qna-danger" hidden>답변 삭제</button></div>
+<form id="qna-answer-form" hidden><div class="notice-field"><label for="qna-answer-input">답변 내용</label><textarea id="qna-answer-input" maxlength="30000" required></textarea></div><div class="notice-actions"><button id="qna-answer-cancel" type="button" class="notice-button">취소</button><button id="qna-answer-submit" type="submit" class="notice-button notice-button--primary">답변 등록</button></div></form></section>
+<div class="notice-actions qna-detail-actions"><a class="notice-button" href="./qna.html">목록</a><a id="qna-edit" class="notice-button notice-button--primary" hidden>수정</a><button id="qna-delete" type="button" class="notice-button qna-danger" hidden>삭제</button></div></section><p><a class="notice-button" href="./qna.html">목록</a></p></div></main>
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <div class="site-footer__content">
+          <a class="site-footer__brand" href="../../index.html#top" aria-label="HARO 맨 위로">HARO</a>
+          <p class="site-footer__description">
+            HARO는 오늘도 적당히 덤덤하게 살아가는 고양이의 이야기를 그립니다.
+            바쁘고 피곤한 일상 속에서 “왜?”, “어쩌라구”, “그럴 수도 있지” 하며
+            너무 애쓰지 않고 자기만의 속도로 하루를 살아가는 하로. 이모티콘과
+            그림, 작은 이야기를 통해 우리 모두의 평범한 하루에 가볍게 웃고
+            쉬어갈 순간을 전하고 싶습니다.
+          </p>
+          <a class="site-footer__email" href="mailto:harodrowing@gmail.com">
+            harodrowing@gmail.com
+          </a>
+        </div>
+
+        <div class="site-footer__bottom">
+          <small class="site-footer__copyright">© 2026 HARO. All rights reserved.</small>
+          <nav class="site-footer__socials" aria-label="공식 SNS">
+            <a
+              href="https://blog.naver.com/indikang"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="네이버 블로그 (새 탭)"
+            >
+              <img src="../../images/icons/blog-white.svg" alt="" loading="lazy" />
+            </a>
+            <a
+              href="https://www.behance.net/indikang"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Behance (새 탭)"
+            >
+              <img src="../../images/icons/behance-white.svg" alt="" loading="lazy" />
+            </a>
+            <a
+              href="https://www.instagram.com/liberoflowerpig/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram (새 탭)"
+            >
+              <img src="../../images/icons/instagram-white.svg" alt="" loading="lazy" />
+            </a>
+          </nav>
+        </div>
+      </div>
+    </footer>
+<script src="../../js/main.js" defer></script>
+<script src="../../js/shop-repository.js" defer></script>
+<script src="../../js/cart-header.js" defer></script>
+
+<script src="../../js/services/notice-common.js" defer></script>
+<script src="../../js/services/notice-firebase.js" defer></script>
+<script src="../../js/services/account-service.js?v=20261106-role1" defer></script>
+<script src="../../js/services/notice-auth.js" defer></script>
+<script src="../../js/services/account-header.js" defer></script>
+<script src="../../js/services/qna-common.js" defer></script>
+<script src="../../js/services/qna-repository.js" defer></script>
+<script src="../../js/services/qna-page.js" defer></script>
+</body></html>
