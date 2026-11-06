@@ -702,3 +702,12 @@
 - 반응형: 1920/1025/1024/769/768/390/320px 목록/상세/폼 가로 넘침·헤더 겹침 없음. 1920/390px 스크린샷 직접 확인. 기존 account-browser 및 notice-permissions-browser 회귀도 통과. 테스트 데이터는 demo에만 저장했고 실제 사용자/공지 데이터는 미변경.
 - 도구: 기존 OS 임시 폴더의 FirebaseCLI14.12.0/규칙SDK4.0.1/Firebase11.10.0/JRE21 재사용, 실제 프로젝트 의존성에 추가하지 않았다. 에뮬레이터/테스트서버/Chrome 종료. 기록/스크린샷은 OS 임시 폴더.
 - 문서: README와 document/QNA.md에 기능·권한·데이터·설정·재현 방법/제약을 기록. 미완료 외부 적용: Firebase 콘솔의 최신 규칙/색인 게시와 실제 Authentication 계정으로 운영호스트 최종 확인. 실기기/Chrome 외 브라우저 미검증.
+
+
+## Q&A 관리자 답변 버튼 미표시 수정
+
+- 작업일: 2026-11-06. 사용자에게 확인한 증상은 답변 작성 버튼이 보이지 않음. 코드 점검에서 users.role:admin을 기록하지만 실제 관리자 판별은 admins/{uid}.enabled만 사용하던 불일치를 확인했다. 실제 사용자 Firebase 문서의 값은 직접 확인하지 않았다.
+- js/services/account-service.js의 getUser는 서버에서 users/{uid}를 읽고 role:admin이면 즉시 admin:true로 반환한다. 기존 admins.enabled:true도 호환한다. 일반 회원은 보조 admins 조회가 규칙상 거부되어도 로그인 자체를 실패시키지 않는다. 역할 조회에 서버 읽기를 사용하고 전체 HTML account-service 참조를 v=20261106-admin-role2로 갱신했다.
+- firebase/firestore.rules의 isAdmin도 보호된 users.role:admin 또는 기존 admins.enabled:true로 통일했다. 회원가입 role:user 고정과 일반 클라이언트의 프로필 수정/관리자 문서 쓰기 차단은 유지한다. 기존 Q&A 답변 작성 UI·타관리자 답변 수정 제한은 변경하지 않았다.
+- tests/account.test.cjs에서 role:admin만으로 관리자 인식/role:user 복귀·일반 admin 임의필드 미인식과 기존 enabled 방식을 확인. tests/qna-rules.test.cjs에 별도 admins 문서 없는 role 관리자 private 읽기·답변 저장 성공 및 일반 사용자 자기 role 변경/관리자 문서 생성 거부를 추가했다. 관련 단위/경로17개, 실제 에뮬레이터 NOTICE+Q&A 보안규칙13개 통과.
+- document/QNA.md 및 NOTICE_Firebase.md의 관리자 설정 설명을 갱신했다. 이번 변경은 UI 구조·CSS 변경이 없어 반응형 재검사는 미수행. 실제 서버 규칙 게시와 사용자 계정에서의 버튼/답변 확인은 별도 필요하며 운영 회원/게시글 데이터는 변경하지 않았다.
