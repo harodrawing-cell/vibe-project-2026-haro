@@ -4,6 +4,10 @@
   const $ = id => document.getElementById(id);
   const params = new URLSearchParams(location.search);
   const id = params.get('id');
+  auth.subscribe(user => {
+    $('notice-edit-link').hidden = !user?.admin;
+    $('notice-delete').hidden = !user?.admin;
+  });
   let deleting = false;
   common.showMessage('공지사항을 불러오는 중입니다.');
   try {

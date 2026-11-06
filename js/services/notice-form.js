@@ -7,6 +7,13 @@
   const form = $('notice-form');
   let original = null, imageUrl = '', baseline = '', active = false;
   let imageLoading = false, submitting = false, leaving = false, imageVersion = 0;
+  auth.subscribe(user => {
+    if (active && (!user || (editing && !user.admin))) {
+      $('notice-form-panel').hidden = true;
+      common.showMessage('로그인 상태 또는 작성 권한이 변경되었습니다. 다시 로그인해 주세요.', true);
+      $('notice-back').hidden = false;
+    }
+  });
   const fields = () => ({ category: $('notice-category').value, title: $('notice-title').value, content: $('notice-body').value, imageUrl });
   const dirty = () => active && !leaving && (imageLoading || JSON.stringify(fields()) !== baseline);
   const cancelUrl = () => original ? common.detailUrl(original.id) : './notice-list.html';
@@ -27,7 +34,8 @@
   };
   common.showMessage('입력 화면을 준비하는 중입니다.');
   try {
-    await auth.requireAdmin();
+    if (editing) await auth.requireAdmin();
+    else await auth.requireLogin();
     if (editing) {
       original = await repository.getById(id);
       if (!original) throw new Error('수정할 게시글이 없습니다. NOTICE 목록으로 돌아가 주세요.');

@@ -1,0 +1,83 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.enabled == true;
+    }
+    function ownProfile() {
+      return getAfter(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    match /admins/{uid} {
+      allow get: if request.auth != null && request.auth.uid == uid;
+      allow list, write: if false;
+    }
+    match /users/{uid} {
+      allow get: if request.auth != null && request.auth.uid == uid;
+      allow create: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.keys().hasAll(['name', 'username', 'email', 'createdAt'])
+        && request.resource.data.keys().hasOnly(['name', 'username', 'email', 'createdAt'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 2 && request.resource.data.name.size() <= 30
+        && request.resource.data.username is string
+        && request.resource.data.username.matches('^[a-z0-9][a-z0-9_]{3,19}$')
+        && request.resource.data.username != 'admin'
+        && request.auth.token.email == request.resource.data.username + '@members.haro.invalid'
+        && request.resource.data.email is string
+        && request.resource.data.email.size() <= 254
+        && request.resource.data.email.matches('^[^ /@]+@[^ /@]+[.][^ /@]+$')
+        && request.resource.data.email == request.resource.data.email.lower()
+        && request.resource.data.email != 'admin.com@company.co.kr'
+        && request.resource.data.createdAt is string && request.resource.data.createdAt.size() == 24
+        && !exists(/databases/$(database)/documents/usernames/$(request.resource.data.username))
+        && !exists(/databases/$(database)/documents/emails/$(request.resource.data.email))
+        && getAfter(/databases/$(database)/documents/usernames/$(request.resource.data.username)).data.uid == uid
+        && getAfter(/databases/$(database)/documents/emails/$(request.resource.data.email)).data.uid == uid;
+      allow list, update, delete: if false;
+    }
+    match /usernames/{username} {
+      // Exact-key duplicate checks only. Never expose a member directory.
+      allow get: if true;
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['uid'])
+        && request.resource.data.uid == request.auth.uid
+        && ownProfile().username == username;
+      allow list, update, delete: if false;
+    }
+    match /emails/{email} {
+      allow get: if true;
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['uid'])
+        && request.resource.data.uid == request.auth.uid
+        && ownProfile().email == email;
+      allow list, update, delete: if false;
+    }
+    match /notices/{id} {
+      allow read: if true;
+      allow delete: if isAdmin();
+      allow create: if request.auth != null && validNotice()
+        && request.resource.data.authorUid == request.auth.uid
+        && request.resource.data.author == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.name;
+      allow update: if isAdmin() && validNotice()
+        && request.resource.data.get('authorUid', '') == resource.data.get('authorUid', '');
+      function validNotice() {
+        return
+        request.resource.data.keys().hasAll(['id', 'category', 'title', 'content', 'author', 'imageUrl', 'createdAt', 'updatedAt'])
+        && request.resource.data.keys().hasOnly(['id', 'category', 'title', 'content', 'author', 'authorUid', 'imageUrl', 'createdAt', 'updatedAt'])
+        && request.resource.data.id == id
+        && request.resource.data.category in ['공지사항', '이모티콘', '굿즈', '사이트 소식']
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0 && request.resource.data.title.size() <= 120
+        && request.resource.data.content is string
+        && request.resource.data.content.size() > 0 && request.resource.data.content.size() <= 30000
+        && request.resource.data.author is string
+        && request.resource.data.author.size() > 0 && request.resource.data.author.size() <= 120
+        && request.resource.data.imageUrl is string
+        && request.resource.data.imageUrl.size() <= 950000
+        && request.resource.data.createdAt is string && request.resource.data.createdAt.size() == 24
+        && request.resource.data.updatedAt is string && request.resource.data.updatedAt.size() == 24;
+      }
+    }
+  }
+}

@@ -177,3 +177,93 @@
   .notice-detail__title { font-size: 23px; }
   .notice-body { padding: 20px 16px; font-size: 15px; }
 }
+
+/* NOTICE controls: keep global headers and account pages unchanged. */
+body:has(.notice-page:not(.account-page)) {
+  --notice-control-height: 44px;
+  --notice-control-radius: 999px;
+  --notice-control-gap: 8px;
+  --notice-control-brown: #88501f;
+  --notice-control-hover: #704017;
+  --notice-control-line: #e9e1d6;
+  --notice-control-soft: #f8f4ed;
+}
+.notice-page:not(.account-page) .notice-button {
+  box-sizing: border-box;
+  height: var(--notice-control-height);
+  min-height: var(--notice-control-height);
+  max-width: 100%;
+  padding: 0 20px;
+  border-radius: var(--notice-control-radius);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.notice-page:not(.account-page) .notice-button:active {
+  border-color: var(--notice-control-brown);
+  background: #efe5d8;
+}
+.notice-page:not(.account-page) .notice-button--primary:active {
+  color: #fff;
+  background: #603716;
+}
+.notice-page:not(.account-page) .notice-button:focus-visible {
+  outline: 2px solid var(--notice-control-brown);
+  outline-offset: 3px;
+}
+.notice-page:not(.account-page) .notice-button:is(:disabled, [aria-disabled=true]) {
+  opacity: .45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.notice-page:not(.account-page) .notice-categories {
+  gap: var(--notice-control-gap);
+}
+.notice-page:not(.account-page) .notice-categories .notice-button {
+  height: 40px;
+  min-height: 40px;
+  min-width: 0;
+  padding-inline: 20px;
+}
+.notice-page:not(.account-page) :is(.notice-categories, .notice-pagination) [aria-current=page] {
+  border-color: var(--notice-control-brown);
+  color: #fff;
+  background: var(--notice-control-brown);
+}
+.notice-page:not(.account-page) :is(.notice-categories, .notice-pagination) [aria-current=page]:is(:hover, :active) {
+  background: var(--notice-control-hover);
+}
+.notice-page:not(.account-page) .notice-search {
+  align-items: center;
+  gap: var(--notice-control-gap);
+}
+.notice-page:not(.account-page) .notice-search input {
+  box-sizing: border-box;
+  height: var(--notice-control-height);
+  min-height: var(--notice-control-height);
+  padding-block: 0;
+  border-radius: var(--notice-control-radius);
+}
+.notice-page:not(.account-page) .notice-search button {
+  border-color: #d8c9b6;
+  color: #684b34;
+  background: var(--notice-control-soft);
+}
+.notice-page:not(.account-page) .notice-search button:is(:hover, :active) {
+  border-color: var(--notice-control-brown);
+  background: #efe5d8;
+}
+.notice-page:not(.account-page) .notice-pagination {
+  gap: var(--notice-control-gap);
+}
+.notice-page:not(.account-page) .notice-pagination .notice-button {
+  width: auto;
+  min-width: 40px;
+  height: 36px;
+  min-height: 36px;
+  padding-inline: 12px;
+  font-size: 13px;
+}

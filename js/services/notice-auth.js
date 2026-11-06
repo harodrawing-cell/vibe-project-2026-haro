@@ -1,13 +1,19 @@
 (function (root, factory) {
   const api = factory();
   if (typeof module === 'object' && module.exports) module.exports = api;
-  else root.HaroNoticeAuth = api.createAuth(() => root.sessionStorage);
+  else root.HaroNoticeAuth = {
+    isAdmin: () => root.HaroAccount.isAdmin(),
+    getCurrentUserName: () => root.HaroAccount.getCurrentUserName(),
+    requireAdmin: () => root.HaroAccount.requireAdmin(),
+    requireLogin: () => root.HaroAccount.requireLogin(),
+    getUser: () => root.HaroAccount.getUser(),
+    subscribe: (...args) => root.HaroAccount.subscribe(...args),
+  };
 })(globalThis, function () {
   'use strict';
   function createAuth(getSession) {
     const ADMIN_KEY = 'haro-notice-test-admin-v1';
-    // TODO: Firebase 교체 — Firebase Auth의 로그인 사용자와 관리자 custom claim을 조회한다.
-    // 프론트 체크는 1차 방어일 뿐이다. Firestore/Storage 보안 규칙에서 권한을 다시 검증해야 한다.
+    // 이전 로컬 어댑터의 Node 회귀 테스트용. 브라우저는 위 Firebase 계정 API만 사용한다.
     async function isAdmin() { return getSession().getItem(ADMIN_KEY) === 'enabled'; }
     async function getCurrentUserName() { return (await isAdmin()) ? '관리자' : '방문자'; }
     async function requireAdmin() {

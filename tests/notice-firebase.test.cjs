@@ -1,9 +1,9 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { createRepository } = require('../js/notice-firebase.js');
+const { createRepository } = require('../js/services/notice-firebase.js');
 function setup() {
   const records = new Map();
-  let admin = true, failure = null;
+  let admin = true, loggedIn = true, failure = null;
   const snapshot = id => ({ id, exists: () => records.has(id), data: () => records.get(id) });
   const sdk = {
     doc: (_, collection, id) => id,
@@ -15,9 +15,9 @@ function setup() {
       get: async id => snapshot(id), set: (id, post) => records.set(id, post), delete: id => records.delete(id),
     }),
   };
-  const auth = { requireAdmin: async () => { if (!admin) throw new Error('관리자 테스트 모드'); }, getCurrentUserName: async () => '관리자' };
+  const auth = { requireLogin: async () => { if (!loggedIn) throw new Error('로그인 필요'); return { uid: 'member-uid', name: '회원' }; }, requireAdmin: async () => { if (!admin) throw new Error('관리자 테스트 모드'); }, getCurrentUserName: async () => '관리자' };
   const repository = createRepository({ auth, connect: async () => { if (failure) throw failure; return { sdk, db: {} }; } });
-  return { repository, records, setAdmin: value => { admin = value; }, fail: code => { failure = { code }; } };
+  return { repository, records, setAdmin: value => { admin = value; }, setLogin: value => { loggedIn = value; }, fail: code => { failure = { code }; } };
 }
 const input = { category: '공지사항', title: '테스트 제목', content: '본문', imageUrl: 'data:image/webp;base64,YQ==' };
 test('Firestore CRUD preserves images, identity, timestamps and category filtering without seeding', async () => {
@@ -49,7 +49,10 @@ test('writes reject unauthorized, invalid and oversized input before changing da
   assert.equal(s.records.size, 0);
   const post = await r.create(input);
   s.setAdmin(false);
-  await assert.rejects(r.create(input), /테스트 모드/);
+  const memberPost = await r.create(input);
+  assert.equal(memberPost.authorUid, 'member-uid');
+  s.setLogin(false);
+  await assert.rejects(r.create(input), /로그인/);
   await assert.rejects(r.update(post.id, { title: '수정' }), /테스트 모드/);
   await assert.rejects(r.remove(post.id), /테스트 모드/);
   assert.deepEqual(await r.getById(post.id), post);
@@ -57,7 +60,7 @@ test('writes reject unauthorized, invalid and oversized input before changing da
 test('connection and permission errors are actionable and never fall back to local data', async () => {
   const s = setup();
   s.fail('permission-denied');
-  await assert.rejects(s.repository.getList(), /Firestore 규칙/);
+  await assert.rejects(s.repository.getList(), /Firestore 보안 규칙/);
   s.fail('unavailable');
   await assert.rejects(s.repository.create(input), /입력 내용은 유지/);
   assert.equal(s.records.size, 0);

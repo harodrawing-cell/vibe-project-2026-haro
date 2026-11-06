@@ -1,8 +1,8 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { createRepository, STORAGE_KEYS } = require('../js/notice-repository.js');
-const { createAuth } = require('../js/notice-auth.js');
-const common = require('../js/notice-common.js');
+const { createRepository, STORAGE_KEYS } = require('../js/services/notice-repository.js');
+const { createAuth } = require('../js/services/notice-auth.js');
+const common = require('../js/services/notice-common.js');
 function memory() {
   const map = new Map();
   return { getItem: key => map.get(key) ?? null, setItem: (key, value) => map.set(key, value), removeItem: key => map.delete(key) };

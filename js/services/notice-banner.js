@@ -6,8 +6,8 @@
   if (!header || !main) return;
   // Resolve from this script, so both the homepage and nested NOTICE pages work
   // under root hosting and project subdirectories without copying board data.
-  const detailPage = new URL('../pages/notice/notice-detail.html', document.currentScript.src);
-  const listPage = new URL('../pages/notice/notice-list.html', document.currentScript.src);
+  const detailPage = new URL('../../pages/notice/notice-detail.html', document.currentScript.src);
+  const listPage = new URL('../../pages/notice/notice-list.html', document.currentScript.src);
   const repository = window.HaroNoticeRepository;
   const root = document.documentElement;
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');

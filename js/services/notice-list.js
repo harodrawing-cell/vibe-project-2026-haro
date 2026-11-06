@@ -5,6 +5,11 @@
   const params = new URLSearchParams(location.search);
   const category = common.categories.includes(params.get('category')) ? params.get('category') : '';
   const query = (params.get('q') || '').trim();
+  const updateWriteLink = loggedIn => {
+    $('notice-write-link').href = loggedIn ? './notice-write.html' : './login.html';
+    $('notice-write-link').title = loggedIn ? '공지사항 작성' : '로그인 후 글쓰기를 이용할 수 있습니다.';
+  };
+  auth.subscribe(user => { updateWriteLink(!!user); });
   $('notice-query').value = query;
   const listUrl = (selected, page = 1) => `./notice-list.html?${new URLSearchParams({ category: selected, q: query, page: String(page) })}`;
   ['', ...common.categories].forEach(value => {
@@ -19,7 +24,6 @@
     event.preventDefault();
     location.href = `./notice-list.html?${new URLSearchParams({ category, q: $('notice-query').value.trim() })}`;
   });
-  $('notice-admin').disabled = true;
   try {
     $('notice-list-panel').setAttribute('aria-busy', 'true');
     common.showMessage('공지사항을 불러오는 중입니다.');
@@ -55,11 +59,7 @@
     if (page > 1) addPage(page - 1, '이전');
     for (let number = Math.max(1, page - 2); number <= Math.min(pages, page + 2); number++) addPage(number, String(number), page === number);
     if (page < pages) addPage(page + 1, '다음');
-    const admin = await auth.isAdmin();
-    $('notice-admin').textContent = admin ? '관리자 테스트 모드 끄기' : '관리자 테스트 모드 켜기';
-    $('notice-admin').setAttribute('aria-pressed', String(admin));
-    $('notice-admin').disabled = false;
-    $('notice-write-link').hidden = !admin;
+    updateWriteLink(!!(await auth.getUser()));
     common.showMessage(params.get('deleted') === '1' ? '게시글이 삭제되었습니다.' : '');
   } catch (error) {
     common.showMessage(error.message || '공지사항을 불러오지 못했습니다.', true);
@@ -67,15 +67,4 @@
     $('notice-list-panel').setAttribute('aria-busy', 'false');
     document.body.dataset.ready = 'true';
   }
-  // 배포 전 제거: 개발용 관리자 전환은 목록 하단에서만 제공한다.
-  $('notice-admin').addEventListener('click', async () => {
-    $('notice-admin').disabled = true;
-    try {
-      await auth.devSetAdmin(!(await auth.isAdmin()));
-      location.reload();
-    } catch (error) {
-      common.showMessage(error.message, true);
-      $('notice-admin').disabled = false;
-    }
-  });
 })();

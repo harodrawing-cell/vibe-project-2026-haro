@@ -18,7 +18,8 @@
     if (!client) client = Promise.all([
       import('https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js'),
       import('https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js'),
-    ]).then(([app, sdk]) => ({ sdk, db: sdk.getFirestore(app.initializeApp(config)) }))
+    ]).then(([app, sdk]) => ({ sdk, app: app.getApps()[0] || app.initializeApp(config) }))
+      .then(value => ({ ...value, db: value.sdk.getFirestore(value.app) }))
       .catch(error => { client = null; throw error; });
     return client;
   }
@@ -26,7 +27,7 @@
     const invoke = async operation => {
       try { return await operation(await connect()); }
       catch (error) {
-        if (error.code === 'permission-denied') throw new Error('Firebase 접근이 거부되었습니다. Firestore 규칙과 테스트 허용 기한을 확인해 주세요.');
+        if (error.code === 'permission-denied') throw new Error('Firebase 접근이 거부되었습니다. 로그인 계정과 Firestore 보안 규칙을 확인해 주세요.');
         if (error.code === 'not-found' || error.code === 'failed-precondition') throw new Error('Firestore (default) 데이터베이스가 생성되어 있는지 확인해 주세요.');
         if (error.code === 'unavailable' || error.name === 'TypeError') throw new Error('Firebase에 연결하지 못했습니다. 인터넷 연결 후 다시 시도해 주세요. 입력 내용은 유지됩니다.');
         throw error;
@@ -56,10 +57,10 @@
       }),
       getById: id => invoke(async ({ sdk, db }) => decode(await sdk.getDocFromServer(reference(sdk, db, id)))),
       create: async input => {
-        await auth.requireAdmin();
+        const user = await auth.requireLogin();
         const fields = common.validateInput(input);
         const now = new Date().toISOString();
-        const post = checkSize({ id: crypto.randomUUID(), ...fields, author: await auth.getCurrentUserName(), createdAt: now, updatedAt: now });
+        const post = checkSize({ id: crypto.randomUUID(), ...fields, author: user.name, authorUid: user.uid, createdAt: now, updatedAt: now });
         return invoke(async ({ sdk, db }) => {
           await sdk.setDoc(reference(sdk, db, post.id), post);
           return post;
@@ -73,6 +74,7 @@
           if (!current) throw new Error('수정할 게시글이 없습니다. NOTICE 목록으로 돌아가 주세요.');
           const fields = common.validateInput({ ...current, ...changes });
           const post = checkSize({ id: current.id, ...fields, author: current.author, createdAt: current.createdAt, updatedAt: new Date().toISOString() });
+          if (current.authorUid) post.authorUid = current.authorUid;
           transaction.set(ref, post);
           return post;
         }));
@@ -87,5 +89,5 @@
       },
     };
   }
-  return { config, createRepository };
+  return { config, getClient, createRepository };
 });

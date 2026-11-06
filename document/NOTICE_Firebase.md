@@ -1,35 +1,40 @@
-# NOTICE Firebase 테스트 연결
+﻿# Firebase Spark 무료 회원가입·로그인
 
-## 현재 연결
+## 현재 방식
 
-- 프로젝트: `haro-web-project`, Cloud Firestore `(default)` DB의 `notices` 컬렉션.
-- `js/notice-firebase.js`에서 Firebase 웹 SDK 12.6.0을 브라우저 모듈로 불러온다. npm 설치나 빌드는 필요 없다.
-- 기존 비동기 CRUD와 ISO 날짜, UUID, 카테고리·검색·페이지네이션 및 메인 배너를 유지한다.
-- 별도 관리자 계정이나 Firebase Authentication은 사용하지 않는다. 목록의 관리자 테스트 모드 버튼은 기존처럼 작성·수정·삭제 UI를 켜는 기능이다. 실제 접근 통제가 아니다.
-- 이미지 선택 5MB 이하, 최대 1200px WebP 변환 및 Base64 저장을 유지한다. Storage는 사용하지 않는다. Firestore 1MiB 문서 제한에 여유를 두어 JSON 기준 950,000바이트 초과 글은 저장 전에 거부한다. 이때 입력과 첨부는 유지한다.
-- 조회는 서버에서 수행하며 연결 실패를 로컬 저장으로 대체하지 않는다. 다른 기기의 변경은 목록 재접속/새로고침으로 확인한다. 메인 배너는 포커스 복귀 시에도 새로 조회한다.
+- 프로젝트 haro-web-project의 Authentication(이메일/비밀번호)와 Firestore (default)만 사용한다. Cloud Functions·Blaze·결제 계정·Storage는 필요 없다. 무료 할당량 내에서 사용한다.
+- 기존 로그인·회원가입 화면과 아이디 로그인을 유지한다. js/services/account-service.js가 웹 SDK로 직접 처리한다.
+- 인증 전용 주소는 `아이디@members.haro.invalid` 형식이다. 입력한 실제 이메일은 Firestore 회원 정보에 저장하며 Auth 콘솔에는 내부 주소가 표시된다. 내부 주소로 메일을 수신할 수 없어 이메일 인증·비밀번호 재설정 메일은 제공하지 않는다. 비밀번호는 Authentication만 관리한다.
+- users/{uid}에 이름·아이디·실제 이메일·생성일을 저장한다. usernames/{아이디}와 emails/{소문자 실제 이메일}에는 UID를 저장한다. 세 문서를 한 트랜잭션으로 생성해 중복을 방지한다. 회원 목록 조회는 금지하며 중복 확인용 특정 키 get만 공개 허용한다.
+- admins/{uid}의 enabled:true가 관리자 권한의 근거다. 클라이언트 쓰기는 금지한다. 프로필의 admin 필드나 브라우저 상태로 관리자 권한을 얻을 수 없다.
+- 네트워크 실패로 가입 커밋 결과가 불명확하면 Auth 계정을 자동 삭제하지 않는다. 미완료 가입으로 ID만 점유된 경우 Auth/Firestore를 콘솔에서 확인해야 한다.
 
-## 실행과 콘솔 설정
+## 무료 설정 순서 (필수)
 
-1. `preview.cmd` 또는 `node scripts/preview.cjs` 실행.
-2. `http://127.0.0.1:8080/pages/notice/notice-list.html` 접속.
-3. 관리자 테스트 모드 켜기 → 글쓰기 → 저장. 다른 브라우저에서도 같은 글을 확인할 수 있다.
-4. Firebase 콘솔 → Firestore Database → 데이터에서 `notices` 확인. 컬렉션은 첫 저장 시 만들어지므로 미리 생성할 필요 없다.
-5. Firestore Database → 규칙에서 프로젝트 루트 `firestore.rules`를 검토하고 게시한다. **로컬 파일 생성만으로 서버 규칙이 바뀌지 않는다.** 현재 콘솔 규칙을 먼저 보관한다.
+1. Firebase 콘솔 → Authentication → 로그인 방법 → 이메일/비밀번호 활성화. Spark 요금제 유지.
+2. Firestore → 규칙에서 `firebase/firestore.rules`를 검토해 게시한다. 다른 기능의 기존 규칙이 있다면 보존해 병합한다. 파일 저장만으로 서버에는 반영되지 않는다. 이전 공개 테스트 규칙을 사용하면 관리자 권한/회원 중복 보호가 적용되지 않는다.
+3. 일반 가입을 시작하기 전에 관리자 계정을 수동 생성한다. Authentication → 사용자 추가: 인증 이메일 `admin@members.haro.invalid`, 비밀번호는 사용자가 지정한 6자리 값. Auth UID를 복사한다. 입력한 실제 관리자 이메일과 내부 인증 이메일을 구분한다.
+4. Firestore 콘솔에서 아래 문서를 생성한다.
+   - `users/{UID}`: name = 관리자, username = admin, email = admin.com@company.co.kr, createdAt = 현재 ISO 날짜 문자열.
+   - `usernames/admin`: uid = 위 UID.
+   - `emails/admin.com@company.co.kr`: uid = 위 UID.
+   - `admins/{UID}`: enabled = true (불리언).
+5. 웹에서는 아이디 `admin`과 지정한 비밀번호로 로그인한다. 일반 회원은 가입 폼으로 생성한다. admin 아이디와 관리자 실제 이메일은 일반 가입에서 차단한다. 로그인 후 상단에는 환영 문구와 로그아웃 버튼을 표시한다.
+6. 필요한 인증 흐름에서 승인 도메인을 요청하면 실제 호스트/로컬 주소를 콘솔에서 등록한다. HTTP 미리보기로 테스트한다.
 
-제공된 규칙은 `notices`만 공개 테스트 읽기·쓰기·삭제를 허용하며 **2026-12-06 00:00 UTC (한국시간 09:00)**에 만료된다. 다른 컬렉션은 허용하지 않는다. 기존 다른 서비스 규칙이 있다면 통째로 덮어쓰지 말고 `notices` 규칙을 병합한다. 관리자 없이 공개 쓰기를 허용하므로 URL을 아는 사람은 누구나 변경·삭제할 수 있다. 운영 전에는 인증 규칙으로 바꿔야 한다.
+관리자 생성과 서버 규칙 게시는 코드 수정만으로 완료되지 않는다. 콘솔에서 처리할 수 있어 배포용 비공개 키나 CLI 로그인이 필요 없다. 비공개 키를 채팅에 공유하지 않는다.
 
-Base64 이미지와 본문은 검색 인덱스가 필요 없다. Firestore 콘솔의 색인 → 단일 필드에서 컬렉션 그룹 `notices`의 `imageUrl`, `content` 필드에 색인 면제를 추가하는 것을 권장한다. `firestore.indexes.json`에 같은 설정을 준비했다. 현재는 기존처럼 화면에서 검색·카테고리 필터링을 수행한다.
+## 파일과 검증
 
-## 기존 로컬 글
+- firebase.json에는 Firestore 설정만 유지하고 functions 배포 대상을 제거했다.
+- api/의 이전 서버 함수와 register-admin.cjs는 과거 구현 자료로 보존한다. 현재 무료 방식에서는 사용하거나 배포하지 않는다. 이전 관리자 등록 스크립트는 현재 내부 주소/권한 방식과 다르므로 실행하지 않는다.
+- NOTICE 글·이미지·WebP/Base64 및 JSON 950,000바이트 제한은 유지한다. 로컬 글 자동 업로드 없음.
+- tests/account.test.cjs의 무료 클라이언트 검증과 기존 회귀 검사를 실행한다. 이전 server 관련 검사는 보존된 api/ 코드 검사다.
+- tests/account-browser.cjs는 실제 비로그인 SDK 초기화 후 계정 대역으로 UI를 검증한다. 실제 Firebase 인증 성공이나 보안 규칙 검증을 의미하지 않는다.
+- 실제 회원가입·관리자 계정 생성·서버 권한 차단 검증은 콘솔 설정 후 필요하다.
 
-기존 localStorage 데이터는 삭제·수정하지 않는다. Firebase 연결 이후에는 자동 시드·샘플 생성·로컬 글 자동 업로드를 하지 않는다. 이전 여부가 정해지지 않아 데이터 이전은 이번 변경에 포함하지 않았다. 기존 글은 원래 접속 주소와 브라우저의 `haro-notices-v2`를 백업한 뒤 별도 일회성 이전으로 처리한다.
+공식 무료 요금제: https://firebase.google.com/pricing
 
-## 검증
+## 글쓰기 권한 변경 (2026-11-06)
 
-- `node --test tests/notice-firebase.test.cjs tests/notice-data.test.js tests/notice-paths.test.cjs`
-- `node tests/notice-firebase-browser.cjs`: 실제 Firebase에 식별 가능한 임시 글 생성·수정·조회·삭제. 서버 데이터에 쓰는 검사이므로 개발 프로젝트에서 실행한다. 별도 Chrome 프로필을 사용한다.
-- 브라우저 검증은 1920/1024/768/390px 목록·작성 폼 가로 넘침, 상세 연결, Base64 보존, 저장 실패 시 입력 보존을 확인한다.
-- 기존 `notice-data.test.js`는 보존된 로컬 어댑터를 검사한다. 실제 브라우저 저장소는 Firebase 어댑터다. 이전 localStorage 기반 브라우저 테스트들은 Firebase 배포 검증용이 아니다.
-
-참고: https://firebase.google.com/docs/web/setup / https://firebase.google.com/docs/firestore/quotas
+일반 회원도 로그인하면 글쓰기가 가능하다. 수정·삭제는 관리자만 허용한다. 신규 글에 authorUid를 저장하고 Firebase 규칙에서 인증 UID와 프로필의 작성자 이름을 검사한다. 이 변경을 서버에서 사용하려면 firebase/firestore.rules를 콘솔에서 다시 게시해야 한다. 기존 authorUid 없는 글도 관리자 수정은 가능하다. 로그아웃 버튼은 환영 문구 옆에 표시하며 누르면 세션을 종료하고 화면을 갱신한다.

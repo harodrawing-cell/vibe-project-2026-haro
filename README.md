@@ -10,9 +10,11 @@ STORY 이미지는 JSON을 불러오므로 `index.html` 파일을 직접 열지 
 
 GOODS 카드 8개는 로컬 상품 상세(`pages/goods/goods-detail.html?id=상품ID`)로 연결됩니다. 장바구니는 `pages/cart/cart.html`이며 모든 페이지 상단 아이콘에서 열 수 있습니다. 상품은 `data/products.json`, 장바구니는 localStorage `haro-cart-v1`로 관리합니다. 무지노트는 첨부 화면에서 확인한 4,500원을 사용하고, 가격이 확인되지 않은 7개 상품은 ‘가격 미등록’으로 표시해 담기를 막습니다. 실제 결제·주문·배송은 제공하지 않습니다. [상품/장바구니 안내](./document/GOODS_CART.md)를 참고하세요.
 
-NOTICE 게시판은 홈페이지의 NOTICE 메뉴 또는 `http://127.0.0.1:8080/pages/notice/notice-list.html`에서 확인합니다. 목록 상단의 관리자 테스트 모드를 켜면 글쓰기·수정·삭제를 확인할 수 있습니다. 현재는 Firebase 프로젝트 `haro-web-project`의 Firestore `(default)` DB, `notices` 컬렉션을 사용합니다. 별도 관리자 계정 없이 테스트하며 첨부 이미지는 기존 WebP/Base64 방식으로 게시글에 저장합니다. 연결·보안 규칙·검증 방법은 [Firebase 테스트 연결 안내](./document/NOTICE_Firebase.md)를 참고하세요. [이전 로컬 테스트 안내](./document/NOTICE_Test_Mode.md)는 전환 전 구조 참고용입니다.
+NOTICE 게시판은 홈페이지의 NOTICE 메뉴 또는 `http://127.0.0.1:8080/pages/notice/notice-list.html`에서 확인합니다. Firebase 프로젝트 `haro-web-project`의 Firestore `(default)` DB, `notices` 컬렉션을 사용합니다. 로그인 화면은 `pages/notice/login.html`이며 하단 회원가입 링크를 통해 `pages/notice/signup.html`로 이동합니다. 회원가입 페이지에는 이름·아이디·비밀번호·이메일 폼과 로그인 복귀 링크가 있습니다. 상단에 로그인 버튼을 표시하고 로그인 후 환영 문구 옆에 로그아웃 버튼을 표시하며, 로그인한 모든 회원은 공지를 작성할 수 있고 수정·삭제는 관리자만 이용하도록 연결했습니다. **Spark 무료 요금제로 동작하도록 변경했습니다. 실제 사용 전 이메일/비밀번호 인증 활성화, Firestore 보안 규칙 게시와 관리자 수동 등록이 필요합니다. Cloud Functions/Blaze는 사용하지 않습니다.** [계정 설정 안내](./document/NOTICE_Firebase.md)를 참고하세요. 첨부 이미지는 기존 WebP/Base64 방식을 유지합니다.
 
 공지사항 HTML 5개는 `pages/notice/`에 있습니다. 같은 폴더의 목록·상세·작성·수정 링크는 유지하며, 공통 CSS·JavaScript·이미지 및 홈페이지는 `../../` 경로로 참조합니다. 기존 localStorage 원본은 보존하지만 Firebase로 자동 업로드하지 않습니다. 조회 실패 시 로컬 데이터로 대체하지 않습니다.
+
+공지사항과 계정/Firebase 관련 JavaScript는 `js/services/`에 모아 관리합니다. 공통 도구(`notice-common.js`) → Firebase 연결(`notice-firebase.js`) → 계정 서비스(`account-service.js`) → 권한(`notice-auth.js`) → 필요한 화면 코드 순서로 불러옵니다. 인증은 웹 SDK에서 직접 처리하며 실제 이메일은 회원 정보로 저장합니다. 아이디 기반 내부 인증 주소를 사용하므로 이메일 인증·비밀번호 재설정 메일은 제공하지 않습니다. `api/`의 이전 함수 코드는 현재 사용하지 않습니다. 쇼핑·장바구니·STORY 등 다른 JavaScript는 기존 `js/` 경로를 유지합니다.
 
 메인 index.html의 HEADER 위에만 같은 게시판 저장소의 최신 글을 최대 3개까지 표시하는 고정 공지 배너가 있습니다. 4초마다 순환하며 제목을 누르면 해당 상세 페이지로 이동합니다. 1개일 때는 자동 전환하지 않고, 글이 없거나 데이터를 읽지 못하면 숨깁니다. 일시정지/재생을 지원하며 모션 감소 설정에서는 자동 전환을 시작하지 않습니다. NOTICE 라벨은 목록으로, 게시글 제목은 해당 상세 페이지로 이동합니다. 닫으면 배너 여백이 제거되며 새로고침하거나 index에 다시 접속하면 다시 표시됩니다. 게시글 데이터 복사본이나 배너용 샘플 글을 만들지 않습니다. 현재 저장소에는 고정 공지 필드가 없어 기존 기본 정렬(최신 작성일)을 그대로 사용합니다.
 
@@ -77,6 +79,12 @@ README를 읽고 작업을 시작할 때는 **가장 먼저 [`task-history/task.
 │   └── sections.css           # 페이지 섹션 및 반응형 스타일
 ├── images/                    # 현재 제공된 이미지·아이콘 자산
 ├── data/                      # 데이터가 추가될 경우 실제 내용을 확인
+├── firebase.json              # Firebase CLI 규칙·색인 파일 경로
+├── firebase/
+│   ├── firestore.rules        # Firestore 테스트 보안 규칙
+│   └── firestore.indexes.json # Firestore 색인 설정
+├── js/
+│   └── services/              # NOTICE 화면·공통 도구·저장소 및 Firebase 연결
 ├── document/                  # PRD 및 에이전트 관련 문서
 ├── task-history/
 │   └── task.md                # 이전 작업 요약 및 다음 작업 인계

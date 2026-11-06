@@ -553,3 +553,110 @@
 - 준비 파일: firestore.rules(공개 테스트 notices 한정, 2026-12-06 UTC 만료), firestore.indexes.json(본문/이미지 색인 제외 권장). Firebase 콘솔 규칙은 변경하지 않았다. README.md, document/NOTICE_Firebase.md 및 이전 안내에 현재 상태와 콘솔 적용 절차를 기록했다.
 - 검증: 신규 Firestore 어댑터와 기존 로컬/경로 단위 검사 13개 통과. 읽기 전용 REST 요청 HTTP 200, 최초 notices 비어 있음 확인. tests/notice-firebase-browser.cjs를 별도 Chrome 프로필에서 실행해 실제 Firebase 임시 글 생성·상세 조회·수정·Base64 유지·삭제 및 삭제 후 null, 목록 반영, 저장 실패 입력 보존, 1920/1024/768/390px 목록/작성 폼 가로 넘침 없음 확인. 임시 글은 삭제 완료.
 - 한계: 콘솔 보안 규칙/색인 게시와 규칙 만료·유효성의 에뮬레이터 검증, 기존 로컬 데이터 이전, 실기기/Chrome 외 브라우저는 미수행. 실제 프로젝트의 현행 규칙으로 읽기·쓰기 동작을 확인했으며 새 규칙이 배포되었다는 의미가 아니다.
+
+
+## NOTICE/Firebase JavaScript 폴더 정리
+
+- 작업일: 2026-11-06. README·최근 이력·HARO 규약·Firebase 안내를 확인하고 진행. spec-kit/AGENTS.md는 현재 없음.
+- js/services/ 생성 후 notice-auth.js, notice-banner.js, notice-common.js, notice-data.js, notice-detail.js, notice-firebase.js, notice-form.js, notice-list.js, notice-repository.js, notice.js 등 10개 파일을 이동했다. 파일 내용·역할은 유지하며 배너의 document.currentScript 기준 목록/상세 URL만 ../../pages/notice/로 보정했다.
+- index.html 및 pages/notice HTML 5개의 script src, tests/notice-data.test.js 및 tests/notice-firebase.test.cjs require, tests/notice-paths.test.cjs 기대 경로를 갱신했다. README와 document/NOTICE_Firebase.md·NOTICE_Test_Mode.md에 새 경로를 반영했다. 과거 프롬프트와 기존 이력은 당시 기록으로 보존했다.
+- tests/notice-firebase-browser.cjs에 메인 배너의 목록/상세 링크와 4개 화면 너비 검증을 추가했다. 별도 Chrome 프로필에서 Firebase 실제 임시 글 CRUD·Base64 유지·저장 실패 입력 보존, 1920/1024/768/390px 메인/공지 목록/작성 화면 가로 넘침 없음, 배너 링크 정상 확인. 임시 글 삭제 완료.
+- 검증: NOTICE/Firebase/경로/쇼핑/STORY 테스트 26개 통과, js 전체 구문 검사 통과. 서비스 내부 require는 같은 폴더 상대 경로이므로 유지했다. 실제 실행 소스의 구 js/notice 경로 참조 없음.
+- 보존: 기존 디자인/CSS·장바구니·STORY 모듈·Firebase 설정/보안 규칙·사용자 데이터 변경 없음. 실기기/Chrome 외 브라우저는 미검증.
+
+
+## Firebase 배포 설정 파일 정리
+
+- 작업일: 2026-11-06. 사용자 요청으로 firestore.indexes.json의 소속 경로를 정리했다.
+- 이동: firestore.indexes.json → firebase/firestore.indexes.json, firestore.rules → firebase/firestore.rules. Firebase 배포 설정을 실행용 js/services와 분리해 함께 관리한다. 두 파일 내용은 변경하지 않았다.
+- 추가: 루트 firebase.json에 firestore.rules/indexes 경로를 지정했다. README.md 구조와 document/NOTICE_Firebase.md의 콘솔/CLI 안내를 새 경로로 갱신했다.
+- 검증: firebase.json과 색인 JSON 파싱, 지정 파일 존재, 색인 면제 2개 보존, 이전 루트 파일 이동 완료 확인. 브라우저 코드·화면·데이터는 변경하지 않아 반응형 재검사는 수행하지 않았다. Firebase 서버 배포 및 CLI 실제 실행은 수행하지 않았다.
+
+
+## 로그인·회원가입 및 공지사항 관리자 권한
+
+- 작업일: 2026-11-06. 오늘 숙지한 README 규칙과 최근 이력, HARO 규약·현재 Firebase 구조를 적용했다. 사용자 로그인기능.txt 요청과 실제 대화 범위를 확인했다.
+- 추가: pages/notice/login.html(NOTICE 디자인, 상단 로그인/하단 가입), css/account.css, js/services/account-service.js·account-header.js·account-page.js. 이름·아이디·비밀번호·이메일, ID 중복 확인, 이메일 중복 오류, 입력 검증/로딩/실패 입력 보존, 환영 문구/로그아웃 전환을 구현했다. 기존 폴더를 활용하고 새 기능 폴더는 만들지 않았다.
+- 서버: 기존 api/에 package.json·package-lock.json·account-validation.cjs·index.cjs·register-admin.cjs 추가. Firebase Auth로 비밀번호를 처리하며 사용자 비밀번호를 Firestore/localStorage에 저장하지 않는다. 아이디 매핑은 서버만 접근하고 트랜잭션으로 중복 선점 방지. 일반 회원 admin ID/관리자 이메일 사용 차단, 생성 실패 Auth 사용자 정리, IP 해시 기반 요청 제한을 추가했다. 함수는 asia-northeast3, Node22 런타임.
+- 관리자 수동 등록 스크립트는 이름 관리자/아이디 admin/이메일 admin.com@company.co.kr 및 서명된 admin custom claim을 등록한다. 요청의 4자 비밀번호는 Firebase 최소 6자 조건으로 불가하여 질의했고 사용자가 6자 이상 진행에 동의했다. 실제 비밀번호 선택·계정 등록은 아직 수행하지 않았다. 코드에 관리자 비밀번호를 하드코딩하지 않았다.
+- 연결 수정: index와 pages/notice·goods·cart의 HTML에 CSS·공통 계정 서비스 연결. 공지 테스트 관리자 버튼 제거. notice-auth.js 브라우저는 실제 계정 서비스에 위임하고 이전 로컬 어댑터는 Node 회귀 검사로만 보존. notice-list/detail/form에 실제 admin 권한 검사와 인증 상태 변경 구독 추가. notice-firebase.js의 공유 초기화 getClient 공개 및 권한 오류 안내 갱신.
+- Firebase 설정: firebase.json 함수 소스 api 추가, firestore.rules의 공개 테스트 변경 권한을 관리자 claim 검사로 교체하고 프로필 본인 조회/클라이언트 쓰기 차단. .gitignore에 서버 의존성·일반 SDK 키 파일·로그 제외를 추가. README/document/NOTICE_Firebase.md에 현재 상태와 설정·배포·등록 절차를 기록했다.
+- 검증: 서버 입력·중복/롤백·로그인 비밀번호 확인·요청 제한·signed claim 검사와 기존 NOTICE/Firebase/경로/쇼핑/STORY 테스트 통과. 계정 서버 의존성 설치, 실제 Functions 모듈의 3개 export 로드 및 JS 구문 검사 통과.
+- Chrome: tests/account-browser.cjs에서 실제 Firebase SDK 비로그인 초기화·구 테스트 권한 API 미노출을 확인. 이후 테스트 계정 대역으로 중복 ID/이메일·가입 완료·잘못된 로그인·로그인/로그아웃·일반회원 작성 차단·admin 작성 표시, 1920/1024/768/390px 로그인 전후 헤더/입력 화면 배치 확인. 스크린샷을 확인해 비밀번호/이메일 입력창 스타일도 NOTICE와 통일했다. 브라우저 계정 검증은 실제 가입/인증 완료를 의미하지 않는다.
+- 미완료(사용자 Firebase 설정 필요): 사용자가 Authentication/Blaze 모두 아직 설정하지 않았다고 답변. PC에 Firebase CLI 인증/ADC도 없으므로 실제 함수·보안 규칙 배포, 관리자 등록과 실제 회원가입/로그인/직접 쓰기 차단 검증은 미수행. 요금제·서버 데이터를 임의 변경하지 않았다. 규칙 에뮬레이터는 Java 미설치로 미실행. 실기기/Chrome 외 브라우저 미검증.
+- 기존 실제 DB CRUD 테스트 tests/notice-firebase-browser.cjs는 devSetAdmin 대신 배포 후 관리자 로그인과 HARO_ADMIN_PASSWORD 환경변수를 요구하도록 갱신했다. 실제 서버 계정이나 테스트 사용자는 이번 작업에서 만들지 않았다.
+
+
+## 로그인·회원가입 페이지 분리
+
+- 작업일: 2026-11-06. pages/notice/login.html에는 로그인 폼과 하단 회원가입 링크만 유지하고, 같은 기존 폴더의 signup.html로 회원가입 폼을 분리했다. 회원가입 하단에는 로그인 복귀 링크를 추가했다.
+- js/services/account-page.js는 존재하는 폼에만 이벤트를 연결하도록 변경하고 가입 완료 안내를 별도 로그인 페이지 흐름으로 수정했다. css/account.css의 합쳐진 화면용 구분선/여백을 제거하고 기존 NOTICE 디자인과 입력 검증·중복 확인·인증 로직은 유지했다. README.md 및 document/NOTICE_Firebase.md 안내를 갱신했다.
+- tests/account-browser.cjs에 별도 가입 페이지 이동과 양쪽 폼 분리·4개 너비 확인을 반영했다. 관련 단위/경로 검사 8개와 폼 분리·정적 자산/링크 존재 검사, 브라우저 스크립트 구문 검사 통과.
+- 브라우저 실행 권한 요청이 사용자에게 거절되어 실제 Chrome/데스크톱·태블릿·모바일 재검증은 수행하지 못했다. Firebase 배포·실제 계정 등록 상태는 이전과 동일하게 미완료다.
+
+
+## 공지 목록 검색 옆 글쓰기 버튼 정리
+
+- 작업일: 2026-11-06. notice-list.html의 검색 옆 전체 목록 버튼을 글쓰기로 교체하고 제목 옆 기존 숨김 글쓰기 버튼을 옮겨 중복을 없앴다. 남아 있던 개발 전용 관리자 전환 안내도 제거했다.
+- notice-list.js에서 글쓰기 링크를 항상 표시하되 관리자만 작성 페이지로, 비로그인/일반회원은 로그인 페이지로 연결한다. 폼과 실제 Firebase 관리자 권한 검사는 유지한다. 전체 탭은 기존대로 카테고리 전환을 담당하며 검색 동작은 보존했다.
+- tests/account-browser.cjs의 권한별 기대값을 숨김 여부에서 링크 목적지로 갱신했다. 관련 단위/경로 검사와 정적 버튼·구문 검사 결과는 이번 작업에서 확인. 실제 Chrome/반응형 화면 재검증은 수행하지 않았다.
+
+
+## NOTICE 버튼 UI 균형 개선
+
+- 작업일: 2026-11-06. 변경 구현 파일은 css/notice.css만이다. HTML·JavaScript·Firebase·인증·검색·카테고리·작성·페이지네이션 로직은 변경하지 않았다.
+- body:has(.notice-page:not(.account-page))에 컨트롤 높이/라운드/간격/브라운/테두리/배경 변수를 정의해 NOTICE 범위를 제한했다. 로그인·가입과 상품·메인 등 다른 페이지 헤더는 영향을 받지 않는다.
+- .notice-button 공통 44px/패딩20/폰트14·600/nowrap, .notice-categories .notice-button 40px·패딩20·간격8, .notice-search 입력/검색/글쓰기 44px 및 수직 중앙 정렬을 적용했다. 검색은 연한 보조색, 글쓰기는 기존 브라운 primary 유지.
+- .notice-pagination .notice-button 높이36px·최소너비40px·폰트13으로 축소하고 선택 페이지도 같은 pill 형태 유지. .account-header__action은 NOTICE에서만 36px·패딩14·폰트12로 정리. .search-overlay__close는 배경 강조를 줄이고 X 선22px/두께1.5px, 클릭44x44px 유지. 버튼 hover/active/focus-visible/disabled 상태를 정리했다. 기존 1024/768px 반응형 구조와 카테고리 줄바꿈은 유지했다.
+- 검증: OS 임시 Chrome 프로필/임시 스크립트에만 23개 게시글 대역을 사용, Firebase 읽기·쓰기/계정 데이터 변경 없음. 1920/1025/1024/769/768/390/320px에서 카테고리40, 검색입력·검색·작성44, 로그인36, 페이지번호36, X클릭44/선22/두께1.5의 실제 계산 크기와 검색·작성 상단 정렬·패딩20, 가로 넘침 없음 확인. 검색 열기/닫기 동작 정상, 처리되지 않은 예외 없음. 로그인 페이지의 기존 헤더 min-height44 유지 확인. 1920/390px 스크린샷 직접 확인.
+- 테스트 코드는 저장소에 추가하지 않았으며 임시 검증 스크립트와 스크린샷은 OS 임시 폴더에 보관했다. 실기기/Chrome 외 브라우저 미검증.
+
+
+## 공통 메뉴바 버튼 규격 반영
+
+- 작업일: 2026-11-06. 사용자가 메인 메뉴바에도 동일 규격 적용을 요청하여 NOTICE 한정 헤더 스타일을 css/notice.css에서 제거하고 css/account.css의 .site-header .account-header__action / .search-overlay .search-overlay__close로 공통화했다.
+- 로그인/로그아웃 36px·패딩14px·폰트12px·연한 브라운 테두리, 닫기 X22px/1.5px 및 클릭44px, hover/active/focus-visible/disabled 규격을 공통 변수로 유지한다. NOTICE 내부 카테고리·검색·글쓰기·페이지네이션은 기존 수정 상태 유지. HTML·JS·기능 변경 없음.
+- Chrome 임시 프로필에서 NOTICE 1920/1025/1024/769/768/390/320px 버튼 규격 검사와 메인·상품상세·장바구니·로그인 페이지의 1920/1024/768/390px 로그인36/닫기44/X22 및 가로 넘침 없음 검사 통과. Firebase 데이터 변경 없음.
+
+
+## 메뉴바 로그인 버튼 디자인 단일화
+
+- 작업일: 2026-11-06. 사용자 요청에 따라 메인과 NOTICE 로그인 버튼의 동일 디자인을 확인하고 css/account.css의 중복 기본/모바일 선언을 제거해 .site-header .account-header__action 한 곳에서 관리하도록 정리했다. 36px pill, 패딩14px, 흰색 배경, 연한 브라운 테두리, 12px/600과 폰트/자간을 명시해 상속 차이를 방지했다. HTML·JS·계정 기능 변경 없음.
+- 실제 Chrome 1920/1024/768/390px에서 NOTICE와 메인·상품상세·장바구니·로그인의 로그인 버튼 높이/좌우 패딩/라운드/테두리색/글자색/배경/폰트 크기·굵기·종류/행간/자간 12개 computed style이 완전히 같음을 확인했다. 기존 NOTICE 컨트롤 7개 너비 검사도 통과. Firebase 데이터 변경 없음.
+
+
+## 상단 로그아웃 버튼 제거
+
+- 작업일: 2026-11-06. 사용자 요청으로 js/services/account-header.js에서 로그아웃 버튼과 클릭 이벤트를 제거했다. 비로그인 상태는 로그인 버튼, 로그인 상태는 사용자 환영 문구만 표시한다. 회원가입·로그인·인증 유지·관리자 권한은 변경하지 않았다.
+- README.md와 document/NOTICE_Firebase.md의 현재 상단 UI 설명을 갱신하고 tests/account-browser.cjs는 로그아웃 클릭 대신 테스트 계정만 초기화하도록 수정했다. 두 JS 파일 구문 검사 통과. 실제 브라우저·반응형 재검증은 미수행. 로그인 화면을 닫는 것은 인증 종료와 다르며 기존 세션 유지 설정은 그대로다.
+
+
+## 회원가입 중복 확인 CORS 오류 진단
+
+- 작업일: 2026-11-06. Origin http://127.0.0.1:5500의 checkUsername preflight 요청을 실제 서버에 OPTIONS로 재현했다. 응답 HTTP404, Access-Control-Allow-Origin 없음, Page not found 확인. api/index.cjs에는 이미 cors:true 및 asia-northeast3 설정이 있다. 브라우저 CORS 표시만으로 클라이언트 설정 문제로 판단하지 않았다. 현재 호출 주소에 서버 함수가 없는 것이 확인되며 미배포/잘못된 배포 위치 확인 필요.
+- js/services/account-service.js의 functions/internal·unavailable 안내를 일시 오류 대신 함수 배포·접근 권한·연결 확인을 안내하도록 변경했다. JS 구문 검사 통과. CORS 우회나 모의 가입 성공, no-cors 처리는 추가하지 않았다.
+- 실제 해결에는 Firebase 로그인과 checkUsername/registerAccount/loginAccount 함수·규칙 배포가 필요하다. 배포·요금제 변경은 이번 작업에서 수행하지 않았다.
+
+
+## Spark 무료 요금제 회원 기능 전환
+
+- 작업일: 2026-11-06. 사용자 요청으로 Cloud Functions/Blaze 의존성을 제거했다. js/services/account-service.js에서 Functions SDK와 callable 호출을 삭제하고 Auth 이메일/비밀번호 및 Firestore 직접 조회/트랜잭션으로 변경했다. firebase.json에서 functions 배포 설정 제거. api/는 과거 자료로 보존하고 현재 사용·배포하지 않는다.
+- 아이디를 소문자 내부 인증 주소 username@members.haro.invalid로 변환하고 실제 이메일은 users/{uid}에 별도 저장한다. 입력 검증, ID/이메일 중복 체크, Auth 생성 후 프로필/ID/이메일 예약 3문서의 트랜잭션 저장, 확정 실패 시 신규 Auth 정리, 네트워크 불명확 실패 시 계정 보존을 구현했다. 완료 후 로그인 화면 이동 링크를 상태 안내에 추가했다. 비밀번호 DB/로컬 저장 없음. 이메일 인증·비밀번호 재설정 메일 미지원 한계는 안내했다.
+- firebase/firestore.rules: admins/{uid}.enabled로 관리자 확인, 해당 컬렉션 클라이언트 쓰기 차단. users 본인 생성/조회와 필드 제한·내부 인증 이메일 바인딩, usernames/emails 특정 키 조회만 허용/목록 금지, getAfter 기반 원자적 소유 관계/중복 방지를 추가했다. 관리자만 공지 변경 규칙 유지. 실제 서버 규칙 게시와 관리자 생성은 미수행.
+- README.md와 document/NOTICE_Firebase.md를 무료 설정 순서로 갱신했다. 콘솔에서 Auth 이메일/비밀번호 활성화, 새 Firestore 규칙 게시 후 관리자 Auth 내부 주소 admin@members.haro.invalid 생성과 users/usernames/emails/admins 문서 수동 등록 필요. 사용자 지정 비밀번호는 코드에 저장하지 않는다.
+- 검증: 무료 클라이언트 검증 4개 추가/변경 및 과거 API 회귀 포함 전체 단위/경로/쇼핑/STORY 테스트 35개 통과. Chrome 계정 UI 테스트의 실제 비로그인 SDK 초기화와 대역 기반 중복 체크·가입·로그인·관리자/일반 UI, 1920/1024/768/390px 검사 통과. 활성 소스의 Functions 호출 없음 확인. 실제 Firebase 계정 생성/로그인/서버 규칙 권한 강제는 콘솔 설정 필요로 미검증. Firestore 규칙 에뮬레이터는 Java 부재로 미실행.
+- 비용 설정·실제 계정·기존 게시글 데이터는 변경하지 않았다. Spark 무료 할당량 내 사용을 전제로 하며 무제한 무료라는 의미는 아니다.
+
+
+## 로그아웃 복원 및 로그인 회원 글쓰기 허용
+
+- 작업일: 2026-11-06. 사용자에게 기존 관리자 전용과의 차이를 확인했고 일반 회원도 로그인하면 글쓰기 허용 답변을 받았다. 수정·삭제는 기존 관리자 전용 유지.
+- account-header.js에 환영 문구 옆 로그아웃 버튼/종료 동작을 복원했다. account-service.js·notice-auth.js에 requireLogin/getUser를 연결하고 notice-list.js의 글쓰기 목적지를 로그인 여부로 결정한다. notice-form.js의 신규 글은 로그인, 수정은 관리자 검사로 분리했다.
+- notice-firebase.js의 생성에 작성자 이름/authorUid를 로그인 사용자로 고정하고 관리자 수정 시 기존 UID를 보존한다. firebase/firestore.rules는 로그인 회원 생성 및 작성자 UID/프로필 이름 검증, 관리자만 수정/삭제로 분리했다. 기존 UID 없는 문서 수정도 관리자에 한해 허용한다. 공지 HTML 안내와 README·Firebase 안내를 갱신했다.
+- 관련 단위/경로 검사 14개 통과. tests/account-browser.cjs를 새 조건으로 갱신해 실제 guest SDK 초기화 후 계정 대역으로 일반 회원 글쓰기 진입·관리자 작성·로그아웃과 1920/1024/768/390px 배치를 확인했다. 실제 서버 글 저장은 하지 않았다. Firebase 규칙 콘솔 재게시가 필요하며 실제 규칙 적용/인증 저장 검증은 미수행이다.
+
+
+## 로그인·로그아웃 단일 버튼 전환
+
+- 작업일: 2026-11-06. 사용자 요청으로 account-header.js의 별도 로그인 링크와 로그아웃 버튼을 단일 button.account-header__action으로 교체했다. 비로그인에는 로그인 문구/로그인 화면 이동, 로그인 후 같은 버튼이 로그아웃 문구/세션 종료 동작으로 전환된다. 환영 문구와 기존 공통 디자인·회원 글쓰기 권한은 유지한다.
+- tests/account-browser.cjs를 단일 버튼/문구 전환 확인으로 갱신했다. JS 구문 검사 통과. Chrome에서 실제 guest 초기화 후 계정 대역으로 단일 컨트롤1개, 로그인 후 로그아웃 문구, 클릭 후 로그인 문구 복원 및 1920/1024/768/390px 배치 검증 통과. 실제 계정/서버 데이터 변경 없음.

@@ -7,6 +7,7 @@ const os = require('node:os');
 const assert = require('node:assert/strict');
 const { once } = require('node:events');
 
+if (!process.env.HARO_ADMIN_PASSWORD) throw new Error('Set HARO_ADMIN_PASSWORD for the deployed admin account before running this live test.');
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
 (async () => {
   const profile = await fs.mkdtemp(path.join(os.tmpdir(), 'haro-notice-qa-'));
@@ -88,7 +89,7 @@ const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
       await navigate('notice-list.html');
       const message = await read('notice-message');
       assert.equal(message, '', 'Firebase list: ' + message);
-      await evaluate("HaroNoticeAuth.devSetAdmin(true)");
+      await evaluate('HaroAccount.login("admin",'+JSON.stringify(process.env.HARO_ADMIN_PASSWORD)+')');
       const post = await evaluate("HaroNoticeRepository.create({category:HaroNoticeCommon.categories[0],title:'[QA] Firebase connection',content:'Temporary QA record; removed after verification.',imageUrl:'data:image/webp;base64,UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAAAA'})");
       createdId=post.id;
       assert.ok(createdId);
@@ -100,6 +101,24 @@ const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
       assert.ok((await read('notice-list')).includes('[QA] Updated'));
       for (const width of [1920,1024,768,390]) {
         await cdp('Emulation.setDeviceMetricsOverride',{width,height:900,deviceScaleFactor:1,mobile:false});
+        await cdp('Page.navigate', { url: 'http://127.0.0.1:8097/' });
+        let bannerReady = false;
+        for (let attempt = 0; attempt < 80; attempt++) {
+          await pause(100);
+          try {
+            if (await evaluate("document.readyState === 'complete' && !!window.HaroNoticeBanner")) {
+              bannerReady = true;
+              break;
+            }
+          } catch {}
+        }
+        assert.ok(bannerReady, 'Homepage banner initialized');
+        await evaluate('HaroNoticeBanner.refresh()');
+        const links = await evaluate("({list:document.querySelector('.notice-banner__label').pathname,title:document.querySelector('.notice-banner__title').pathname,id:new URL(document.querySelector('.notice-banner__title').href).searchParams.get('id'),overflow:document.documentElement.scrollWidth>innerWidth})");
+        assert.equal(links.list, '/pages/notice/notice-list.html');
+        assert.equal(links.title, '/pages/notice/notice-detail.html');
+        assert.ok(links.id);
+        assert.equal(links.overflow, false, 'Homepage horizontal overflow');
         await navigate('notice-list.html');
         const size=await evaluate('({scroll:document.documentElement.scrollWidth,width:innerWidth})');
         assert.ok(size.scroll<=size.width,JSON.stringify(size));
@@ -115,7 +134,7 @@ const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
       await pause(200);
       assert.equal(await evaluate("document.getElementById('notice-title').value"),'Draft title');
       assert.equal(await evaluate("document.getElementById('notice-submit').disabled"),false);
-      await evaluate("HaroNoticeAuth.devSetAdmin(true)");
+      await evaluate('HaroAccount.login("admin",'+JSON.stringify(process.env.HARO_ADMIN_PASSWORD)+')');
       await evaluate('HaroNoticeRepository.remove('+JSON.stringify(createdId)+')');
       assert.equal(await evaluate('HaroNoticeRepository.getById('+JSON.stringify(createdId)+')'),null);
       createdId=null;

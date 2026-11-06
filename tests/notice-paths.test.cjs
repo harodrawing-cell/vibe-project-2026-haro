@@ -21,7 +21,7 @@ test('NOTICE files and all static local asset links resolve from pages/notice', 
       assert.ok(fs.existsSync(resolved), `${name}: missing ${match[1]}`);
     }
     assert.match(html, /href="\.\.\/\.\.\/index\.html#top"/);
-    assert.match(html, /src="\.\.\/\.\.\/js\/notice-repository\.js"/);
+    assert.match(html, /src="\.\.\/\.\.\/js\/services\/notice-repository\.js"/);
   }
   assert.match(fs.readFileSync(path.join(root, 'index.html'), 'utf8'), /href="\.\/pages\/notice\/notice-list\.html"/);
 });
