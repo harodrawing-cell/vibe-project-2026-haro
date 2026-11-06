@@ -5,7 +5,7 @@
 - 프로젝트 haro-web-project의 Authentication(이메일/비밀번호)와 Firestore (default)만 사용한다. Cloud Functions·Blaze·결제 계정·Storage는 필요 없다. 무료 할당량 내에서 사용한다.
 - 기존 로그인·회원가입 화면과 아이디 로그인을 유지한다. js/services/account-service.js가 웹 SDK로 직접 처리한다.
 - 인증 전용 주소는 `아이디@members.haro.invalid` 형식이다. 입력한 실제 이메일은 Firestore 회원 정보에 저장하며 Auth 콘솔에는 내부 주소가 표시된다. 내부 주소로 메일을 수신할 수 없어 이메일 인증·비밀번호 재설정 메일은 제공하지 않는다. 비밀번호는 Authentication만 관리한다.
-- users/{uid}에 이름·아이디·실제 이메일·생성일을 저장한다. usernames/{아이디}와 emails/{소문자 실제 이메일}에는 UID를 저장한다. 세 문서를 한 트랜잭션으로 생성해 중복을 방지한다. 회원 목록 조회는 금지하며 중복 확인용 특정 키 get만 공개 허용한다.
+- users/{uid}에 이름·아이디·실제 이메일·role·생성일을 저장한다. 일반 가입의 role은 문자열 user로 고정한다. usernames/{아이디}와 emails/{소문자 실제 이메일}에는 UID를 저장한다. 세 문서를 한 트랜잭션으로 생성해 중복을 방지한다. 회원 목록 조회는 금지하며 중복 확인용 특정 키 get만 공개 허용한다.
 - admins/{uid}의 enabled:true가 관리자 권한의 근거다. 클라이언트 쓰기는 금지한다. 프로필의 admin 필드나 브라우저 상태로 관리자 권한을 얻을 수 없다.
 - 네트워크 실패로 가입 커밋 결과가 불명확하면 Auth 계정을 자동 삭제하지 않는다. 미완료 가입으로 ID만 점유된 경우 Auth/Firestore를 콘솔에서 확인해야 한다.
 
@@ -15,7 +15,7 @@
 2. Firestore → 규칙에서 `firebase/firestore.rules`를 검토해 게시한다. 다른 기능의 기존 규칙이 있다면 보존해 병합한다. 파일 저장만으로 서버에는 반영되지 않는다. 이전 공개 테스트 규칙을 사용하면 관리자 권한/회원 중복 보호가 적용되지 않는다.
 3. 일반 가입을 시작하기 전에 관리자 계정을 수동 생성한다. Authentication → 사용자 추가: 인증 이메일 `admin@members.haro.invalid`, 비밀번호는 사용자가 지정한 6자리 값. Auth UID를 복사한다. 입력한 실제 관리자 이메일과 내부 인증 이메일을 구분한다.
 4. Firestore 콘솔에서 아래 문서를 생성한다.
-   - `users/{UID}`: name = 관리자, username = admin, email = admin.com@company.co.kr, createdAt = 현재 ISO 날짜 문자열.
+   - `users/{UID}`: name = 관리자, username = admin, email = admin.com@company.co.kr, role = admin (문자열), createdAt = 현재 ISO 날짜 문자열.
    - `usernames/admin`: uid = 위 UID.
    - `emails/admin.com@company.co.kr`: uid = 위 UID.
    - `admins/{UID}`: enabled = true (불리언).
@@ -38,3 +38,5 @@
 ## 글쓰기 권한 변경 (2026-11-06)
 
 일반 회원도 로그인하면 글쓰기가 가능하다. 수정·삭제는 관리자만 허용한다. 신규 글에 authorUid를 저장하고 Firebase 규칙에서 인증 UID와 프로필의 작성자 이름을 검사한다. 이 변경을 서버에서 사용하려면 firebase/firestore.rules를 콘솔에서 다시 게시해야 한다. 기존 authorUid 없는 글도 관리자 수정은 가능하다. 로그아웃 버튼은 환영 문구 옆에 표시하며 누르면 세션을 종료하고 화면을 갱신한다.
+
+회원 프로필 필드는 createdAt/email/name/role/username의 문자열 5개다. 일반 가입은 role:user, 관리자 수동 프로필은 role:admin을 사용한다. role 필드 자체는 권한 근거가 아니며 관리자 권한은 기존 보호된 admins/{uid}.enabled 문서로 확인한다. 기존 회원 문서를 자동 변경하지 않는다.

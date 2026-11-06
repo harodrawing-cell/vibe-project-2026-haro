@@ -660,3 +660,10 @@
 
 - 작업일: 2026-11-06. 사용자 요청으로 account-header.js의 별도 로그인 링크와 로그아웃 버튼을 단일 button.account-header__action으로 교체했다. 비로그인에는 로그인 문구/로그인 화면 이동, 로그인 후 같은 버튼이 로그아웃 문구/세션 종료 동작으로 전환된다. 환영 문구와 기존 공통 디자인·회원 글쓰기 권한은 유지한다.
 - tests/account-browser.cjs를 단일 버튼/문구 전환 확인으로 갱신했다. JS 구문 검사 통과. Chrome에서 실제 guest 초기화 후 계정 대역으로 단일 컨트롤1개, 로그인 후 로그아웃 문구, 클릭 후 로그인 문구 복원 및 1920/1024/768/390px 배치 검증 통과. 실제 계정/서버 데이터 변경 없음.
+
+
+## 회원가입 사용자 필드 정합성
+
+- 작업일: 2026-11-06. 저장 코드 확인 결과 createdAt/email/name/username은 문자열로 저장되고 있었으나 role이 없어 추가했다. js/services/account-service.js의 신규 users 문서는 createdAt/email/name/role/username 문자열 5개이며 일반 가입 role은 user로 고정한다.
+- firebase/firestore.rules의 허용/필수 필드에 role을 추가하고 생성 시 role:user만 허용한다. 일반 회원이 role:admin을 입력해 권한을 얻지 못하게 기존 admins/{uid}.enabled 권한 근거는 유지했다. 콘솔에서 수동 관리자 프로필을 작성할 때 role:admin을 넣도록 안내를 갱신했다.
+- tests/account.test.cjs에 실제 회원 저장 객체의 정확한 필드5개/모든 값 문자열/ISO날짜/role:user 검증을 추가했고 관련 검사9개 통과. 기존 실제 DB 회원 문서나 관리자 권한은 변경하지 않았다. 서버 규칙 재게시 필요. 화면 구조 변경이 없어 반응형 재검사는 수행하지 않았다.

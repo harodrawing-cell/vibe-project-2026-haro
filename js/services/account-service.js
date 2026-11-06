@@ -84,7 +84,7 @@
             const idRecord = await transaction.get(userRef);
             const emailRecord = await transaction.get(emailRef);
             if (idRecord.exists() || emailRecord.exists()) throw Object.assign(new Error('이미 사용 중인 아이디 또는 이메일입니다.'), { code: 'account/duplicate' });
-            transaction.set(profileRef, { name, username, email, createdAt: new Date().toISOString() });
+            transaction.set(profileRef, { name, username, email, role: 'user', createdAt: new Date().toISOString() });
             transaction.set(userRef, { uid: user.uid });
             transaction.set(emailRef, { uid: user.uid });
           });

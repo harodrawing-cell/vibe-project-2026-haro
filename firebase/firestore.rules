@@ -16,8 +16,9 @@ service cloud.firestore {
     match /users/{uid} {
       allow get: if request.auth != null && request.auth.uid == uid;
       allow create: if request.auth != null && request.auth.uid == uid
-        && request.resource.data.keys().hasAll(['name', 'username', 'email', 'createdAt'])
-        && request.resource.data.keys().hasOnly(['name', 'username', 'email', 'createdAt'])
+        && request.resource.data.keys().hasAll(['name', 'username', 'email', 'role', 'createdAt'])
+        && request.resource.data.keys().hasOnly(['name', 'username', 'email', 'role', 'createdAt'])
+        && request.resource.data.role == 'user'
         && request.resource.data.name is string
         && request.resource.data.name.size() >= 2 && request.resource.data.name.size() <= 30
         && request.resource.data.username is string

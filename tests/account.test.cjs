@@ -127,6 +127,10 @@ test('free signup reserves id/email atomically, stores no password, then returns
  const s=clientSetup();assert.equal(await s.service.checkId('member01'),true);assert.equal(await s.service.checkId('admin'),false);
  await s.service.register(member);assert.equal(s.auth.currentUser,null);
  assert.equal(s.docs.get('users/uid1').email,'member@example.com');assert.equal(s.docs.get('users/uid1').password,undefined);
+ assert.deepEqual(Object.keys(s.docs.get('users/uid1')).sort(),['createdAt','email','name','role','username']);
+ assert.equal(s.docs.get('users/uid1').role,'user');
+ for(const value of Object.values(s.docs.get('users/uid1'))) assert.equal(typeof value,'string');
+ assert.equal(new Date(s.docs.get('users/uid1').createdAt).toISOString(),s.docs.get('users/uid1').createdAt);
  assert.equal(s.docs.get('usernames/member01').uid,'uid1');assert.equal(s.docs.get('emails/member@example.com').uid,'uid1');
  assert.ok(s.identities.has('member01@members.haro.invalid'));assert.equal(await s.service.checkId('member01'),false);
  await assert.rejects(s.service.register(member),/아이디/);
