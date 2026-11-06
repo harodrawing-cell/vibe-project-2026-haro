@@ -1,0 +1,7 @@
+{
+  "indexes": [],
+  "fieldOverrides": [
+    { "collectionGroup": "notices", "fieldPath": "imageUrl", "indexes": [] },
+    { "collectionGroup": "notices", "fieldPath": "content", "indexes": [] }
+  ]
+}

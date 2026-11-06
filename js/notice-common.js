@@ -32,7 +32,7 @@
   }
   async function fileToImageUrl(file) {
     validateFile(file);
-    // TODO: Firebase 교체 — 압축 결과를 Firebase Storage에 업로드하고 다운로드 URL 문자열을 반환한다.
+    // 테스트용 Firestore에서도 기존 WebP/Base64 첨부 방식을 유지한다.
     const source = URL.createObjectURL(file);
     try {
       const image = new Image();

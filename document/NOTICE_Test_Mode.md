@@ -1,5 +1,7 @@
 # NOTICE 개발 및 Firebase 이전 안내
 
+> 2026-11-06: 아래 내용은 전환 전 로컬 구현 기록입니다. 현재 브라우저 연결과 콘솔 설정은 [NOTICE_Firebase.md](./NOTICE_Firebase.md)를 참고하세요.
+
 ## 기존 코드 분석과 적용 범위
 
 기존 NOTICE는 `notice.html?view=list|detail|write|edit`와 동기식 `notice-data.js` 어댑터를 사용했다. 데이터는 `{ body, image: { name, src } }` 형태였고, 카테고리 필터·삭제·이미지 압축 기능이 없었다.

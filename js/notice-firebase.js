@@ -1,0 +1,91 @@
+(function (root, factory) {
+  const common = typeof module === 'object' && module.exports ? require('./notice-common.js') : root.HaroNoticeCommon;
+  const api = factory(common);
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  else root.HaroNoticeFirebase = api;
+})(globalThis, function (common) {
+  'use strict';
+  const config = Object.freeze({
+    apiKey: 'AIzaSyAndMx1VVf3csbxwJEaPkNkvQX3XbwDf7E',
+    authDomain: 'haro-web-project.firebaseapp.com',
+    projectId: 'haro-web-project',
+    storageBucket: 'haro-web-project.firebasestorage.app',
+    messagingSenderId: '1059493107277',
+    appId: '1:1059493107277:web:c84f6b928f50e530c92e04',
+  });
+  let client;
+  function getClient() {
+    if (!client) client = Promise.all([
+      import('https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js'),
+      import('https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js'),
+    ]).then(([app, sdk]) => ({ sdk, db: sdk.getFirestore(app.initializeApp(config)) }))
+      .catch(error => { client = null; throw error; });
+    return client;
+  }
+  function createRepository({ auth, connect = getClient }) {
+    const invoke = async operation => {
+      try { return await operation(await connect()); }
+      catch (error) {
+        if (error.code === 'permission-denied') throw new Error('Firebase 접근이 거부되었습니다. Firestore 규칙과 테스트 허용 기한을 확인해 주세요.');
+        if (error.code === 'not-found' || error.code === 'failed-precondition') throw new Error('Firestore (default) 데이터베이스가 생성되어 있는지 확인해 주세요.');
+        if (error.code === 'unavailable' || error.name === 'TypeError') throw new Error('Firebase에 연결하지 못했습니다. 인터넷 연결 후 다시 시도해 주세요. 입력 내용은 유지됩니다.');
+        throw error;
+      }
+    };
+    function reference(sdk, db, id) {
+      if (typeof id !== 'string' || !id || id.includes('/') || id === '.' || id === '..') throw new Error('게시글 ID가 올바르지 않습니다.');
+      return sdk.doc(db, 'notices', id);
+    }
+    const decode = snapshot => snapshot.exists() ? { ...snapshot.data(), id: snapshot.id } : null;
+    function checkSize(post) {
+      // Leave room for Firestore document names/field overhead under its 1 MiB limit.
+      if (new TextEncoder().encode(JSON.stringify(post)).length > 950000) {
+        throw new Error('첨부 이미지와 본문의 합계가 저장 한도를 초과했습니다. 더 작은 이미지를 선택해 주세요. 입력 내용은 유지됩니다.');
+      }
+      return post;
+    }
+    return {
+      // Compatibility with the banner's storage-event hook; Firestore is the source of truth.
+      STORAGE_KEYS: Object.freeze({}),
+      seedIfNeeded: async () => {},
+      getList: ({ category } = {}) => invoke(async ({ sdk, db }) => {
+        const result = await sdk.getDocsFromServer(sdk.collection(db, 'notices'));
+        return result.docs.map(decode)
+          .filter(post => !category || category === '전체' || post.category === category)
+          .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+      }),
+      getById: id => invoke(async ({ sdk, db }) => decode(await sdk.getDocFromServer(reference(sdk, db, id)))),
+      create: async input => {
+        await auth.requireAdmin();
+        const fields = common.validateInput(input);
+        const now = new Date().toISOString();
+        const post = checkSize({ id: crypto.randomUUID(), ...fields, author: await auth.getCurrentUserName(), createdAt: now, updatedAt: now });
+        return invoke(async ({ sdk, db }) => {
+          await sdk.setDoc(reference(sdk, db, post.id), post);
+          return post;
+        });
+      },
+      update: async (id, changes) => {
+        await auth.requireAdmin();
+        return invoke(({ sdk, db }) => sdk.runTransaction(db, async transaction => {
+          const ref = reference(sdk, db, id);
+          const current = decode(await transaction.get(ref));
+          if (!current) throw new Error('수정할 게시글이 없습니다. NOTICE 목록으로 돌아가 주세요.');
+          const fields = common.validateInput({ ...current, ...changes });
+          const post = checkSize({ id: current.id, ...fields, author: current.author, createdAt: current.createdAt, updatedAt: new Date().toISOString() });
+          transaction.set(ref, post);
+          return post;
+        }));
+      },
+      remove: async id => {
+        await auth.requireAdmin();
+        return invoke(({ sdk, db }) => sdk.runTransaction(db, async transaction => {
+          const ref = reference(sdk, db, id);
+          if (!(await transaction.get(ref)).exists()) throw new Error('삭제할 게시글이 없습니다. NOTICE 목록으로 돌아가 주세요.');
+          transaction.delete(ref);
+        }));
+      },
+    };
+  }
+  return { config, createRepository };
+});

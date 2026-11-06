@@ -21,7 +21,7 @@
     $('notice-edit-link').hidden = !admin;
     $('notice-delete').hidden = !admin;
     $('notice-detail-panel').hidden = false;
-    common.showMessage(params.get('saved') === '1' ? '수정 내용이 이 브라우저에 저장되었습니다.' : params.get('created') === '1' ? '게시글이 이 브라우저에 등록되었습니다.' : '');
+    common.showMessage(params.get('saved') === '1' ? '수정 내용이 저장되었습니다.' : params.get('created') === '1' ? '게시글이 등록되었습니다.' : '');
   } catch (error) {
     common.showMessage(error.message || '공지사항을 불러오지 못했습니다.', true);
     $('notice-back').hidden = false;

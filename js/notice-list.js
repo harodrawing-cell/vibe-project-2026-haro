@@ -60,7 +60,7 @@
     $('notice-admin').setAttribute('aria-pressed', String(admin));
     $('notice-admin').disabled = false;
     $('notice-write-link').hidden = !admin;
-    common.showMessage(params.get('deleted') === '1' ? '게시글이 이 브라우저에서 삭제되었습니다.' : '');
+    common.showMessage(params.get('deleted') === '1' ? '게시글이 삭제되었습니다.' : '');
   } catch (error) {
     common.showMessage(error.message || '공지사항을 불러오지 못했습니다.', true);
   } finally {

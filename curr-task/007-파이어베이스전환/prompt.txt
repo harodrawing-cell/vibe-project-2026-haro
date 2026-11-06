@@ -1,0 +1,23 @@
+[공지사항]
+1. 공지사항 페이지 구현시 현재
+로컬스토리지로 데이터를 저장하고 있어. firebase로 마이그레이션 하려고해. 지금 firebase를 생성하여 DB까지 만든 상태야. 진행방법 및 다음 순서를 알려줘.
+2. 첨부파일은 기존 방식을 유지하고 보안 설정도 ADMIN없이 테스트용이므로 쉽게 연결되도록 설정해줘. 내가 다음 스탭을 시작할때 제공해 줘야하는게 뭔지 말해.
+
+3. SDK 코드를 줄께. 진행해.
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyAndMx1VVf3csbxwJEaPkNkvQX3XbwDf7E",
+  authDomain: "haro-web-project.firebaseapp.com",
+  projectId: "haro-web-project",
+  storageBucket: "haro-web-project.firebasestorage.app",
+  messagingSenderId: "1059493107277",
+  appId: "1:1059493107277:web:c84f6b928f50e530c92e04"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);

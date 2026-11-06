@@ -2,7 +2,7 @@
   const node = typeof module === 'object' && module.exports;
   const api = factory(node ? require('./notice-common.js') : root.HaroNoticeCommon);
   if (node) module.exports = api;
-  else root.HaroNoticeRepository = api.createRepository({ getStorage: () => root.localStorage, auth: root.HaroNoticeAuth });
+  else root.HaroNoticeRepository = root.HaroNoticeFirebase.createRepository({ auth: root.HaroNoticeAuth });
 })(globalThis, function (common) {
   'use strict';
   const STORAGE_KEYS = Object.freeze({ POSTS: 'haro-notices-v2', SEEDED: 'haro-notices-v2-seeded', LEGACY: 'haro-notices-test-v1', CATEGORY_SAMPLES: 'haro-notices-category-samples-20261105' });

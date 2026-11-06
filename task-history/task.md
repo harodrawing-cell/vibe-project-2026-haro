@@ -542,3 +542,14 @@
 - 브라우저: 별도 임시 Chrome 프로필에서 최종 shop-browser 검사 통과. 8개 카드 클릭 → 일치하는 이름/이미지/가격 상세, 실제 이미지 로드/썸네일 전환, 수량 금액, 중복 합산, 미확인 가격 차단, 잘못된 수량, 쓰기 실패 시 기존 장바구니 유지, 8개 페이지 배지 및 실제 두 탭 간 배지·합계 동기화, 수량 변경·삭제·새로고침 유지, 빈 상태, 없는 상품 안내를 확인했다. 1920/1024/768/390px에서 신규 상세/장바구니와 메인/NOTICE 가로 넘침 없고 헤더 아이콘·메뉴/검색이 정상 작동했다. 기존 카드에 링크를 감싼 전후의 실제 폭·높이가 같고 Swiper의 4초 자동 재생 설정을 유지함을 확인했다. 최종 검사에서 처리되지 않은 예외 없음. 데스크톱 상세·모바일 CART 스크린샷을 직접 확인했다. 카드 구조 크기 비교는 실제 슬라이더에 영향을 주지 않도록 분리된 DOM 복제본에서 수행했다.
 - 경로/보존: 전체 8개 HTML의 로컬 정적 자산·링크 존재, 중복 ID 없음, 쇼핑 모듈 1회 로드, 공통 FOOTER 마크업 일치를 확인했다. 신규 상세/CART의 NOTICE 링크는 ../notice/notice-list.html로 연결했다. 검사 데이터는 임시 프로필에만 저장하고 실제 사용자 저장소는 조작하지 않았다. 화면 이미지는 OS 임시 폴더 haro-shop-preview에 보관했고 검사 서버/Chrome을 종료했다.
 - 한계: 실제 결제·주문·배송과 리뷰 작성은 제공하지 않는다. 상품 7개는 가격 자료가 등록되기 전까지 담을 수 없다. 옵션과 가격은 확인 자료를 JSON에 추가한 후 사용한다. 실기기 터치/Chrome 외 브라우저/실제 배포 환경은 미검증이다. 중간 반복 탭·뷰포트 검사에서 Swiper 12의 setBreakpoint → loopDestroy → updateActiveIndex 경로에서 getAttribute 예외가 확인되었다. 신규 장바구니 코드의 예외는 아니며 기존 Swiper 설정 유지 요구에 따라 수정하지 않았다. 최종 너비별 검사는 빈 페이지에서 화면 크기를 바꾼 뒤 각 페이지를 새로 로드하는 방식으로 진행했다.
+
+
+## 010 NOTICE Firebase 테스트 연결
+
+- 작업일: 2026-11-06. README와 이력, HARO 규약, 기존 NOTICE 문서와 코드를 먼저 확인했다. README에 참조된 spec-kit/AGENTS.md는 현재 없다.
+- 변경: js/notice-firebase.js 추가, notice-repository.js 브라우저 초기화를 Firestore로 전환, index.html과 pages/notice HTML 5개에 SDK 어댑터 연결. notice-common.js의 첨부 처리 주석, notice-list.js/notice-detail.js의 저장 안내와 HTML 테스트 안내를 갱신했다.
+- 사용자 제공 haro-web-project 설정 사용. (default) DB notices 컬렉션에 기존 Promise CRUD/UUID/ISO 문자열 문서 모델 유지. 수정·삭제는 트랜잭션으로 처리한다. 별도 관리자 계정·Auth·Storage 도입 없이 기존 테스트 모드 버튼과 WebP/Base64 첨부를 유지한다. JSON 950,000바이트 초과를 저장 전에 차단하고 입력을 보존한다.
+- 로컬 데이터 삭제/자동 이전 및 Firebase 자동 시드·샘플 생성 없음. 기존 로컬 어댑터는 보존하지만 브라우저는 Firebase만 사용한다. 장바구니와 공통 CSS/디자인은 유지.
+- 준비 파일: firestore.rules(공개 테스트 notices 한정, 2026-12-06 UTC 만료), firestore.indexes.json(본문/이미지 색인 제외 권장). Firebase 콘솔 규칙은 변경하지 않았다. README.md, document/NOTICE_Firebase.md 및 이전 안내에 현재 상태와 콘솔 적용 절차를 기록했다.
+- 검증: 신규 Firestore 어댑터와 기존 로컬/경로 단위 검사 13개 통과. 읽기 전용 REST 요청 HTTP 200, 최초 notices 비어 있음 확인. tests/notice-firebase-browser.cjs를 별도 Chrome 프로필에서 실행해 실제 Firebase 임시 글 생성·상세 조회·수정·Base64 유지·삭제 및 삭제 후 null, 목록 반영, 저장 실패 입력 보존, 1920/1024/768/390px 목록/작성 폼 가로 넘침 없음 확인. 임시 글은 삭제 완료.
+- 한계: 콘솔 보안 규칙/색인 게시와 규칙 만료·유효성의 에뮬레이터 검증, 기존 로컬 데이터 이전, 실기기/Chrome 외 브라우저는 미수행. 실제 프로젝트의 현행 규칙으로 읽기·쓰기 동작을 확인했으며 새 규칙이 배포되었다는 의미가 아니다.
