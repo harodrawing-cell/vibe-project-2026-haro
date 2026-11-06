@@ -41,7 +41,7 @@ exports.registerAccount = onCall(options, async request => {
       const ref = db.collection('usernames').doc(input.username);
       if ((await transaction.get(ref)).exists) throw new HttpsError('already-exists', '이미 사용 중인 아이디입니다.');
       transaction.create(ref, { uid: user.uid });
-      transaction.create(db.collection('users').doc(user.uid), { name: input.name, username: input.username, email: input.email, createdAt: new Date().toISOString() });
+      transaction.create(db.collection('users').doc(user.uid), { name: input.name, username: input.username, email: input.email, role: 'user', createdAt: new Date().toISOString() });
     });
     return { success: true };
   } catch (error) {

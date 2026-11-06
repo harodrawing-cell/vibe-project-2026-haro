@@ -267,3 +267,13 @@ body:has(.notice-page:not(.account-page)) {
   padding-inline: 12px;
   font-size: 13px;
 }
+
+/* Detail actions reuse the NOTICE pill controls without changing other pages. */
+.notice-page .notice-detail-actions { justify-content: flex-end; gap: 8px; }
+.notice-page .notice-detail-actions > :first-child { margin-right: auto; }
+.notice-page .notice-detail-actions .notice-button { flex: 0 0 auto; min-width: 0; }
+.notice-page .notice-detail-actions #notice-delete { border-color: #efd1cf; color: #a43832; background: #fff1ef; }
+.notice-page .notice-detail-actions #notice-delete:is(:hover, :active) { border-color: #c96a62; color: #8a2822; background: #fbe1dd; }
+@media (max-width: 768px) {
+  .notice-page .notice-detail-actions .notice-button { padding-inline: 14px; }
+}

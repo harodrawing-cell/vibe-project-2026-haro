@@ -59,6 +59,7 @@ test('server creates a normal member with no admin claim and no password in Fire
   assert.equal((await s.call('checkUsername',{username:'member01'})).available,false);
   assert.equal(s.docs.get('users/uid1').password,undefined);
   assert.equal(s.docs.get('users/uid1').admin,undefined);
+  assert.equal(s.docs.get('users/uid1').role,'user');
 });
 test('duplicate id rolls back only the new Auth user; duplicate email is rejected', async () => {
   const s=backend();
@@ -90,8 +91,8 @@ test('all pages load account services before notice controllers; profiles and no
     assert.ok(!html.includes('id="notice-admin"'));
   }
   const rules=fs.readFileSync('firebase/firestore.rules','utf8');
-  assert.match(rules,/allow delete: if isAdmin\(\)/);
-  assert.match(rules,/allow update: if isAdmin\(\)/);
+  assert.match(rules,/allow delete: if canManage\(\)/);
+  assert.match(rules,/allow update: if canManage\(\)/);
   assert.match(rules,/allow create: if request.auth != null/);
   assert.doesNotMatch(rules,/timestamp.date/);
 });

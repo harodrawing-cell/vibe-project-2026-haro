@@ -37,6 +37,15 @@
 
 ## 글쓰기 권한 변경 (2026-11-06)
 
-일반 회원도 로그인하면 글쓰기가 가능하다. 수정·삭제는 관리자만 허용한다. 신규 글에 authorUid를 저장하고 Firebase 규칙에서 인증 UID와 프로필의 작성자 이름을 검사한다. 이 변경을 서버에서 사용하려면 firebase/firestore.rules를 콘솔에서 다시 게시해야 한다. 기존 authorUid 없는 글도 관리자 수정은 가능하다. 로그아웃 버튼은 환영 문구 옆에 표시하며 누르면 세션을 종료하고 화면을 갱신한다.
+일반 회원도 로그인하면 글쓰기가 가능하다. 수정·삭제는 작성자 UID가 일치하는 회원 또는 관리자만 허용한다. 신규 글에 authorUid를 저장하고 Firebase 규칙에서 인증 UID와 프로필의 작성자 이름을 검사한다. 이 변경을 서버에서 사용하려면 firebase/firestore.rules를 콘솔에서 다시 게시해야 한다. 기존 authorUid 없는 글도 관리자 수정은 가능하다. 로그아웃 버튼은 환영 문구 옆에 표시하며 누르면 세션을 종료하고 화면을 갱신한다.
 
 회원 프로필 필드는 createdAt/email/name/role/username의 문자열 5개다. 일반 가입은 role:user, 관리자 수동 프로필은 role:admin을 사용한다. role 필드 자체는 권한 근거가 아니며 관리자 권한은 기존 보호된 admins/{uid}.enabled 문서로 확인한다. 기존 회원 문서를 자동 변경하지 않는다.
+
+## 작성자·관리자 수정/삭제 권한
+
+- 작성자 확인은 authorUid와 인증 UID만 비교한다. 이름·닉네임·role 입력으로 소유권을 판단하지 않는다.
+- 새 글의 authorUid/author는 로그인 사용자에서 저장하고, 수정 시 authorUid·author·createdAt은 변경할 수 없다. 다른 회원 글은 관리자만 관리한다.
+- authorUid가 없는 이전 글은 관리자만 수정·삭제한다. 작성자 이름으로 자동 매핑하지 않는다. 소유권 복구가 필요한 경우 원본 백업 후 신뢰할 수 있는 작성 기록과 Authentication UID를 수동 대조하고, 콘솔에서 해당 글의 authorUid만 명시적으로 부여한다. 추측 기반 일괄 이전은 하지 않는다.
+- firebase/firestore.rules를 Firebase 콘솔에 다시 게시해야 운영 DB에도 새 권한이 적용된다. 이번 작업은 로컬 규칙만 변경하고 실제 서버 규칙이나 게시글은 수정하지 않았다.
+- node tests/notice-permissions-browser.cjs: 임시 브라우저 저장소의 테스트 글로 UI·권한·수정·삭제·반응형 검사.
+- tests/notice-rules.test.cjs: 로컬 Firestore 에뮬레이터에서만 실행하는 실제 규칙 검사. HARO_RULES_MODULES에 firebase와 @firebase/rules-unit-testing이 설치된 경로를 지정하고 FIRESTORE_EMULATOR_HOST=127.0.0.1:포트를 설정한다. 프로젝트 ID는 demo-haro-notice로 고정되어 운영 DB에서 실행하지 않는다. 테스트 도구와 Java는 OS 임시 폴더에만 설치했다.

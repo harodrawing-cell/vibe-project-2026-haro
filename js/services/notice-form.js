@@ -8,7 +8,7 @@
   let original = null, imageUrl = '', baseline = '', active = false;
   let imageLoading = false, submitting = false, leaving = false, imageVersion = 0;
   auth.subscribe(user => {
-    if (active && (!user || (editing && !user.admin))) {
+    if (active && (!user || (editing && !common.canManagePost(user, original)))) {
       $('notice-form-panel').hidden = true;
       common.showMessage('로그인 상태 또는 작성 권한이 변경되었습니다. 다시 로그인해 주세요.', true);
       $('notice-back').hidden = false;
@@ -34,11 +34,11 @@
   };
   common.showMessage('입력 화면을 준비하는 중입니다.');
   try {
-    if (editing) await auth.requireAdmin();
-    else await auth.requireLogin();
+    await auth.requireLogin();
     if (editing) {
       original = await repository.getById(id);
       if (!original) throw new Error('수정할 게시글이 없습니다. NOTICE 목록으로 돌아가 주세요.');
+      if (!common.canManagePost(await auth.getUser(), original)) throw new Error('게시글 작성자 본인과 관리자만 수정할 수 있습니다.');
     }
     $('notice-author').value = original ? original.author : await auth.getCurrentUserName();
     $('notice-category').value = original ? original.category : '공지사항';

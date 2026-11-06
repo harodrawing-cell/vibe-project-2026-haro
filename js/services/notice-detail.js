@@ -4,14 +4,17 @@
   const $ = id => document.getElementById(id);
   const params = new URLSearchParams(location.search);
   const id = params.get('id');
-  auth.subscribe(user => {
-    $('notice-edit-link').hidden = !user?.admin;
-    $('notice-delete').hidden = !user?.admin;
-  });
+  let post = null;
+  const updateRights = user => {
+    const allowed = common.canManagePost(user, post);
+    $('notice-edit-link').hidden = !allowed;
+    $('notice-delete').hidden = !allowed;
+  };
+  auth.subscribe(updateRights);
   let deleting = false;
   common.showMessage('공지사항을 불러오는 중입니다.');
   try {
-    const post = await repository.getById(id);
+    post = await repository.getById(id);
     if (!post) throw new Error('해당 게시글을 찾을 수 없습니다. NOTICE 목록으로 돌아가 주세요.');
     $('notice-detail-title').textContent = post.title;
     $('notice-detail-meta').textContent = common.meta(post);
@@ -21,9 +24,7 @@
       $('notice-detail-image').hidden = false;
     }
     $('notice-edit-link').href = common.editUrl(post.id);
-    const admin = await auth.isAdmin();
-    $('notice-edit-link').hidden = !admin;
-    $('notice-delete').hidden = !admin;
+    updateRights(await auth.getUser());
     $('notice-detail-panel').hidden = false;
     common.showMessage(params.get('saved') === '1' ? '수정 내용이 저장되었습니다.' : params.get('created') === '1' ? '게시글이 등록되었습니다.' : '');
   } catch (error) {
@@ -33,10 +34,16 @@
     document.body.dataset.ready = 'true';
   }
   $('notice-delete').addEventListener('click', async () => {
-    if (deleting || !confirm('이 게시글을 삭제할까요? 삭제 후에는 되돌릴 수 없습니다.')) return;
+    if (deleting) return;
     deleting = true;
     $('notice-delete').disabled = true;
     try {
+      if (!common.canManagePost(await auth.getUser(), post)) throw new Error('게시글 작성자 본인과 관리자만 삭제할 수 있습니다.');
+      if (!confirm('이 게시글을 삭제하시겠습니까? 삭제 후에는 복구할 수 없습니다.')) {
+        deleting = false;
+        $('notice-delete').disabled = false;
+        return;
+      }
       await repository.remove(id);
       location.href = './notice-list.html?deleted=1';
     } catch (error) {

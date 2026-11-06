@@ -55,5 +55,7 @@
     }
   }
   const meta = post => `${post.category} · ${post.author} · ${formatDate(post.createdAt)}${post.updatedAt !== post.createdAt ? ` · 수정 ${formatDate(post.updatedAt)}` : ''}`;
-  return { categories, formatDate, detailUrl, editUrl, showMessage, validateInput, validateFile, fileToImageUrl, meta };
+  const canManagePost = (user, post) => !!user && !!post && (user.admin === true ||
+    (typeof user.uid === 'string' && user.uid.length > 0 && typeof post.authorUid === 'string' && user.uid === post.authorUid));
+  return { categories, formatDate, detailUrl, editUrl, showMessage, validateInput, validateFile, fileToImageUrl, meta, canManagePost };
 });

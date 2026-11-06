@@ -667,3 +667,23 @@
 - 작업일: 2026-11-06. 저장 코드 확인 결과 createdAt/email/name/username은 문자열로 저장되고 있었으나 role이 없어 추가했다. js/services/account-service.js의 신규 users 문서는 createdAt/email/name/role/username 문자열 5개이며 일반 가입 role은 user로 고정한다.
 - firebase/firestore.rules의 허용/필수 필드에 role을 추가하고 생성 시 role:user만 허용한다. 일반 회원이 role:admin을 입력해 권한을 얻지 못하게 기존 admins/{uid}.enabled 권한 근거는 유지했다. 콘솔에서 수동 관리자 프로필을 작성할 때 role:admin을 넣도록 안내를 갱신했다.
 - tests/account.test.cjs에 실제 회원 저장 객체의 정확한 필드5개/모든 값 문자열/ISO날짜/role:user 검증을 추가했고 관련 검사9개 통과. 기존 실제 DB 회원 문서나 관리자 권한은 변경하지 않았다. 서버 규칙 재게시 필요. 화면 구조 변경이 없어 반응형 재검사는 수행하지 않았다.
+
+
+## role 누락 재점검 및 저장 완료 확인
+
+- 작업일: 2026-11-06. 현재 무료 account-service.js에는 이미 role:user 저장이 있음을 확인했다. 보존된 api/index.cjs 및 register-admin.cjs에는 role이 없어 각각 user/admin을 추가해 모든 프로필 생성 경로를 일치시켰다. 이 이전 서버 코드는 여전히 무료 방식에서 활성화하지 않는다.
+- 무료 가입 트랜잭션 후 서버에서 users/{uid}를 다시 읽고 role:user를 확인한 경우에만 가입 성공으로 처리하도록 보완했다. 메인/공지/계정/상품/장바구니 HTML의 account-service.js 참조에 v=20261106-role1을 붙여 이전 캐시 사용 가능성을 줄였다. 캐시가 실제 누락 원인인지는 확정하지 않았다.
+- 관련 단위/정적 경로 검사11개 통과. 현재 무료/이전 서버 생성 경로 모두 role 검증. 실제 Firebase 신규 가입과 기존 문서 갱신은 수행하지 않았고 기존 회원 role 자동 보정은 하지 않는다. role은 Authentication 사용자 목록이 아니라 Firestore users/{UID}에 저장된다. 기존 화면 구조 변경이 없어 반응형 재검증은 수행하지 않았다.
+
+
+## NOTICE 상세 작성자·관리자 수정/삭제 구현
+
+- 작업일: 2026-11-06. 요청에 따라 README/이력/HARO 규약과 기존 상세·폼·Firebase 저장/인증을 확인했다. AGENTS.md는 현재 없음. 비교 이미지2장은 실제 메시지에 포함되지 않아 기존 HARO UI 기준으로 적용했다. 조회수는 현재 코드에 없으며 임의로 추가하지 않았다.
+- notice-common.js에 UID 기반 canManagePost를 추가했다. notice-detail.js는 게시글+현재 사용자로 수정/삭제 버튼을 표시하고 인증 변경 시 재평가한다. 삭제는 권한 재확인 후 지정 문구의 confirm, 취소 무변경, 중복 클릭 방지, 실패 안내·버튼 복원 및 성공 목록 이동을 재사용했다.
+- notice-form.js는 편집 진입과 인증 변경 시 작성자/관리자를 검사하고 기존 값 자동 로딩·동일 ID 저장·완료 상세 이동·취소 상세 복귀를 유지한다. notice-firebase.js의 update/remove는 로그인 사용자와 트랜잭션 내 기존 문서 authorUid를 비교해 직접 API 호출도 거부하며 기존 작성자/작성일/UID를 보존한다.
+- firebase/firestore.rules에서 canManage는 관리자 또는 resource.authorUid==인증UID로 판단한다. 수정 때 기존 UID·작성자명·작성일 변경은 차단한다. UID 없는 글은 관리자만 관리하고 이름 추정/자동 데이터 이전은 없다. 콘솔 재게시 전 서버에는 미적용이다.
+- notice-detail.html의 기존 actions에 전용 클래스만 추가했고 css/notice.css에서 목록 왼쪽/수정·삭제 오른쪽, 삭제 연한 붉은색, 공통44px pill과 기존768px 기준 모바일 간격을 적용했다. NOTICE HTML의 안내 문구를 사용자 지정 문장으로 통일했다. 다른 섹션/인증 방식/DB/기존 글은 변경하지 않았다.
+- 단위 검증: tests/notice-firebase.test.cjs와 account.test.cjs 권한 기대값 갱신, 같은 이름/다른 UID 거부·작성자 CRUD·기존 UID없는 글 관리자만 관리 검사 통과.
+- Chrome: 신규 tests/notice-permissions-browser.cjs에서 임시 저장소 테스트 글로 비로그인/다른 UID(동일이름)/작성자/관리자/레거시 버튼 노출, 무권한 수정 주소 진입 거부, 수정 저장·동일ID 유지·취소, 삭제 지정 확인문구/취소/실패복원/중복요청1회/성공목록 이동, 1920/1024/768/390/320px 버튼 좌우정렬·높이44·넘침없음을 검증했다.
+- 실제 규칙 검증: OS 임시 폴더에 Firebase CLI14.12.0/rules-unit-testing4.0.1/firebase11.10.0 및 Temurin JRE21을 준비했다. demo-haro-notice Firestore 에뮬레이터127.0.0.1:8089에서 tests/notice-rules.test.cjs 6개 통과. 방문자 조회만 허용/타인UID 수정삭제·소유UID위조 거부/본인 수정삭제·불변필드 보호/관리자 타인·레거시 관리/로그인 작성과 자기승격 차단/무료 가입3문서 원자저장 검증. 에뮬레이터 종료 완료. 테스트 도구는 프로젝트 의존성에 추가하지 않았다.
+- README·document/NOTICE_Firebase.md에 권한과 안전한 UID 수동 마이그레이션 방안을 기록했다. 운영 게시글·회원·서버 규칙에 읽기/쓰기/삭제를 하지 않았고 실서비스 규칙 게시와 실계정 검증은 별도 필요하다. 실기기/Chrome 외 브라우저 미검증.

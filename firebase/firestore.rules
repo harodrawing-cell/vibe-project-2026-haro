@@ -55,13 +55,19 @@ service cloud.firestore {
       allow list, update, delete: if false;
     }
     match /notices/{id} {
+      function canManage() {
+        return isAdmin() || (request.auth != null
+          && resource.data.get('authorUid', '') == request.auth.uid);
+      }
       allow read: if true;
-      allow delete: if isAdmin();
+      allow delete: if canManage();
       allow create: if request.auth != null && validNotice()
         && request.resource.data.authorUid == request.auth.uid
         && request.resource.data.author == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.name;
-      allow update: if isAdmin() && validNotice()
-        && request.resource.data.get('authorUid', '') == resource.data.get('authorUid', '');
+      allow update: if canManage() && validNotice()
+        && request.resource.data.get('authorUid', '') == resource.data.get('authorUid', '')
+        && request.resource.data.author == resource.data.author
+        && request.resource.data.createdAt == resource.data.createdAt;
       function validNotice() {
         return
         request.resource.data.keys().hasAll(['id', 'category', 'title', 'content', 'author', 'imageUrl', 'createdAt', 'updatedAt'])

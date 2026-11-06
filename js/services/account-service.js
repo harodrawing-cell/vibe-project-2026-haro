@@ -88,6 +88,10 @@
             transaction.set(userRef, { uid: user.uid });
             transaction.set(emailRef, { uid: user.uid });
           });
+          const saved = await sdk.getDocFromServer(profileRef);
+          if (!saved.exists() || saved.data().role !== 'user') {
+            throw new Error('회원 정보의 role 저장을 확인하지 못했습니다. Firestore users 문서와 최신 보안 규칙을 확인해 주세요.');
+          }
         } catch (error) {
           if (user) {
             // A network error can have an unknown commit result: preserve the identity in that case.

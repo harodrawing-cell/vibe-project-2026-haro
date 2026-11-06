@@ -67,11 +67,12 @@
         });
       },
       update: async (id, changes) => {
-        await auth.requireAdmin();
+        const user = await auth.requireLogin();
         return invoke(({ sdk, db }) => sdk.runTransaction(db, async transaction => {
           const ref = reference(sdk, db, id);
           const current = decode(await transaction.get(ref));
           if (!current) throw new Error('수정할 게시글이 없습니다. NOTICE 목록으로 돌아가 주세요.');
+          if (!common.canManagePost(user, current)) throw new Error('게시글 작성자 본인과 관리자만 수정할 수 있습니다.');
           const fields = common.validateInput({ ...current, ...changes });
           const post = checkSize({ id: current.id, ...fields, author: current.author, createdAt: current.createdAt, updatedAt: new Date().toISOString() });
           if (current.authorUid) post.authorUid = current.authorUid;
@@ -80,10 +81,12 @@
         }));
       },
       remove: async id => {
-        await auth.requireAdmin();
+        const user = await auth.requireLogin();
         return invoke(({ sdk, db }) => sdk.runTransaction(db, async transaction => {
           const ref = reference(sdk, db, id);
-          if (!(await transaction.get(ref)).exists()) throw new Error('삭제할 게시글이 없습니다. NOTICE 목록으로 돌아가 주세요.');
+          const current = decode(await transaction.get(ref));
+          if (!current) throw new Error('삭제할 게시글이 없습니다. NOTICE 목록으로 돌아가 주세요.');
+          if (!common.canManagePost(user, current)) throw new Error('게시글 작성자 본인과 관리자만 삭제할 수 있습니다.');
           transaction.delete(ref);
         }));
       },

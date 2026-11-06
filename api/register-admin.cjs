@@ -28,7 +28,7 @@ async function main() {
       const idRef = db.collection('usernames').doc('admin');
       if ((await tx.get(idRef)).exists) throw new Error('admin 아이디가 이미 등록되어 있습니다.');
       tx.create(idRef, { uid: user.uid });
-      tx.create(db.collection('users').doc(user.uid), { name: '관리자', username: 'admin', email, createdAt: new Date().toISOString() });
+      tx.create(db.collection('users').doc(user.uid), { name: '관리자', username: 'admin', email, role: 'admin', createdAt: new Date().toISOString() });
     });
   } catch (error) { await auth.deleteUser(user.uid); throw error; }
   console.log('Administrator provisioned:', user.uid);
