@@ -12,7 +12,7 @@
 
 ## 기존 시스템 재사용
 
-Firebase 프로젝트·Authentication·Firestore `(default)`와 기존 `HaroAccount`, `HaroNoticeFirebase.getClient()`를 사용한다. 관리자 판별은 보호된 `admins/{UID}.enabled`를 재사용한다. Cloud Functions·Blaze·Storage·새 인증 방식은 추가하지 않는다. 기존 NOTICE·회원·장바구니 데이터는 변경하지 않는다.
+Firebase 프로젝트·Authentication·Firestore `(default)`와 기존 `HaroAccount`, `HaroNoticeFirebase.getClient()`를 사용한다. 관리자 판별은 보호된 `users/{UID}.role == "admin"` 또는 기존 `admins/{UID}.enabled == true`를 사용한다. Cloud Functions·Blaze·Storage·새 인증 방식은 추가하지 않는다. 기존 NOTICE·회원·장바구니 데이터는 변경하지 않는다.
 
 새 폴더를 만들지 않고 페이지는 `pages/notice/`, JS는 `js/services/qna-common.js`, `qna-repository.js`, `qna-page.js`, CSS는 `css/qna.css`에 둔다. NOTICE CSS와 공통 헤더 CSS를 재사용한다. `account-page.js`에는 허용된 로컬 목적지 `qna-write.html`로만 복귀하는 처리를 추가했으며 임의 URL 리디렉션은 허용하지 않는다.
 
@@ -48,3 +48,7 @@ Firebase 프로젝트·Authentication·Firestore `(default)`와 기존 `HaroAcco
 - 화면: 1920/1025/1024/769/768/390/320px에서 목록·상세·폼 가로 넘침 및 헤더 겹침 없음. 1920/390px 스크린샷을 직접 확인했다. 기존 로그인과 NOTICE 브라우저 회귀 검사도 통과했다.
 - 에뮬레이터는 OS 임시 폴더의 Firebase CLI 14.12.0, rules-unit-testing 4.0.1, Firebase 11.10.0, JRE 21을 재사용했다. 프로젝트 운영 의존성을 추가하지 않았다. 테스트 도구 경로를 `HARO_RULES_MODULES`, 로컬 주소를 `FIRESTORE_EMULATOR_HOST=127.0.0.1:8089`로 전달한다. demo 프로젝트만 사용한다.
 - 실제 서버 설정·실제 Authentication 계정 동작·실기기·Chrome 외 브라우저는 미검증이다. 참고 사이트는 도구에서 열리지 않아 기존 HARO NOTICE 디자인을 기준으로 했다.
+
+## 관리자 버튼이 보이지 않을 때 (2026-11-06)
+
+로그인 UID와 같은 users 문서의 role 문자열이 admin이면 관리자다. 별도 admins 문서를 추가할 필요는 없다. 기존 admins/{UID}.enabled:true 설정도 호환된다. 최신 account-service.js는 서버에서 프로필을 다시 읽고 모든 페이지가 갱신된 스크립트 버전을 사용한다. Firebase 콘솔에 최신 firestore.rules를 게시한 뒤 새로고침한다. 회원 프로필은 일반 가입 시 role:user로만 생성할 수 있고 일반 클라이언트 수정은 계속 차단된다. 관리자 권한을 해제할 때는 role을 user로 변경하고 기존 admins 문서의 enabled도 해제해야 한다.

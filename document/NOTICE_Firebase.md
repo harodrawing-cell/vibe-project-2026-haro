@@ -6,7 +6,7 @@
 - 기존 로그인·회원가입 화면과 아이디 로그인을 유지한다. js/services/account-service.js가 웹 SDK로 직접 처리한다.
 - 인증 전용 주소는 `아이디@members.haro.invalid` 형식이다. 입력한 실제 이메일은 Firestore 회원 정보에 저장하며 Auth 콘솔에는 내부 주소가 표시된다. 내부 주소로 메일을 수신할 수 없어 이메일 인증·비밀번호 재설정 메일은 제공하지 않는다. 비밀번호는 Authentication만 관리한다.
 - users/{uid}에 이름·아이디·실제 이메일·role·생성일을 저장한다. 일반 가입의 role은 문자열 user로 고정한다. usernames/{아이디}와 emails/{소문자 실제 이메일}에는 UID를 저장한다. 세 문서를 한 트랜잭션으로 생성해 중복을 방지한다. 회원 목록 조회는 금지하며 중복 확인용 특정 키 get만 공개 허용한다.
-- admins/{uid}의 enabled:true가 관리자 권한의 근거다. 클라이언트 쓰기는 금지한다. 프로필의 admin 필드나 브라우저 상태로 관리자 권한을 얻을 수 없다.
+- users/{uid}의 role:admin 또는 기존 admins/{uid}의 enabled:true가 관리자 권한의 근거다. 클라이언트 쓰기는 금지한다. 프로필의 admin 필드나 브라우저 상태로 관리자 권한을 얻을 수 없다.
 - 네트워크 실패로 가입 커밋 결과가 불명확하면 Auth 계정을 자동 삭제하지 않는다. 미완료 가입으로 ID만 점유된 경우 Auth/Firestore를 콘솔에서 확인해야 한다.
 
 ## 무료 설정 순서 (필수)
@@ -39,7 +39,7 @@
 
 일반 회원도 로그인하면 글쓰기가 가능하다. 수정·삭제는 작성자 UID가 일치하는 회원 또는 관리자만 허용한다. 신규 글에 authorUid를 저장하고 Firebase 규칙에서 인증 UID와 프로필의 작성자 이름을 검사한다. 이 변경을 서버에서 사용하려면 firebase/firestore.rules를 콘솔에서 다시 게시해야 한다. 기존 authorUid 없는 글도 관리자 수정은 가능하다. 로그아웃 버튼은 환영 문구 옆에 표시하며 누르면 세션을 종료하고 화면을 갱신한다.
 
-회원 프로필 필드는 createdAt/email/name/role/username의 문자열 5개다. 일반 가입은 role:user, 관리자 수동 프로필은 role:admin을 사용한다. role 필드 자체는 권한 근거가 아니며 관리자 권한은 기존 보호된 admins/{uid}.enabled 문서로 확인한다. 기존 회원 문서를 자동 변경하지 않는다.
+회원 프로필 필드는 createdAt/email/name/role/username의 문자열 5개다. 일반 가입은 role:user, 관리자 수동 프로필은 role:admin을 사용한다. role은 클라이언트가 변경할 수 없는 Firestore 프로필에서 읽는다. role:admin 또는 기존 admins/{uid}.enabled:true로 관리자 권한을 확인한다. 기존 회원 문서를 자동 변경하지 않는다.
 
 ## 작성자·관리자 수정/삭제 권한
 
@@ -49,3 +49,7 @@
 - firebase/firestore.rules를 Firebase 콘솔에 다시 게시해야 운영 DB에도 새 권한이 적용된다. 이번 작업은 로컬 규칙만 변경하고 실제 서버 규칙이나 게시글은 수정하지 않았다.
 - node tests/notice-permissions-browser.cjs: 임시 브라우저 저장소의 테스트 글로 UI·권한·수정·삭제·반응형 검사.
 - tests/notice-rules.test.cjs: 로컬 Firestore 에뮬레이터에서만 실행하는 실제 규칙 검사. HARO_RULES_MODULES에 firebase와 @firebase/rules-unit-testing이 설치된 경로를 지정하고 FIRESTORE_EMULATOR_HOST=127.0.0.1:포트를 설정한다. 프로젝트 ID는 demo-haro-notice로 고정되어 운영 DB에서 실행하지 않는다. 테스트 도구와 Java는 OS 임시 폴더에만 설치했다.
+
+## 관리자 버튼이 보이지 않을 때 (2026-11-06)
+
+로그인 UID와 같은 users 문서의 role 문자열이 admin이면 관리자다. 별도 admins 문서를 추가할 필요는 없다. 기존 admins/{UID}.enabled:true 설정도 호환된다. 최신 account-service.js는 서버에서 프로필을 다시 읽고 모든 페이지가 갱신된 스크립트 버전을 사용한다. Firebase 콘솔에 최신 firestore.rules를 게시한 뒤 새로고침한다. 회원 프로필은 일반 가입 시 role:user로만 생성할 수 있고 일반 클라이언트 수정은 계속 차단된다. 관리자 권한을 해제할 때는 role을 user로 변경하고 기존 admins 문서의 enabled도 해제해야 한다.
