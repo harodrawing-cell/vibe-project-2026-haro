@@ -142,6 +142,8 @@ test('free login uses Auth password verification; admin comes only from protecte
  await assert.rejects(s.service.login('member01','wrongpass'),/올바르지/);
  await s.service.login('MEMBER01',member.password);assert.equal(await s.service.isAdmin(),false);
  s.docs.get('users/uid1').admin=true;assert.equal(await s.service.isAdmin(),false);
+ s.docs.get('users/uid1').role='admin';assert.equal(await s.service.isAdmin(),true);
+ s.docs.get('users/uid1').role='user';assert.equal(await s.service.isAdmin(),false);
  s.docs.set('admins/uid1',{enabled:true});assert.equal(await s.service.isAdmin(),true);
  await s.service.requireAdmin();await s.service.logout();assert.equal(await s.service.isAdmin(),false);
 });

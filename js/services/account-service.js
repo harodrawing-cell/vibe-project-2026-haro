@@ -12,7 +12,7 @@
     'auth/email-already-in-use': '이미 사용 중인 아이디입니다.',
     'auth/weak-password': '비밀번호는 6자 이상 입력해 주세요.',
     'auth/configuration-not-found': 'Firebase Authentication에서 이메일/비밀번호 로그인을 활성화해 주세요.',
-    'permission-denied': 'Firestore 회원가입 보안 규칙을 먼저 게시해 주세요.',
+    'permission-denied': '회원 정보 접근 권한과 최신 Firestore 보안 규칙을 확인해 주세요.',
     'unavailable': '인터넷 연결을 확인한 뒤 다시 시도해 주세요.',
     'resource-exhausted': '무료 사용 한도에 도달했습니다. 잠시 후 다시 시도해 주세요.',
   };
@@ -40,9 +40,19 @@
     return invoke(async ({ auth, sdkAuth, sdk, db }) => {
       if (registering || !auth.currentUser) return null;
       const user = auth.currentUser;
-      const administrator = await sdk.getDoc(sdk.doc(db, 'admins', user.uid));
-      const profile = await sdk.getDoc(sdk.doc(db, 'users', user.uid));
-      return { uid: user.uid, name: profile.exists() ? profile.data().name : user.displayName || '사용자', admin: administrator.exists() && administrator.data().enabled === true };
+      const profile = await sdk.getDocFromServer(sdk.doc(db, 'users', user.uid));
+      const fields = profile.exists() ? profile.data() : {};
+      let admin = fields.role === 'admin';
+      if (!admin) {
+        try {
+          const administrator = await sdk.getDocFromServer(sdk.doc(db, 'admins', user.uid));
+          admin = administrator.exists() && administrator.data().enabled === true;
+        } catch (error) {
+          // A missing legacy permission rule must not prevent a regular member login.
+          if (error.code !== 'permission-denied') throw error;
+        }
+      }
+      return { uid: user.uid, name: fields.name || user.displayName || '사용자', role:admin ? 'admin' : 'user', admin };
     });
   }
   window.HaroAccount = {
@@ -54,7 +64,7 @@
       return user;
     },
     async isAdmin() { return (await getUser())?.admin === true; },
-    async requireAdmin() { if (!(await this.isAdmin())) throw new Error('관리자만 글쓰기·수정·삭제할 수 있습니다. 관리자 계정으로 로그인해 주세요.'); },
+    async requireAdmin() { if (!(await this.isAdmin())) throw new Error('관리자 권한이 필요한 작업입니다. 관리자 계정으로 로그인해 주세요.'); },
     async getCurrentUserName() { return (await getUser())?.name || '방문자'; },
     checkId(value) {
       const username = normalizeId(value);

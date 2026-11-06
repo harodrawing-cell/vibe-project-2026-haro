@@ -23,7 +23,7 @@ test.before(async()=>{
 test.beforeEach(async()=>{
  await env.clearFirestore();
  await env.withSecurityRulesDisabled(async context=>{
-  for(const uid of ['owner','other','admin','admin2'])await sdk.setDoc(sdk.doc(context.firestore(),'users',uid),{name:name(uid),username:uid,email:uid+'@example.com',role:uid.startsWith('admin')?'admin':'user',createdAt:'2026-11-06T00:00:00.000Z'});
+  for(const uid of ['owner','other','admin','admin2','admin-role'])await sdk.setDoc(sdk.doc(context.firestore(),'users',uid),{name:name(uid),username:uid,email:uid+'@example.com',role:uid.startsWith('admin')?'admin':'user',createdAt:'2026-11-06T00:00:00.000Z'});
   for(const uid of ['admin','admin2'])await sdk.setDoc(sdk.doc(context.firestore(),'admins',uid),{enabled:true});
  });
 });
@@ -55,6 +55,14 @@ test('guest cannot create; another member and administrator cannot edit/delete s
   await assertFails(sdk.deleteDoc(sdk.doc(db(uid),'qnaDetails',post.id)));
  }
  await assertFails(sdk.updateDoc(sdk.doc(db('owner'),'qnaDetails',post.id),{authorUid:'other'}));
+});
+test('a protected profile role admin can read private questions and answer without a legacy admins document',async()=>{
+ const post=await repository('owner').create({...input,isPublic:false});
+ const admin=repository('admin-role');assert.equal((await admin.getById(post.id)).content,input.content);
+ await admin.saveAnswer(post.id,'role 관리자 답변');
+ assert.equal((await repository('owner').getById(post.id)).answer.content,'role 관리자 답변');
+ await assertFails(sdk.updateDoc(sdk.doc(db('other'),'users','other'),{role:'admin'}));
+ await assertFails(sdk.setDoc(sdk.doc(db('other'),'admins','other'),{enabled:true}));
 });
 test('owner edits preserve id, creation date and existing answer; visibility atomically sanitizes public metadata',async()=>{
  const owner=repository('owner'),post=await owner.create(input);
