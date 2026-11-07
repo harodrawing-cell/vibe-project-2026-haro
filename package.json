@@ -1,0 +1,31 @@
+{
+  "name": "haro-react",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5173 --strictPort --open /react.html",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 4173 --strictPort",
+    "test": "node --test tests/react-services.test.js",
+    "test:browser": "node tests/react-browser.cjs",
+    "test:visual": "node scripts/compare-react.cjs",
+    "test:build": "node tests/react-build.cjs",
+    "format": "prettier --write src vite.config.mjs"
+  },
+  "dependencies": {
+    "firebase": "12.6.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-router-dom": "^7.0.0",
+    "swiper": "^12.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.1.2",
+    "playwright": "^1.56.0",
+    "prettier": "^3.9.10",
+    "vite": "^8.3.6"
+  },
+  "overrides": {
+    "@grpc/grpc-js": "^1.13.6"
+  }
+}

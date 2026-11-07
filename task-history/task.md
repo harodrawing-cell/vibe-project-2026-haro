@@ -900,3 +900,140 @@
 - 남은 검증: 실제 iPhone Safari/카카오톡의 HERO 색상 및 클릭, 실서비스 로그인 실패 1회/2회 안내, 가입 후 로그아웃·헤더 상태, 이모티콘/GOODS 조작과 화면 크기 변경 시 getAttribute 오류 재발 여부는 별도 확인이 필요하다. Firebase 도메인 경고 해결과 Pages deploy 시간 초과, Swiper 관련 의심 오류는 각각 구분한다.
 - 참고 실행: https://github.com/harodrawing-cell/vibe-project-2026-haro/actions/runs/42369752576 / https://github.com/harodrawing-cell/vibe-project-2026-haro/actions/runs/42357068774
 - 변경 파일: task-history/task.md만 추가 기록. prompt.txt 및 기존 소스·배포 설정은 변경하지 않았다.
+
+## React 전환 STEP 1 분석
+
+- 날짜: 2026-11-07.
+- 현재 열린 vibe-project-2026-haro-react 루트를 대상으로 사용하고 haro-react 하위 폴더를 만들지 않는다는 최신 지시를 우선했다.
+- README/이력/HARO_SpecKit/관련 PRD 및 기능 명세와 실제 HTML/CSS/JS/JSON·자산·Firebase 코드를 정적으로 분석했다. spec-kit/AGENTS.md는 없으며 기존 이력의 병합 충돌 표시는 보존했다.
+- 분석 결과와 기능/미완성/미사용 구분, 원본 index.html 보존용 별도 React 진입점, 단계별 구현·검증 계획을 document/REACT_MIGRATION.md에 기록했다.
+- node/npm/git은 현재 셸에서 찾지 못했고 일반 설치 경로에서도 Node를 확인하지 못했다. 요청 4항에 따라 설치 승인 전 의존성 설치와 STEP 2 실행은 보류한다. 시스템 전역 설정은 변경하지 않았다.
+- 기존 HTML/CSS/JS/이미지/Firebase 규칙·설정/운영 원격·배포는 수정하지 않았다. 테스트·브라우저 비교·빌드·실계정 및 운영 데이터 변경은 수행하지 않았다.
+- 변경 파일: document/REACT_MIGRATION.md 추가, task-history/task.md 말미 기록 추가.
+
+## HARO React 전환 STEP 2~8
+
+- 작업일: 2026-11-08(한국 시간). 사용자가 설치 완료한 Node26.13.0/npm11.20.0을 현재 셸에서 확인했다. 현재 프로젝트 루트를 사용했으며 haro-react 하위 폴더는 생성하지 않았다.
+- Vite 공식 React JavaScript 템플릿으로 구성을 확인하고 Vite8.3.6/React19.3.1/React Router/Swiper12/Firebase12.6.0을 설치했다. 원본 index.html을 보호하기 위해 react.html을 추가하고 dist에서만 index.html로 변환한다. 템플릿 임시 폴더는 검증 후 제거했다. 시스템 전역 PATH/npm 설정을 바꾸지 않았으며 TLS 검증을 해제하지 않고 세션의 Windows 시스템 CA를 사용했다.
+- 추가 파일: package.json/package-lock.json/vite.config.mjs/react.html/.env.example/README.react.md, src의 layouts/components/sections/pages/hooks/services/contexts/styles/data, document/REACT_VALIDATION.md 및 원본 SHA-256 목록, tests/react-services.test.js/react-browser.cjs/react-build.cjs와 scripts/compare-react.cjs. .gitignore에 의존성·빌드·개인 환경변수·검증 파일 제외를 추가했다.
+- 메인: HEADER/FOOTER, 공지 배너, HERO12컷·125ms/프레임·1.5초, ABOUT, React Swiper EMOTICON/GOODS, STORY 랜덤4개를 컴포넌트로 전환했다. 상태/이벤트와 타이머·관찰자·프레임·구독 정리를 React 수명주기에 연결했다.
+- 서브: NOTICE/Q&A 목록·검색·페이지·상세·작성·수정·삭제·첨부/관리자 답변·공개/비공개, 로그인·가입 중복확인·오류 안내·가입 후 로그아웃 및 완료 화면·수동 복구 안내, 상품/장바구니를 전환했다. 기존 서비스 알고리즘을 ES Module로 옮겼고 기존 데이터 형식과 haro-cart-v1 키를 유지했다. 미등록 가격·결제/주문/배송·통합검색·자동 비밀번호 재설정은 기존의 미지원 상태를 유지한다.
+- 정정: STEP 1의 Canvas 미발견 기록은 HERO에 한정된다. NOTICE 첨부 PNG/JPEG의 WebP 변환은 Canvas를 사용한다. 관리자 판정도 실제 firestore.rules를 재확인해 보호된 users.role:admin 또는 admins.enabled:true를 모두 유지했다. 일반 클라이언트 관리자 생성/프로필 수정 금지 및 기존 서버 규칙은 보존했다. 인증 상태 변경 중 늦게 도착한 프로필 응답이 이전 사용자를 복원하지 않게 확인을 추가했다.
+- 보존: 원본 HTML/CSS/JS/JSON/이미지와 Firebase 설정·규칙의 SHA-256 동일성 테스트 통과. 기존 Git/원격 origin/배포 환경은 유지했다. 실제 계정 생성·운영 데이터 쓰기·DB 마이그레이션·규칙 게시·GitHub commit/push/배포를 수행하지 않았다.
+- 단위/회귀: React5개 및 기존 계정/NOTICE/Q&A/GOODS/STORY 포함36개 통과. 관리자 role/admins 호환과 로그아웃 중 프로필 응답 무효화를 추가 검증했다. npm audit 취약점0건이며 grpc 간접 의존성의 호환 패치 범위를 override했다.
+- Edge: 1920/1024/768/390px에서 메인/목록/계정/상품/장바구니28개+상세/작성/수정24개=52개 화면의 가로 넘침 없음. 실제 외부 Edge 엔진에서 HERO 일반1.5초/모션감소·최종프레임/글자색, 모바일 메뉴·검색 Escape, 배너닫기·여백, 장바구니 합계/수량/재접속/삭제, NOTICE 검색·소유자수정·동일ID·삭제취소/확인, Q&A 비공개거부·소유자열람·관리자답변, 로그인1회/2회실패·수동복구·가입완료, Canvas WebP 변환을 확인했다. 운영 Firebase 요청은 차단하고 브라우저 요청 가로채기로 테스트 대역만 사용했다.
+- Swiper: 실제 열린 페이지에서1920→390→1024→768→1920px 전환과 다음 상품 버튼 이동을 확인했으며 처리되지 않은 예외가 없었다. 52개 검사 최종 콘솔 오류/JavaScript 예외/로컬 자산404는0건이다.
+- 비교: 원본과 React를 같은 조건에서 캡처했다. HERO/ABOUT/EMOTICON/STORY/GOODS의4개 너비×5개 섹션에서 시작 위치와 높이 차이0px. 390/1920px 캡처를 직접 확인했다. STORY는 랜덤이라 이미지 픽셀 일치 대상으로 간주하지 않았다. 세부 버튼/문장 전체의 픽셀 동일성은 주장하지 않는다.
+- 빌드: npm run build 통과, dist/index.html 및 CSS/JS/이미지 산출물 생성. 이미지175개 원본 해시 일치, preview7개 해시 라우트 직접 접근/새로고침 확인. 별도 로컬 정적 서버 /haro/ 하위 경로에서도7개 라우트와 자산 경로 오류0건 확인. HashRouter와 상대 base를 사용한다.
+- 서버: 개발 http://127.0.0.1:5173/react.html 및 빌드미리보기 http://127.0.0.1:4173/ 를 사용자 확인용으로 유지한다. 직접 재실행·Ctrl+C 종료 방법은 README.react.md에 기록했다. 기존 사이트 비교는 개발서버 /index.html이다.
+- 남은 검증: 실계정 Authentication/실제 Firestore 규칙 게시 상태·서버 권한 종단 검증, 실제 iPhone Safari/카카오톡 터치 동작은 미검증. 코드·대역 검증을 운영 검증으로 보고하지 않는다. 배포 설정과 기존 운영 사이트 전환은 수행하지 않았다. 브라우저 증거는 test-results/react에 보관한다.
+
+## HARO React 최종 감사 — 실제 Firebase 비공개 권한 문제 확인
+
+- 날짜: 2026-11-08(KST). 사용자 요청8개 항목의 최종 검증을 수행했다. **배포 판정은 보류**다. 기존 HTML/CSS/JS/JSON/이미지/Firebase 설정·규칙 및 React 앱 소스·빌드는 이번 감사에서 변경하지 않았다. 운영 데이터·계정 변경, push, commit, 배포도 하지 않았다.
+- 추가 감사 코드: tests/react-final-readonly.cjs, tests/react-design-audit.cjs, tests/react-interactions-final.cjs. 문서: document/REACT_MIGRATION.md 최종 검증 절, document/REACT_VALIDATION.md에 최신 보류 판정, 이 작업 이력. 증거는 gitignore 대상 test-results/react-final에 저장했다. 민감한 게시글 본문/제목/작성자/UID/문서ID는 보고 파일에 기록하지 않았다.
+- 진입점: Edge에서5173/react.html의 React container/Fiber와 Home/App/Context/HashRouter 트리를 직접 확인했고 JSX 로드 및 HERO 상태 변경을 확인했다. 4173/에서도 React container/Fiber·컴파일된 assets/react-B9A-SPc9.js 로드와 HERO 상태 변경을 확인했다. 양쪽 모두 legacy js/main.js를 로드하지 않는다. 개발서버5173/는 원본 index.html을 표시하는 것이 의도된 구성이다.
+- 배포 경로: 원본 index.html 보존 때문에 개발 진입점만 react.html이다. vite.config.mjs는 dist에서만 index.html을 생성하므로 dist를 document root로 배포하면 /에서 React를 쓸 수 있다. HashRouter의 /#/notice는 가능하지만 /notice 서버 rewrite를 구현한 것은 아니다. 소스 전체를 원래 Pages 브랜치에 올리는 방식은 React dist 배포와 다르다. 기존 HTML 주소 리디렉트는 미구현이다.
+- 디자인: 1920/1024/768/390px의 메인/NOTICE/Q&A/로그인/가입/상품/장바구니28쌍=56개 화면을 같은 대역·고정랜덤 조건에서 비교 캡처했다. React 가로 넘침0건. 메인5개 섹션의 시작위치·높이 일치. 그러나 가입 설명/비밀번호 도움말/이메일 안내/로그인 링크가 달라 높이 약+32.81px, GOODS의 수업용·가격 안내 생략과 초기 옵션 미선택으로 main이 너비별 약80~154px 짧고 담기 버튼 초기 상태도 다르다. CART breadcrumb/저장 안내·빈 버튼 primary 차이, NOTICE 안내/breadcrumb/빈 문구 차이, 검색 하단 브랜드 전문·이메일·SNS아이콘·copyright 누락 및 긴 상품명 줄바꿈, STORY의 이전 aria-live 로딩 안내 잔류를 확인했다. 차이는 수정하지 않고 상세 표로 기록했다. 390px 가입/상품/검색 원본·React 캡처를 직접 확인했다.
+- 실제 Firebase: 별도 비로그인 Edge 임시 프로필에서 haro-web-project/(default)에 실제 읽기만 수행했다. Auth 초기화 정상/signedIn:false, NOTICE7개와 Q&A공개목록2개, 공개 Q&A본문 조회 성공. dev/build 실제 UI에서도 NOTICE총7개/Q&A총2개를 표시했다. 비공개 메타는 제목/작성자를 마스킹하고 본문/답변 필드가 없었다.
+- **중대 권한 실패:** qnaList가 비공개로 표시하고 qnaDetails.isPublic도 false인 실제 문서가 비로그인 getDocFromServer에서 읽혔다. 해당 본문과 답변을 Authorization 헤더 없이 credentials:omit REST GET으로 독립 확인했으며 모두 HTTP200이었다. React 저장소 getById는 실제 같은 비공개 질문에 작성자/관리자 전용 안내로 거부하지만 직접 API 읽기를 보호하지 못한다. 서버 규칙 보안 검증 실패이며 로컬 UI/대역 통과와 구별한다.
+- 서버 규칙: 로컬 firestore.rules의 qnaReadable 및 qnaDetails/qnaAnswers allow get은 비공개를 작성자/관리자로 제한한다. 실제 서버 읽기는 그 정책과 다르다. users/admins의 존재하지 않는 감사용ID 읽기도 permission-denied 대신 exists:false 정상응답이었으나 실제 회원 프로필을 읽었다는 의미는 아니다. 콘솔의 배포된 규칙·광범위 wildcard allow·게시 버전·DB를 확인해야 한다. 콘솔 내용을 조회하지 못했으므로 정확한 잘못된 규칙 위치/이력은 단정하지 않았고 규칙 게시도 하지 않았다.
+- 실계정 미완료: 전용 로그인 계정이 없으며 회원가입·CRUD·관리자 답변 저장은 실제 Auth/Firestore 변경을 수반하므로 사용자 데이터 보존 조건에 따라 미실행했다. 실제 본인/타인/관리자 쓰기 허용/거부를 검증했다고 보고하지 않는다. 승인된 전용 계정·별도 테스트 데이터 또는 에뮬레이터에서 후속 검증이 필요하다.
+- 쇼핑/모션: dev와build 각각 격리 localStorage에 노트2개를 담아 haro-cart-v1 quantity2/배지2, 재접속 후2 유지,3개 증가시 배지3/합계16500원 확인. 원래 사용자 브라우저 저장소는 사용하지 않았다. EMOTICON/GOODS 다음0→1/이전1→0, 기존 브라우저 검사에서 데스크톱·모바일 왕복 리사이즈 통과. DOM src 기록으로 BOX_001~012 전체 순서와 개발약1510ms/빌드약1518ms 재생, 스크롤 초기화 확인.
+- 재실행: npm test5개 통과(원본229개 SHA-256 포함), 대역 기반 브라우저52개 화면 및 주요 기능 검사 재통과, dist 이미지175개 해시와 /haro/ 하위7개 라우트 직접 접근/새로고침/404없음 재통과. 실제 Firebase 보안 실패는 이 로컬 통과와 별개다.
+- iPhone 미완료: Safari/카카오톡에서 CLICK 색상·터치/프레임 decode, 주소창·회전·safe-area, 메뉴/검색/키보드와 포커스 복귀, Swiper 손가락 스와이프, 사생활 보호 모드 localStorage/배지, 보안 수정 후 실계정 유지/권한, VoiceOver STORY 안내를 확인해야 한다. Edge390px 결과를 실기기 검증으로 표시하지 않았다.
+- 우선순위: 1) 배포 차단—비공개 Q&A 서버 읽기 권한. 2) 배포 전 보완—디자인/안내·초기 옵션 동작·STORY 접근성 차이. 3) 미검증—실계정/서버 쓰기/실제 iPhone. 상세 증거·절차는 document/REACT_MIGRATION.md에 정리했다. 운영 설정·데이터 변경 없이 감사 결과만 전달한다.
+
+## Firebase Q&A 비공개 보안 규칙 수정 후보 및 Emulator 검증
+
+- 날짜: 2026-11-08(KST). 사용자 요청에 따라 원인을 재검증하고 로컬 전체 운영 규칙 후보를 작성했다. **운영 게시·GitHub push·React 배포는 미실행**이다. 실제 데이터/계정을 변경하지 않았다.
+- 원인: 사용자가 Firebase Console에서2026-12-06까지 모든 문서의 읽기·쓰기를 허용하는 운영 정책을 확인했다. 기존 로컬 firestore.rules의 제한이 실제 서버에 적용되지 않은 상태다. 겹치는 전체 allow는 개별Q&A deny로 취소할 수 없어 전체 허용 정책을 제거한 전체 규칙 교체가 필요하다. 정확한 Console 원문 문자열은 제공되지 않아 배포된 원문의 줄단위 diff/게시이력은 단정하지 않았다.
+- 실제 REST 재확인: Authorization/Firebase ID Token/OAuth/서비스 계정 없이 credentials:omit GET. 비공개 qnaDetails isPublic:false 문서의 실제 title9자/content38자, 해당 답변 content39자 필드가 HTTP200으로 반환됐다. 개인 원문·UID/문서ID는 보고서에 남기지 않았으며 실제 운영 쓰기는 수행하지 않았다. 이는 서비스 계정 우회가 아닌 무인증 접근이다.
+- 백업: firebase/backups/20261108/local-before.rules에 수정 전 로컬전체파일 보존, 원본SHA256 e70b9f36741c6ec13d22a4f760b5930f554bb4ba038cd1fc5f38feb526e6ecfc. 관리API 비인증 조회는403/PERMISSION_DENIED였고 운영 원문을 반환하지 않았다. 사용자의 전체허용 정책 확인을 백업README에 구분해 기록했다. 실제 운영 원문은 게시 전 Console에서 별도로 복사해야 하며 로컬백업을 운영백업이라고 보고하지 않는다.
+- 규칙 변경: firebase/firestore.rules의 qnaReadable(id,d)가 목록과 상세 모두공개인 경우에만 공개 읽기를 허용하고 공개플래그 불일치는 비공개로 처리한다. 비공개 본문/답변은 본인/보호된관리자만, qnaDetails/qnaAnswers의 list는명시거부. 미등록경로 read/write:false 추가. 후보에는 날짜기반 전체allow가 없다. NOTICE 및 users/usernames/emails/admins 기존규칙 블록은 원본과 동일함을 자동비교했다. firebase.json도 변경하지 않았다.
+- 유지: users의 role:user 생성강제/클라이언트수정금지, username/email 정확키 중복체크/가입3문서원자저장, 보호된role/admins 관리자확인, Q&A질문 본인만수정삭제/관리자는답변만, 빈답변자리 생성/답변내용삭제를waiting으로복원, 전체질문삭제시3문서정리를 유지했다. HTML/CSS/JS/JSON/이미지/React앱소스·UI/회원계정·운영게시글·장바구니는 바꾸지 않았다.
+- 테스트 추가: tests/qna-security.test.cjs14개. 기존 tests/notice-rules.test.cjs6개+qna-rules.test.cjs7개와 함께 **실제 Emulator27개 모두통과**. 필수10개(방문자공개허용/비공개차단/타인차단/본인허용/관리자허용/비로그인생성차단/본인CRUD/타인변경차단/회원답변차단/관리자답변작성수정삭제)와 UID/role/admins위조·공개메타누출·불일치공개플래그·전체조회·미등록경로차단 확인.
+- Emulator REST: 무인증공개GET200, 무인증/타인 비공개본문·답변GET403 PERMISSION_DENIED 및fields없음, 본인/role관리자/기존admins관리자200. 실제서비스계정/Bearer owner 우회토큰은 쓰지 않았다. 인증REST는 로컬demo프로젝트 전용unsigned사용자토큰이며, SecurityRulesDisabled는 초기테스트자료만 준비했다.
+- 최초실행에서 이미answered인 문서에 answered를 다시 쓰는 no-op을 거부할것으로 기대한 테스트1개를 발견했다. 실제 답변과 불일치하는 waiting 위조요청으로 수정한 후27개통과했다. 권한을 느슨하게 바꾸어 테스트를 통과시키지 않았다.
+- 환경: firebase.security-emulator.json 및 scripts/test-security.ps1 추가, 운영firebase.json은유지. OS임시폴더에 firebase-tools14.12.0/rules-unit-testing4.0.1/Firebase11.10.0/JRE21.0.13 격리사용. 전역PATH/HOME/npm설정을변경하지않았으며 CLI캐시/설정도임시경로만사용. 테스트는127.0.0.1:8089의demo프로젝트만대상으로하고종료완료.
+- 기타변경: tests/react-final-readonly.cjs에 실제응답content필드/길이 및인증유형기록 추가. tests/react-services.test.js의 원본검사에서 승인된규칙변경만 분리하여 기존전체백업해시 및NOTICE/계정규칙동일성을 검사하도록 보완. scripts/download-security-tools.cjs는 공식JRE를임시폴더에받는보조도구이며 앱코드가아니다.
+- 회귀: 계정/NOTICE/Q&A/GOODS/STORY/React서비스36개통과, 원본프론트·자산·Firebase설정보존확인. 브라우저52개화면과HERO12컷1.5초/Swiper라이브리사이즈·조작/장바구니·로그인·NOTICE/Q&A대역기능재통과. npm run build 성공, 동일React번들생성. 보안수정으로디자인/React기능은변경하지않았다.
+- 산출물: 전체Console게시후보 firebase/firestore.rules(SHA256 c7098adb43f76171f35bd7c1bb84f0e43ac18f831964f5b8728c2de33a2ae644). document/QNA_SECURITY_FIX.md에 전체파일링크·전후설명·권한표·테스트표·백업상태·승인후Console전체교체절차 기록. document/REACT_MIGRATION.md 및REACT_VALIDATION.md에최신상태추가. 증거test-results/security/emulator-tests.log/live-before.json.
+- 미완료/판정: 운영원문백업→후보비교→사용자게시승인→규칙게시→실서버무인증REST403/공개200 및본인·타인·관리자권한재검증이남아있다. 운영규칙미적용이므로 실서버문제가해결됐다고주장하지않으며 React운영배포도보류한다. 데이터쓰기/신규가입검증은전용계정과테스트자료범위를승인받은뒤수행한다. 실제iPhone/기존디자인차이는앞서기록한미완료로유지한다.
+
+## Firebase Console 적용 전 최종 규칙 재확인 및 게시 안내
+
+- 날짜: 2026-11-08(KST). 사용자 요청에 따라 firebase/firestore.rules 전체를 다시 읽고 SHA-256 c7098adb43f76171f35bd7c1bb84f0e43ac18f831964f5b8728c2de33a2ae644가 Emulator27개 통과 후보와 같음을 확인했다. 규칙 코드는 추가 변경하지 않았다.
+- npm test5개 재실행 통과. 원본 프론트/자산/설정 보존, 규칙 변경 전 전체 백업, NOTICE/계정 규칙 블록 보존과 React 인증·장바구니·Q&A 검증 확인. 앞서 완료한 Emulator27개/회귀36개/브라우저52개 결과와 운영 실계정 검증을 구분했다.
+- Firebase Console에서 haro-web-project/(default) Rules 원문을 별도 deployed-before.rules로 복사한 뒤 후보 전체로 교체하고, 기존 날짜 기반 전체 허용을 남기지 않는 절차를 안내했다. 게시 전 승인을 유지하며 실제 Publish는 누르거나 호출하지 않았다.
+- document/QNA_SECURITY_FIX.md에 게시 후 node tests/react-final-readonly.cjs 읽기 전용 검증 명령과 보고서의 privateDetail/privateAnswer REST403/contentFieldPresent:false 확인 경로를 추가했다. 기존 NOTICE/Q&A 공개 조회 유지 및 실제 서버 비공개 차단 검증을 안내했다.
+- 신규 회원가입·게시글 CRUD는 실제 데이터 변경을 수반하므로 운영에서는 실행하지 않았다. 작성자/타인/관리자 읽기 및 허가된 기존 계정 로그인은 운영 게시 후 별도 확인하며, 기존 데이터 불변 조건에서는 가입/쓰기의 Emulator 통과를 실서버 검증으로 보고하지 않는다.
+- 기존 데이터/계정/인덱스/Authentication 설정 변경 없음. 규칙 운영 게시, GitHub Push, React 배포 없음. 사용자에게 먼저 최종 전체 코드 파일과 백업·게시·확인 절차를 제시한다.
+
+## Console 게시 완료 알림 후 실제 Firebase 읽기 전용 검증
+
+- 날짜: 2026-11-08 01:19~01:22(KST). 사용자가 최종 규칙 게시 완료를 알려 실제 haro-web-project/(default)에 검증했다. **비공개 접근 차단은 실패했으며 React 배포 보류**다. 사용자의 게시 행위 자체를 부정하지 않으며 실제 게시된 원문/대상/반영 상태는 관리 인증이 없어 직접 조회하지 못했다.
+- 실제 실행: tests/react-final-readonly.cjs를 새 Edge 임시컨텍스트에서 실행. 인증/DB 테스트대역 없이 운영 SDK 및REST로 비공개qnaDetails(isPublic:false)와qnaAnswers를 읽었고 둘다HTTP200/content필드존재(본문38자/제목9자/답변39자)였다. 원문/문서ID/UID/개인정보는 출력·저장하지 않았다.
+- 독립확인: scripts/verify-live-qna-rest.cjs 추가. 별도Node프로세스에서 API키/SDK/브라우저프로필/Authorization/쿠키/Firebase ID Token/서비스계정 없이 직접REST GET, Cache-Control:no-cache 사용. 재실행최종2026-11-08 01:21:59 KST(서버Date01:21:57), 비공개본문·답변모두200/content존재/privateReadBlocked:false. 기존브라우저화면캐시만의문제가아님을확인했다.
+- 정상범위: NOTICE실서버7개·Q&A공개목록2개와공개상세조회성공. dev5173/build4173 실제UI에도각총7개/총2개표시. 비공개공개메타마스킹유지. React getById는비공개전용오류로차단하지만직접API읽기보호실패와구분한다.
+- 인증읽기: Auth초기화정상/signedIn:false. tests/react-final-readonly.cjs에가입용ID중복조회(account.checkId의합성ID)와합성email키정확문서조회를추가했고실서버조회성공. 실제로그인·가입·인증유지정상으로확대해석하지않는다. users/admins의존재하지않는감사용문서읽기는정상exists:false여서후보의비로그인거부기대와불일치하나실제회원정보를조회했다는의미는아니다.
+- 미검증: 테스트계정이없어본인/타인/관리자의실서버읽기와로그인성공·세션유지미검증. 가입/게시글·답변CRUD는운영데이터변경금지에따라미실행. 이전Emulator27개통과와운영서버검증을구분한다.
+- 다음확인: Console의haro-web-project/(default)대상·게시된전체원문·전체allow잔류·게시시간/상태를확인해야한다. 대상착오/불완전교체/전파지연등구체원인을단정하지않았다. 로컬후보해시는기존c7098adb43f76171f35bd7c1bb84f0e43ac18f831964f5b8728c2de33a2ae644와동일하며추가규칙변경·게시는하지않았다.
+- 기록/증거: document/REACT_MIGRATION.md에실행표·인증유형·최종시각·미검증추가, QNA_SECURITY_FIX.md/REACT_VALIDATION.md최신상태갱신. test-results/security/production-postpublish-browser.json, production-postpublish-rest.json, production-postpublish-browser-run.log 보관. 실제Firebase데이터/계정/설정변경없음, GitHub Push/React배포없음.
+
+
+## 2026-11-08 Account privacy and permission review
+
+See [full review](../document/SECURITY_REVIEW_20261108.md). Auth/Firestore Emulator: 30/30 passed; regression: 36/36 passed. Production read-only check at 01:34:33 KST: private Q&A body and answer SDK denied, REST403, no content fields; public NOTICE7 and Q&A2 readable, private metadata masked. This supersedes earlier200 observations. New reservation read restrictions are local only; production administrator legitimacy audit, real account login and writes remain unverified. No production data/rules changes, push or deployment.
+
+
+## 2026-11-08 Production administrator audit and release checklist
+
+Prepared [operator checklist](../document/PRODUCTION_SECURITY_CHECKLIST.md): read-only audit of both administrator sources, approved remediation and backup, Console-versus-local full-text comparison, postpublish G/A/B/M account test matrix, and residual privacy backlog AUTH-PRIVACY-01. Exact production rules equality and administrator legitimacy remain unverified. Previous Emulator30/regression36 and production private REST403 results are historical evidence, not newly rerun or full production acceptance. No account/data/rule mutations, push or deployment.
+
+
+## 2026-11-08 Latest published rules: production read-only verification
+
+[Execution report](../document/LATEST_PUBLISH_VERIFICATION.md): 01:51:00 KST fresh Edge session; private Q&A body/answer SDK permission-denied and unauthenticated REST403, content absent. Public NOTICE7/Q&A2 and masked private metadata confirmed. Guest profile/admin reads denied, synthetic signup availability lookups succeeded. Actual login/admin identities not tested (no test credentials); signup and CRUD not run (production mutation prohibited). Production rules source equality not independently verified. No production data/account/rules modifications, push or deployment. Evidence: test-results/security/latest-publish-readonly.json and latest-publish-readonly.log.
+
+
+## 2026-11-08 Member/admin operational acceptance procedure
+
+Prepared [member/admin test and cleanup guide](../document/MEMBER_ADMIN_ACCEPTANCE.md), covering existing login/session, dedicated signup, A/B/G private reads, owner CRUD, admin answer and answered/waiting transitions, dedicated test IDs and approval-based cleanup. No production tests or mutations were executed in this documentation step. Prior evidence remains Emulator30/regression36 and production read-only at 01:51 KST. Real login/signup and authenticated permissions/writes/cleanup remain pending; administrator audit and exact deployed-source comparison remain pending. No production data/account changes, push or React deployment.
+
+
+## 2026-11-08 Member A real-browser acceptance: PASS (user-reported)
+
+User confirmed all five checks passed: A login; session retained after reload; private Q&A creation and Firebase save; owner private-detail read; public list title masked. These are completed user-executed production checks, not agent-observed automated results. See [result and next steps](../document/MEMBER_A_TEST_RESULT.md). Exact execution time and test document ID were not supplied. B private access denial and M answer create/edit/remove with answered/waiting transitions remain pending. Other untested items remain pending. Only the user-created test question is in scope for eventual separately agreed cleanup; no data/account/rule changes, deletions, push or deployment were performed by the agent.
+
+
+## 2026-11-08 Member B private-question access: PASS (user-reported)
+
+User logged in as member B and confirmed the body of member A private Q&A question could not be viewed. Mark this specific check as passed by actual user browser testing, not agent-observed automation. See [B test result](../document/MEMBER_B_TEST_RESULT.md). Exact execution time/document ID/server status were not supplied. Answer access and post-answer recheck are not inferred. Pending: A question edit/delete; M answer create/edit/remove and answered/waiting transitions. Complete M tests before deleting only the exact A-owned user-created test question. No production data/account/rule modifications or deletions, GitHub push or React deployment by the agent.
+
+## 2026-11-08 실제 브라우저 Q&A 검증 완료 보고 추가
+
+- 기록일·사용자 실행 완료 보고일: **2026-11-08(KST)**. 기존 기록은 유지하고 이번 결과만 추가했다. 사용자 실행 보고이며 에이전트 직접 관찰 결과가 아니다. 정확한 실행 시각·문서 ID는 미제공이다.
+- **PASS:** 회원 B가 A의 비공개 질문 본문을 읽을 수 없음. 앞선 명시적 정상 결과를 근거로 검증 완료일은 2026-11-08로 기록한다.
+- **실행 완료·판정 확인 필요:** A의 본인 질문 수정/저장, M의 답변 등록/수정 및 answered 전환, M의 답변 삭제 및 waiting 전환, A의 테스트 질문 삭제/목록 반영. 실행 완료는 보고받았으나 항목별 기대 동작의 실제 정상 여부는 미명시이므로 PASS나 실패로 추정하지 않는다. 이 4항목의 PASS 완료일은 아직 미확정이다.
+- 확인된 기존 기능: A 로그인·새로고침 후 세션 유지·비공개 질문 작성/저장·본인 열람·목록 제목 마스킹, B의 본문 접근 차단.
+- 남은 사항: 4단계 정상 여부 명시 확인, 삭제 후 세 Q&A 문서 정리 확인, 답변 이후 B 접근 차단, 신규 가입, 관리자 정당성/예약문서 감사·Console 전체 규칙 비교, AUTH-PRIVACY-01·실제 iPhone/디자인 검증. 전체 운영 보안 완료로 판정하지 않는다.
+- 상세 표: [REACT_MIGRATION.md](../document/REACT_MIGRATION.md)의 이번 추가 절. 수정 파일은 이 문서와 document/REACT_MIGRATION.md 두 개다. 운영 데이터·회원·규칙 변경/삭제, GitHub Push·React 배포 없음.
+
+## 2026-11-08 회원 Q&A 실제 브라우저 검증 최종 확정 — 5개 모두 PASS
+
+**검증 완료일: 2026-11-08(KST). 최종 결과: 전 항목 PASS, 오류 없음.** 사용자 직접 실행 결과의 명시적 최종 보고를 반영했다. 에이전트 재실행 결과가 아니다. 기존 기록은 유지하며 이전 ‘판정 확인 필요’ 4개 항목은 이번 보고로 완료 확정한다.
+
+| 테스트 항목 | 결과 | 완료일 |
+|---|---|---|
+| 회원 B의 회원 A 비공개 질문 접근 차단 | **PASS** | 2026-11-08 |
+| 회원 A 본인 질문 수정·저장·새로고침 후 내용 유지 | **PASS** | 2026-11-08 |
+| 관리자 M 답변 등록·수정 및 답변완료 상태 | **PASS** | 2026-11-08 |
+| 관리자 M 답변 삭제 및 답변대기 상태 | **PASS** | 2026-11-08 |
+| 회원 A 테스트 질문 삭제 및 목록 반영 | **PASS** | 2026-11-08 |
+
+확인된 기능: 타인 비공개 접근 차단, 작성자 수정·저장 유지·삭제, 관리자 답변 관리와 답변완료/답변대기 상태 전환. 이 5개 항목의 보고된 문제는 없다.
+
+범위 밖 잔여 사항: 삭제 후 세 문서의 고아 문서 직접 확인, 답변 이후 B 재접근, 신규 가입, 관리자 정당성·예약문서 오염 감사, Console 규칙 원문 비교, AUTH-PRIVACY-01, 실제 iPhone/디자인 검증. 전체 보안 및 배포 준비 완료로 확대 판정하지 않는다.
+
+수정 파일: document/REACT_MIGRATION.md, task-history/task.md. 문서 추가만 수행했다. 사용자 테스트 질문 삭제 결과를 기록했으며 에이전트의 운영 데이터·회원 변경/삭제는 없다. 기능 코드 수정·규칙 게시·GitHub Push·React 배포 없음.

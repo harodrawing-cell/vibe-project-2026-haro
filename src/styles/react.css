@@ -1,0 +1,22 @@
+/* React-only adjustments; original stylesheets are preserved. */
+#root {
+  min-height: 100vh;
+}
+.notice-body {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.react-error {
+  max-width: 900px;
+  margin: 60px auto;
+  padding: 24px;
+}
+.product-form-fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.notice-message[data-error='true'] {
+  color: #a33333;
+}

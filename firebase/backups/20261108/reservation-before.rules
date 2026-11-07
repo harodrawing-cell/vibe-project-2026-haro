@@ -1,0 +1,186 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null && (
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid))
+          && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', 'user') == 'admin')
+        || (exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+          && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.enabled == true));
+    }
+    function ownProfile() {
+      return getAfter(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    match /admins/{uid} {
+      allow get: if request.auth != null && request.auth.uid == uid;
+      allow list, write: if false;
+    }
+    match /users/{uid} {
+      allow get: if request.auth != null && request.auth.uid == uid;
+      allow create: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.keys().hasAll(['name', 'username', 'email', 'role', 'createdAt'])
+        && request.resource.data.keys().hasOnly(['name', 'username', 'email', 'role', 'createdAt'])
+        && request.resource.data.role == 'user'
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 2 && request.resource.data.name.size() <= 30
+        && request.resource.data.username is string
+        && request.resource.data.username.matches('^[a-z0-9][a-z0-9_]{3,19}$')
+        && request.resource.data.username != 'admin'
+        && request.auth.token.email == request.resource.data.username + '@members.haro.invalid'
+        && request.resource.data.email is string
+        && request.resource.data.email.size() <= 254
+        && request.resource.data.email.matches('^[^ /@]+@[^ /@]+[.][^ /@]+$')
+        && request.resource.data.email == request.resource.data.email.lower()
+        && request.resource.data.email != 'admin.com@company.co.kr'
+        && request.resource.data.createdAt is string && request.resource.data.createdAt.size() == 24
+        && !exists(/databases/$(database)/documents/usernames/$(request.resource.data.username))
+        && !exists(/databases/$(database)/documents/emails/$(request.resource.data.email))
+        && getAfter(/databases/$(database)/documents/usernames/$(request.resource.data.username)).data.uid == uid
+        && getAfter(/databases/$(database)/documents/emails/$(request.resource.data.email)).data.uid == uid;
+      allow list, update, delete: if false;
+    }
+    match /usernames/{username} {
+      // Exact-key duplicate checks only. Never expose a member directory.
+      allow get: if true;
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['uid'])
+        && request.resource.data.uid == request.auth.uid
+        && ownProfile().username == username;
+      allow list, update, delete: if false;
+    }
+    match /emails/{email} {
+      allow get: if true;
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['uid'])
+        && request.resource.data.uid == request.auth.uid
+        && ownProfile().email == email;
+      allow list, update, delete: if false;
+    }
+    // Q&A is independent of NOTICE. Public metadata never contains private titles or bodies.
+    function qnaFields(d) {
+      return d.keys().hasAll(['category', 'title', 'content', 'author', 'authorUid', 'isPublic', 'createdAt', 'updatedAt'])
+        && d.keys().hasOnly(['category', 'title', 'content', 'author', 'authorUid', 'isPublic', 'createdAt', 'updatedAt'])
+        && d.category in ['이모티콘 문의', '굿즈 문의', '캐릭터 문의', '협업·제휴 문의', '기타 문의']
+        && d.title is string && d.title.size() > 0 && d.title.size() <= 120
+        && d.content is string && d.content.size() > 0 && d.content.size() <= 30000
+        && d.author is string && d.author.size() > 0 && d.author.size() <= 120
+        && d.authorUid is string && d.authorUid.size() > 0
+        && d.isPublic is bool
+        && d.createdAt is string && d.createdAt.size() == 24
+        && d.updatedAt is string && d.updatedAt.size() == 24;
+    }
+    function qnaMirror(l, d) {
+      return l.keys().hasAll(['category', 'title', 'author', 'authorUid', 'isPublic', 'createdAt', 'updatedAt', 'status'])
+        && l.keys().hasOnly(['category', 'title', 'author', 'authorUid', 'isPublic', 'createdAt', 'updatedAt', 'status'])
+        && l.category == d.category && l.authorUid == d.authorUid && l.isPublic == d.isPublic
+        && l.createdAt == d.createdAt && l.updatedAt == d.updatedAt
+        && l.title == (d.isPublic ? d.title : '비공개 질문입니다')
+        && l.author == (d.isPublic ? d.author : '비공개');
+    }
+    function qnaStatus(id, l) {
+      return l.status == (getAfter(/databases/$(database)/documents/qnaAnswers/$(id)).data.content == '' ? 'waiting' : 'answered');
+    }
+    function qnaReadable(id, d) {
+      // Fail closed when legacy/manual edits disagree about visibility.
+      // A public list entry never grants access to a private body or answer.
+      return (d.get('isPublic', false) == true
+          && exists(/databases/$(database)/documents/qnaList/$(id))
+          && get(/databases/$(database)/documents/qnaList/$(id)).data.get('isPublic', false) == true)
+        || (request.auth != null && request.auth.uid == d.get('authorUid', ''))
+        || isAdmin();
+    }
+    function qnaOwner(d) {
+      return request.auth != null && request.auth.uid == d.authorUid;
+    }
+    function qnaAnswerFields(a) {
+      return a.keys().hasAll(['content', 'author', 'authorUid', 'createdAt', 'updatedAt'])
+        && a.keys().hasOnly(['content', 'author', 'authorUid', 'createdAt', 'updatedAt'])
+        && a.content is string && a.content.size() <= 30000
+        && ((a.content == '' && a.author == '' && a.authorUid == '' && a.createdAt == '' && a.updatedAt == '')
+          || (a.content.size() > 0 && a.author is string && a.author.size() > 0 && a.author.size() <= 120
+            && a.authorUid is string && a.authorUid.size() > 0
+            && a.createdAt is string && a.createdAt.size() == 24
+            && a.updatedAt is string && a.updatedAt.size() == 24));
+    }
+    match /qnaList/{id} {
+      allow read: if true;
+      allow create: if qnaOwner(request.resource.data)
+        && qnaMirror(request.resource.data, getAfter(/databases/$(database)/documents/qnaDetails/$(id)).data)
+        && request.resource.data.status == 'waiting' && qnaStatus(id, request.resource.data);
+      allow update: if qnaMirror(request.resource.data, getAfter(/databases/$(database)/documents/qnaDetails/$(id)).data)
+        && qnaStatus(id, request.resource.data)
+        && ((qnaOwner(resource.data) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['category', 'title', 'author', 'isPublic', 'updatedAt']))
+          || (isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])));
+      allow delete: if qnaOwner(resource.data)
+        && !existsAfter(/databases/$(database)/documents/qnaDetails/$(id))
+        && !existsAfter(/databases/$(database)/documents/qnaAnswers/$(id));
+    }
+    match /qnaDetails/{id} {
+      allow get: if qnaReadable(id, resource.data);
+      allow list: if false;
+      allow create: if qnaOwner(request.resource.data) && qnaFields(request.resource.data)
+        && request.resource.data.author == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.name
+        && qnaMirror(getAfter(/databases/$(database)/documents/qnaList/$(id)).data, request.resource.data);
+      allow update: if qnaOwner(resource.data) && qnaFields(request.resource.data)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['category', 'title', 'content', 'isPublic', 'updatedAt'])
+        && qnaMirror(getAfter(/databases/$(database)/documents/qnaList/$(id)).data, request.resource.data);
+      allow delete: if qnaOwner(resource.data)
+        && !existsAfter(/databases/$(database)/documents/qnaList/$(id))
+        && !existsAfter(/databases/$(database)/documents/qnaAnswers/$(id));
+    }
+    match /qnaAnswers/{id} {
+      allow get: if qnaReadable(id, get(/databases/$(database)/documents/qnaDetails/$(id)).data);
+      allow list: if false;
+      allow create: if qnaOwner(getAfter(/databases/$(database)/documents/qnaDetails/$(id)).data)
+        && !exists(/databases/$(database)/documents/qnaDetails/$(id))
+        && qnaAnswerFields(request.resource.data) && request.resource.data.content == ''
+        && qnaStatus(id, getAfter(/databases/$(database)/documents/qnaList/$(id)).data);
+      allow update: if isAdmin() && qnaAnswerFields(request.resource.data)
+        && existsAfter(/databases/$(database)/documents/qnaDetails/$(id))
+        && qnaStatus(id, getAfter(/databases/$(database)/documents/qnaList/$(id)).data)
+        && (request.resource.data.content == '' ||
+          (request.resource.data.authorUid == request.auth.uid
+            && request.resource.data.author == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.name
+            && (resource.data.content == '' || (resource.data.authorUid == request.auth.uid && request.resource.data.createdAt == resource.data.createdAt))));
+      allow delete: if qnaOwner(get(/databases/$(database)/documents/qnaDetails/$(id)).data)
+        && !existsAfter(/databases/$(database)/documents/qnaDetails/$(id))
+        && !existsAfter(/databases/$(database)/documents/qnaList/$(id));
+    }
+    match /notices/{id} {
+      function canManage() {
+        return isAdmin() || (request.auth != null
+          && resource.data.get('authorUid', '') == request.auth.uid);
+      }
+      allow read: if true;
+      allow delete: if canManage();
+      allow create: if request.auth != null && validNotice()
+        && request.resource.data.authorUid == request.auth.uid
+        && request.resource.data.author == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.name;
+      allow update: if canManage() && validNotice()
+        && request.resource.data.get('authorUid', '') == resource.data.get('authorUid', '')
+        && request.resource.data.author == resource.data.author
+        && request.resource.data.createdAt == resource.data.createdAt;
+      function validNotice() {
+        return
+        request.resource.data.keys().hasAll(['id', 'category', 'title', 'content', 'author', 'imageUrl', 'createdAt', 'updatedAt'])
+        && request.resource.data.keys().hasOnly(['id', 'category', 'title', 'content', 'author', 'authorUid', 'imageUrl', 'createdAt', 'updatedAt'])
+        && request.resource.data.id == id
+        && request.resource.data.category in ['공지사항', '이모티콘', '굿즈', '사이트 소식']
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0 && request.resource.data.title.size() <= 120
+        && request.resource.data.content is string
+        && request.resource.data.content.size() > 0 && request.resource.data.content.size() <= 30000
+        && request.resource.data.author is string
+        && request.resource.data.author.size() > 0 && request.resource.data.author.size() <= 120
+        && request.resource.data.imageUrl is string
+        && request.resource.data.imageUrl.size() <= 950000
+        && request.resource.data.createdAt is string && request.resource.data.createdAt.size() == 24
+        && request.resource.data.updatedAt is string && request.resource.data.updatedAt.size() == 24;
+      }
+    }
+    // No broad allow rule may be merged above this fallback. Rules grants are ORed.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
