@@ -671,7 +671,7 @@
   }
 }
 
-:is(button:not(:disabled), .emoticon__button, .story__instagram, .goods__shop-link):is(
+:is(button:not(:disabled):not(.hero__button-look), .emoticon__button, .story__instagram, .goods__shop-link):is(
     :hover,
     :active,
     :focus,

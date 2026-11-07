@@ -121,7 +121,7 @@ function clientSetup() {
   const context={Promise,Error,String,Date,Object,authSdk:sdkAuth,HaroNoticeFirebase:{getClient:async()=>({app:{},db:{},sdk})}};
   context.window=context;
   vm.runInNewContext(fs.readFileSync('js/services/account-service.js','utf8').replace("import('https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js')",'Promise.resolve(authSdk)'),context);
-  return {service:context.HaroAccount,docs,identities,auth,fail:code=>{failure=code;}};
+  return {service:context.HaroAccount,docs,identities,auth,sdkAuth,fail:code=>{failure=code;}};
 }
 const member={name:'무료회원',username:'member01',email:'MEMBER@EXAMPLE.COM',password:'password123'};
 test('free signup reserves id/email atomically, stores no password, then returns to signed-out state',async()=>{
@@ -155,4 +155,31 @@ test('active browser and deployment configuration have no Cloud Functions depend
  const source=fs.readFileSync('js/services/account-service.js','utf8');assert.doesNotMatch(source,/firebase-functions|httpsCallable|cloudfunctions.net/);
  assert.equal(JSON.parse(fs.readFileSync('firebase.json','utf8')).functions,undefined);
  const rules=fs.readFileSync('firebase/firestore.rules','utf8');assert.match(rules,/match \/admins\//);assert.match(rules,/allow list, write: if false/);assert.match(rules,/getAfter/);
+});
+
+test('client retains credential codes without revealing whether the account exists',async()=>{
+ const s=clientSetup();
+ for(const code of ['auth/invalid-credential','auth/wrong-password','auth/user-not-found']) {
+   s.sdkAuth.signInWithEmailAndPassword=async()=>{throw {code};};
+   await assert.rejects(s.service.login('member01','wrongpass'),error=>error.code===code && error.message==='아이디 또는 비밀번호가 올바르지 않습니다.');
+ }
+});
+
+test('uncertain profile commit preserves identity and signs out without reporting success',async()=>{
+ const s=clientSetup();s.fail('unavailable');
+ await assert.rejects(s.service.register(member),error=>error.code==='account/profile-save-failed');
+ assert.equal(s.identities.size,1);assert.equal(s.auth.currentUser,null);
+});
+
+test('signup awaits sign-out, hides temporary identity, and reports sign-out failure',async()=>{
+ const s=clientSetup();let finishSignOut;
+ s.sdkAuth.signOut=()=>new Promise(resolve=>{finishSignOut=()=>{s.auth.currentUser=null;resolve();};});
+ const registering=s.service.register(member);
+ while(!finishSignOut) await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(await s.service.getUser(),null);
+ finishSignOut();await registering;assert.equal(s.auth.currentUser,null);
+ const failed=clientSetup();failed.sdkAuth.signOut=async()=>{throw {code:'auth/network-request-failed'};};
+ await assert.rejects(failed.service.register(member),error=>error.code==='account/signup-signout-failed' && error.profileSaved===true);
+ assert.equal(await failed.service.getUser(),null);
+ assert.equal(failed.identities.size,1);
 });

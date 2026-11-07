@@ -5,6 +5,8 @@
   const loginEmail = username => `${username}@members.haro.invalid`;
   const messages = {
     'auth/invalid-credential': '아이디 또는 비밀번호가 올바르지 않습니다.',
+    'auth/wrong-password': '아이디 또는 비밀번호가 올바르지 않습니다.',
+    'auth/user-not-found': '아이디 또는 비밀번호가 올바르지 않습니다.',
     'auth/user-disabled': '사용이 중지된 계정입니다.',
     'auth/too-many-requests': '요청이 많습니다. 잠시 후 다시 시도해 주세요.',
     'auth/network-request-failed': '인터넷 연결을 확인해 주세요.',
@@ -29,7 +31,7 @@
   }
   async function invoke(operation) {
     try { return await operation(await connect()); }
-    catch (error) { throw new Error(messages[error.code] || error.message || '요청을 처리하지 못했습니다. 다시 시도해 주세요.'); }
+    catch (error) { throw Object.assign(new Error(messages[error.code] || error.message || '요청을 처리하지 못했습니다. 다시 시도해 주세요.'), { code: error.code, profileSaved: error.profileSaved }); }
   }
   function normalizeId(value) {
     const id = String(value || '').trim().toLowerCase();
@@ -87,6 +89,7 @@
         if ((await sdk.getDocFromServer(emailRef)).exists()) throw new Error('이미 사용 중인 이메일입니다.');
         registering = true;
         let user;
+        let profileSaved = false;
         try {
           user = (await sdkAuth.createUserWithEmailAndPassword(auth, loginEmail(username), input.password)).user;
           const profileRef = sdk.doc(db, 'users', user.uid);
@@ -102,17 +105,22 @@
           if (!saved.exists() || saved.data().role !== 'user') {
             throw new Error('회원 정보의 role 저장을 확인하지 못했습니다. Firestore users 문서와 최신 보안 규칙을 확인해 주세요.');
           }
+          profileSaved = true;
         } catch (error) {
           if (user) {
             // A network error can have an unknown commit result: preserve the identity in that case.
             if (['permission-denied', 'account/duplicate', 'invalid-argument'].includes(error.code)) {
               try { await sdkAuth.deleteUser(user); } catch { /* Original error remains actionable. */ }
             }
-            await sdkAuth.signOut(auth);
+            throw Object.assign(new Error(`회원 정보 저장을 완료했는지 확인하지 못했습니다. 재가입 전에 관리자에게 문의해 주세요. ${messages[error.code] || error.message || ''}`), { code: 'account/profile-save-failed' });
           }
           throw error;
-        } finally { registering = false; }
-        await sdkAuth.signOut(auth);
+        } finally {
+          // Keep the temporary signup session hidden until sign-out has completed.
+          try { await sdkAuth.signOut(auth); }
+          catch { throw Object.assign(new Error('가입 처리 후 로그아웃을 완료하지 못했습니다. 연결을 확인한 뒤 로그아웃 다시 시도 버튼을 눌러 주세요.'), { code: 'account/signup-signout-failed', profileSaved }); }
+          finally { registering = !!auth.currentUser; }
+        }
         return { success: true };
       });
     },
@@ -120,7 +128,7 @@
       username = normalizeId(username);
       return invoke(({ auth, sdkAuth }) => sdkAuth.signInWithEmailAndPassword(auth, loginEmail(username), password));
     },
-    logout() { return invoke(({ sdkAuth, auth }) => sdkAuth.signOut(auth)); },
+    logout() { return invoke(async ({ sdkAuth, auth }) => { await sdkAuth.signOut(auth); registering = false; }); },
     subscribe(listener, onError = () => {}) {
       let active = true, unsubscribe;
       connect().then(({ auth, sdkAuth }) => {

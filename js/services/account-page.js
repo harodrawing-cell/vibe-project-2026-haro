@@ -10,6 +10,31 @@
     $('account-message').focus();
   };
   let checkedId = '';
+  let signupProfileSaved = false;
+  function showSignupSuccess() {
+    $('account-message').textContent = '';
+    document.querySelector('.account-signup').hidden = true;
+    $('signup-signout-retry').hidden = true;
+    $('signup-success').hidden = false;
+    $('signup-success-title').focus();
+  }
+  $('signup-signout-retry')?.addEventListener('click', async () => {
+    $('signup-signout-retry').disabled = true;
+    try {
+      await HaroAccount.logout();
+      $('signup-signout-retry').hidden = true;
+      if (signupProfileSaved) showSignupSuccess();
+      else message('로그아웃되었습니다. 회원 정보 저장 여부는 관리자에게 확인해 주세요.', true);
+    } catch (error) { message(error.message, true); }
+    finally { $('signup-signout-retry').disabled = false; }
+  });
+  let loginFailures = 0;
+  const credentialErrors = new Set(['auth/invalid-credential', 'auth/wrong-password', 'auth/user-not-found']);
+  $('password-recovery-toggle')?.addEventListener('click', () => {
+    $('password-recovery').hidden = false;
+    $('password-recovery-toggle').setAttribute('aria-expanded', 'true');
+    $('password-recovery').focus();
+  });
   $('signup-username')?.addEventListener('input', () => { checkedId = ''; $('signup-id-status').textContent = ''; });
   $('check-username')?.addEventListener('click', async () => {
     $('check-username').disabled = true;
@@ -28,14 +53,33 @@
     form.setAttribute('aria-busy', 'true');
     controls.forEach(control => { control.disabled = true; });
     try { await operation(); }
-    catch (error) { message(error.message, true); }
+    catch (error) {
+      if (error.code === 'account/signup-signout-failed') {
+        signupProfileSaved = error.profileSaved === true;
+        $('signup-signout-retry').hidden = false;
+      }
+      message(error.message, true);
+    }
     finally { controls.forEach(control => { control.disabled = false; }); form.setAttribute('aria-busy', 'false'); }
   }
   $('login-form')?.addEventListener('submit', event => {
     event.preventDefault();
     const username = $('login-username').value, password = $('login-password').value;
     void submit($('login-form'), async () => {
-      await HaroAccount.login(username, password);
+      try {
+        await HaroAccount.login(username, password);
+        loginFailures = 0;
+        $('login-help').hidden = true;
+      } catch (error) {
+        if (credentialErrors.has(error.code)) {
+          loginFailures += 1;
+          $('login-help').hidden = loginFailures < 2;
+          throw new Error(loginFailures < 2
+            ? '아이디 또는 비밀번호가 올바르지 않습니다.'
+            : '아이디 또는 비밀번호를 다시 확인해 주세요. 아직 회원가입을 하지 않으셨다면 회원가입을 진행해 주세요.');
+        }
+        throw error;
+      }
       location.href = returnToQna ? './qna-write.html' : './notice-list.html';
     });
   });
@@ -48,11 +92,7 @@
       $('signup-form').reset();
       checkedId = '';
       $('signup-id-status').textContent = '';
-      message('회원가입이 완료되었습니다. 로그인해 주세요.');
-      const loginLink = document.createElement('a');
-      loginLink.href = './login.html' + (returnToQna ? '?next=qna-write.html' : '');
-      loginLink.textContent = '로그인 화면으로 이동';
-      $('account-message').append(' ', loginLink);
+      showSignupSuccess();
     });
   });
   document.body.dataset.ready = 'true';

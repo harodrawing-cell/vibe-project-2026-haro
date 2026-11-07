@@ -12,6 +12,19 @@
 .account-page .account-submit { width: 100%; margin-top: 6px; }
 .account-page .notice-hint { min-height: 20px; }
 .account-page [data-error=true] { color: #a22626; }
+.account-page .notice-button { -webkit-appearance: none; appearance: none; -webkit-text-fill-color: currentColor; }
+.account-help { margin-bottom: 28px; }
+.account-help__actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.account-help__actions .notice-button { min-height: 48px; }
+.account-recovery { margin-top: 20px; line-height: 1.8; overflow-wrap: anywhere; }
+.account-recovery a, .account-signup-prompt a { color: #89501c; font-weight: 700; text-underline-offset: 4px; }
+.account-signup-prompt a { display: inline-flex; align-items: center; min-height: 44px; margin-left: 6px; }
+.account-success { padding-block: 24px; text-align: center; }
+.account-page .account-success h2 { line-height: 1.5; margin-bottom: 16px; }
+.account-success p { margin: 0; line-height: 1.8; }
+.account-page .account-success__login { display: flex; width: 100%; min-height: 50px; margin-top: 32px; align-items: center; justify-content: center; border: 1px solid #89501c; border-radius: 999px; color: #fff; background: #89501c; text-decoration: none; white-space: nowrap; }
+.account-page .account-success__login:is(:hover, :active) { background: #704016; }
+.account-page :is(.account-success__login, .account-help .notice-button, .account-signup-prompt a):focus-visible { outline: 2px solid #89501c; outline-offset: 4px; }
 @media (min-width: 1025px) and (max-width: 1250px) { .site-nav { gap: 14px; } .account-header__welcome { max-width: 110px; } }
 @media (max-width: 1024px) { .account-header { margin-left: 4px; } .account-header__welcome { max-width: 140px; } }
 @media (max-width: 600px) {

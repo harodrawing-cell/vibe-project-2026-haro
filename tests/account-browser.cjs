@@ -103,7 +103,7 @@ const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
           subscribe(listener){listener(current());return ()=>{};},
           async checkId(id){return !['admin','taken01'].includes(id);},
           async register(input){if(input.email==='used@example.com')throw new Error('이미 사용 중인 이메일입니다.');return {success:true};},
-          async login(id,password){if(password!=='password123')throw new Error('아이디 또는 비밀번호가 올바르지 않습니다.');sessionStorage.setItem('qa-user',JSON.stringify({uid:'qa',name:id==='admin'?'관리자':'테스트사용자',admin:id==='admin'}));},
+          async login(id,password){if(password==='networkfail')throw Object.assign(new Error('인터넷 연결을 확인해 주세요.'),{code:'auth/network-request-failed'});if(password==='ratelimited')throw Object.assign(new Error('요청이 많습니다.'),{code:'auth/too-many-requests'});if(password!=='password123')throw Object.assign(new Error('아이디 또는 비밀번호가 올바르지 않습니다.'),{code:'auth/invalid-credential'});sessionStorage.setItem('qa-user',JSON.stringify({uid:'qa',name:id==='admin'?'관리자':'테스트사용자',admin:id==='admin'}));},
           async logout(){sessionStorage.removeItem('qa-user');},
         };
       }});
@@ -139,7 +139,17 @@ const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
     assert.ok((await read('account-message')).includes('이미 사용 중인 이메일'));
     await value('signup-email','new@example.com');
     await evaluate("document.getElementById('signup-form').requestSubmit()");await pause(100);
-    assert.ok((await read('account-message')).includes('회원가입이 완료'));
+    assert.equal(await evaluate("document.getElementById('signup-success').hidden"),false);
+    assert.equal(await read('signup-success-title'),'회원가입이 완료되었습니다!');
+    assert.equal(await evaluate("document.querySelector('.account-signup').hidden"),true);
+    assert.equal(await evaluate("document.querySelector('.account-header button').textContent"),'로그인');
+    assert.equal(await evaluate('document.documentElement.scrollWidth>innerWidth'),false);
+    assert.equal(await evaluate("getComputedStyle(document.querySelector('.account-success__login')).backgroundColor"),'rgb(137, 80, 28)');
+    for(const width of [1920,1024,768,390]) {
+      await cdp('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:false});
+      assert.equal(await evaluate('document.documentElement.scrollWidth>innerWidth'),false);
+      assert.equal(await evaluate("(()=>{const a=document.querySelector('.account-success__login'),s=getComputedStyle(a);return s.whiteSpace==='nowrap' && a.getBoundingClientRect().height>=48;})()"),true);
+    }
     await evaluate("document.querySelector('a[href=\"./login.html\"]').click()");
     await waitPath('login.html');
     assert.equal(await evaluate("document.getElementById('signup-form')"),null);
@@ -147,6 +157,21 @@ const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
     await value('login-password','wrongpass');
     await evaluate("document.getElementById('login-form').requestSubmit()");await pause(100);
     assert.ok((await read('account-message')).includes('올바르지'));
+    assert.equal(await evaluate("document.getElementById('login-help').hidden"),true);
+    for (const password of ['networkfail', 'ratelimited']) {
+      await value('login-password',password);
+      await evaluate("document.getElementById('login-form').requestSubmit()");await pause(100);
+      assert.equal(await evaluate("document.getElementById('login-help').hidden"),true);
+    }
+    await value('login-password','wrongpass');
+    await evaluate("document.getElementById('login-form').requestSubmit()");await pause(100);
+    assert.equal(await read('account-message'),'아이디 또는 비밀번호를 다시 확인해 주세요. 아직 회원가입을 하지 않으셨다면 회원가입을 진행해 주세요.');
+    assert.equal(await evaluate("document.getElementById('login-help').hidden"),false);
+    await click('password-recovery-toggle');
+    assert.equal(await evaluate("document.getElementById('password-recovery').hidden"),false);
+    await value('login-password','networkfail');
+    await evaluate("document.getElementById('login-form').requestSubmit()");await pause(100);
+    assert.equal(await evaluate("document.getElementById('login-help').hidden"),false);
     await value('login-password','password123');
     await evaluate("document.getElementById('login-form').requestSubmit()");
     await waitPath('notice-list.html');
@@ -174,6 +199,24 @@ const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
     await navigate('notice-write.html');
     assert.equal(await evaluate("document.getElementById('notice-form-panel').hidden"),false);
     assert.deepEqual(errors,[]);
+    await cdp('Page.navigate',{url:'http://127.0.0.1:8097/index.html'});
+    for(let i=0;i<100;i++) {
+      await pause(100);
+      if(await evaluate("document.readyState==='complete' && !!document.querySelector('.hero__button-look')")) break;
+    }
+    await cdp('DOM.enable');await cdp('CSS.enable');
+    const {root}=await cdp('DOM.getDocument');
+    const {nodeId}=await cdp('DOM.querySelector',{nodeId:root.nodeId,selector:'.hero__button-look'});
+    for(const width of [1920,1024,768,390]) {
+      await cdp('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:false});
+      for(const state of [[],['hover'],['active'],['focus'],['focus-visible']]) {
+        await cdp('CSS.forcePseudoState',{nodeId,forcedPseudoClasses:state});
+        const colors=await evaluate("(()=>{const s=getComputedStyle(document.querySelector('.hero__button-look'));return [s.color,s.webkitTextFillColor,s.appearance];})()");
+        assert.deepEqual(colors,['rgb(32, 32, 32)','rgb(32, 32, 32)','none']);
+      }
+    }
+    await cdp('CSS.forcePseudoState',{nodeId,forcedPseudoClasses:[]});
+    assert.equal(await evaluate("(()=>{document.querySelector('.hero__button-look').click();return document.querySelector('.hero-box').classList.contains('is-opening');})()"),true);
     console.log('PASS: real guest initialization; mocked registration, duplicates, login/logout, member/admin UI and 1920/1024/768/390 responsive headers');
   } finally {
     if(socket)socket.close();if(browser)browser.kill();if(server)server.kill();

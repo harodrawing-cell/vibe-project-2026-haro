@@ -214,13 +214,24 @@
   <div class="notice-page__heading"><img class="notice-heading__art" src="../../images/img-dt/img_5_haro-cat.png" width="64" height="64" alt="" aria-hidden="true" /><h1>LOGIN</h1><span class="notice-page__rule" aria-hidden="true"></span><p>하로와 함께하는 하루, 반가워요.</p></div>
   <div class="notice-content">
     <p id="account-message" class="notice-message" role="status" aria-live="polite" tabindex="-1"></p>
+    <div id="login-help" class="account-help" hidden>
+      <div class="account-help__actions">
+        <button id="password-recovery-toggle" class="notice-button" type="button" aria-controls="password-recovery" aria-expanded="false">비밀번호 찾기</button>
+        <a class="notice-button" href="./signup.html">회원가입</a>
+      </div>
+      <div id="password-recovery" class="account-recovery" tabindex="-1" hidden>
+        <p>현재 아이디 로그인 방식에서는 자동 비밀번호 재설정 메일을 지원하지 않습니다. 가입할 때 등록한 이메일로 아이디와 비밀번호 복구 요청을 보내 주세요. 계정 소유 확인 후 가능한 복구 절차를 안내받아 주세요.</p>
+        <p>비밀번호는 보내지 마세요. 이메일을 보내는 것만으로 비밀번호가 변경되지는 않습니다.</p>
+        <a href="mailto:harodrowing@gmail.com?subject=HARO%20비밀번호%20복구%20문의">harodrowing@gmail.com으로 복구 문의하기</a>
+      </div>
+    </div>
     <section aria-labelledby="login-title"><h2 id="login-title">로그인</h2>
       <form id="login-form">
         <div class="notice-field"><label for="login-username">아이디</label><input id="login-username" name="login-username" type="text" autocomplete="username" minlength="4" maxlength="20" autocapitalize="none" spellcheck="false" required /></div>
         <div class="notice-field"><label for="login-password">비밀번호</label><input id="login-password" name="login-password" type="password" autocomplete="current-password" minlength="6" maxlength="128" required /></div>
         <button type="submit" class="notice-button notice-button--primary account-submit">로그인</button>
       </form>
-      <p class="notice-hint">아직 회원이 아니신가요? <a href="./signup.html">회원가입</a></p>
+      <p class="notice-hint account-signup-prompt">아직 회원이 아니신가요? <a href="./signup.html">회원가입하기</a></p>
     </section>
 
   </div>

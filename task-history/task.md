@@ -867,3 +867,19 @@
 - 검증: 영문 설명 잔여 여부와 번역 구간을 확인했다. 사이트 코드는 변경하지 않았으며 실행 테스트는 필요하지 않아 수행하지 않았다.
 - 변경 파일: task-history/task.md.
 >>>>>>> Stashed changes
+
+## iPhone HERO 버튼 색상 및 로그인·회원가입 UX 개선
+
+- 날짜: 2026-11-07
+- 수정 파일: css/components.css, css/sections.css, css/account.css, pages/notice/login.html, pages/notice/signup.html, js/services/account-service.js, js/services/account-page.js, tests/account.test.cjs, tests/account-browser.cjs, task-history/task.md.
+- HERO: 실제 HTML의 button.hero__button-look에 color가 없고 base.css도 버튼 색상을 상속하지 않는 점을 확인했다. 원래 선택자에 color:#202020, -webkit-text-fill-color:currentColor, appearance:none 및 WebKit 접두사를 지정했다. sections.css의 공통 hover/active/focus 규칙에서 HERO만 제외해 흰 글씨로 덮어쓰는 충돌을 제거했다. button에는 :visited가 적용되지 않는다. !important나 상태별 중복 색상 선언은 추가하지 않았고 크기·테두리·라운드·위치·애니메이션 JavaScript는 유지했다. 다른 주요 텍스트 버튼은 원래 명시된 색상을 유지한다. 계정 화면 버튼의 WebKit 글자 채움은 currentColor를 사용한다.
+- 로그인: Firebase 오류 code를 서비스에서 보존한다. invalid-credential/wrong-password/user-not-found만 현재 화면의 메모리 카운터에 누적하며 첫 실패와 두 번째 이상 실패에 요청 문구를 표시한다. 계정 존재 여부는 구분하지 않는다. 네트워크·서비스·too-many-requests는 제외하며 성공 시 초기화한다. 두 번째 이후 비밀번호 찾기·회원가입 버튼은 후속 네트워크 실패에도 유지한다. 기존 회원가입 링크를 브라운 색상 및 44px 터치 영역의 회원가입하기 링크로 강조했다. 기존 Q&A 복귀 경로도 유지한다.
+- 비밀번호 복구: 활성 클라이언트 인증은 username@members.haro.invalid 가상 이메일을 쓰며 실제 이메일은 Firestore 프로필에 저장한다. 자동 재설정 메일을 가상 주소로 보내지 않고, 가입 이메일에서 기존 공개 문의 주소 harodrowing@gmail.com으로 아이디와 복구 요청을 보내는 별도 수동 문의 안내를 제공한다. 비밀번호를 보내지 않도록 안내하며 소유 확인 전 자동 비밀번호 변경은 하지 않는다. 이번 변경은 자동 복구 API를 구현한 것이 아니며 운영자의 소유 확인 및 복구 대응이 필요하다. 메일은 사용자가 직접 발송한다.
+- 가입: 프로필 트랜잭션과 서버 저장 확인 후 로그아웃이 끝나야 성공을 반환한다. 임시 가입 세션은 로그아웃 완료까지 헤더에서 숨긴다. 프로필 저장 실패·가입 Auth 오류·로그아웃 오류를 구분하며 로그아웃 오류에는 재시도 버튼을 제공한다. 저장 완료 여부를 함께 보존해 로그아웃 재시도 후에도 저장이 확인된 경우만 완료 화면을 표시한다. 기존의 신규 계정에 한정된 명확한 저장 실패 롤백 정책은 유지했다. 기존 회원 계정 및 인증 정보는 변경하지 않았다.
+- 이메일 인증: 현재 코드에는 실제 이메일 인증 발송/필수 검증 절차가 없으며 로그인용 가상 이메일과 실제 이메일이 다르다. 이번 작업에서 기존 인증 방식이나 보안 설정을 바꾸거나 이메일 인증 완료를 가정하지 않았다.
+- 가입 완료 화면: 폼을 숨기고 회원가입이 완료되었습니다! / 하로와 함께해 주셔서 감사합니다. 및 로그인하러 가기 버튼을 표시한다. 버튼은 #89501C 배경·흰 글씨·Pill·전체 폼 너비·최소 50px 높이·줄바꿈 금지이며 키보드 포커스를 제공한다. 제목으로 포커스를 이동한다.
+- 검증: account.test.cjs의 12개 테스트 통과. 서비스 테스트는 인증 오류 코드 보존, 프로필 저장 불확실 시 계정 보존/로그아웃, 로그아웃 대기 및 실패 시 임시 사용자 숨김을 포함한다. Firebase 쓰기나 실제 계정 생성 없이 테스트 대역으로 검증했다.
+- 브라우저 검증: Edge 헤드리스에서 1920/1024/768/390px 로그인·가입 화면과 헤더 가로 넘침/겹침, 완료 CTA 크기·색상, 첫 실패·두 번째 실패·네트워크/요청 제한 제외·도움 버튼 유지·복구 안내 열기·로그인 이동을 확인했다. HERO의 기본/hover/active/focus/focus-visible 계산 color와 WebKit text fill은 모두 rgb(32,32,32), appearance는 none이며 상자 클릭 시 is-opening 전환을 확인했다. 인증 동작은 테스트 대역을 사용했으므로 실서비스 Firebase 종단 검증은 아니다.
+- 미검증: 실제 iPhone Safari 및 카카오톡 인앱 브라우저는 사용할 수 없어 검증 완료로 표시하지 않는다. 사용자 요청의 실제 화면 3장은 이 세션 첨부 목록에서 확인하지 못했으며 검은 H 플로팅 버튼도 저장소 소스에서 찾지 못해 변경하지 않았다.
+- 수동 확인: 배포 후 iPhone Safari 및 카카오톡으로 홈페이지를 열어 CLICK 기본/터치/포커스 색상과 상자 애니메이션을 확인한다. 로그인 오입력 1회/2회 안내 및 복구·가입 이동, 가입 완료 후 헤더 로그인 표기, 로그인하러 가기 이동을 확인한다. 네트워크 오류·요청 제한 시 횟수를 늘리지 않는지 확인하며 Firebase 보안 제한 해제나 반복 시도 자동화는 하지 않는다.
+- 범위: prompt.txt, Firestore 규칙, NOTICE/Q&A/GOODS/장바구니/STORY 동작 및 Firebase 설정은 수정하지 않았다. 기존 작업 기록의 충돌 표시는 이번 작업에서 임의로 정리하지 않고 말미에 기록만 추가했다.

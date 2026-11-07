@@ -107,6 +107,10 @@
 }
 
 .hero__button-look {
+  color: #202020;
+  -webkit-text-fill-color: currentColor;
+  -webkit-appearance: none;
+  appearance: none;
   display: grid;
   width: 136px;
   height: 48px;
