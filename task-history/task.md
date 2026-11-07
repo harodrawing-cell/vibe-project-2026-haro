@@ -883,3 +883,20 @@
 - 미검증: 실제 iPhone Safari 및 카카오톡 인앱 브라우저는 사용할 수 없어 검증 완료로 표시하지 않는다. 사용자 요청의 실제 화면 3장은 이 세션 첨부 목록에서 확인하지 못했으며 검은 H 플로팅 버튼도 저장소 소스에서 찾지 못해 변경하지 않았다.
 - 수동 확인: 배포 후 iPhone Safari 및 카카오톡으로 홈페이지를 열어 CLICK 기본/터치/포커스 색상과 상자 애니메이션을 확인한다. 로그인 오입력 1회/2회 안내 및 복구·가입 이동, 가입 완료 후 헤더 로그인 표기, 로그인하러 가기 이동을 확인한다. 네트워크 오류·요청 제한 시 횟수를 늘리지 않는지 확인하며 Firebase 보안 제한 해제나 반복 시도 자동화는 하지 않는다.
 - 범위: prompt.txt, Firestore 규칙, NOTICE/Q&A/GOODS/장바구니/STORY 동작 및 Firebase 설정은 수정하지 않았다. 기존 작업 기록의 충돌 표시는 이번 작업에서 임의로 정리하지 않고 말미에 기록만 추가했다.
+
+## GitHub Pages 배포 실패 조사 및 Firebase 승인 도메인 후속 확인
+
+- 날짜: 2026-11-07
+- 작업 범위: 원인 분석과 사용자 화면 안내. 이번 후속 작업에서는 사이트 소스, 배포 설정, Firebase 설정을 직접 수정하지 않았다. 사용자 요청에 따라 이 기록만 추가한다.
+- 배포 조사: 실패 실행 #12(42369752576)의 커밋은 8f3c3ec9f1e7c69b5c9baf1305be22eab3502fc4. 로컬 및 해당 원격 커밋에 .github/workflows/가 없고, 실제 실행 경로는 dynamic/pages/pages-build-deployment로 GitHub 생성 기본 Pages 워크플로임을 공개 API에서 확인했다. Jekyll 빌드와 아티팩트 업로드, report-build-status는 성공했으며 deploy는 한국 시간 20:49:21~20:59:44에 실행 후 실패했다. 사용자가 제공한 로그 증상은 syncing_files 반복 후 Timeout reached, aborting이다.
+- 배포 규모: 실패 아티팩트 github-pages는 39,550,335바이트(약 37.72MiB), 직전 성공 실행 #11(42357068774)은 39,549,929바이트로 차이는 406바이트다. 두 커밋 사이 변경은 README.md 하나뿐이다. 실패 커밋의 저장소 파일은 311개, 약 38.84MiB이며 아티팩트 내부의 정확한 파일 개수는 확인하지 못했다. 원격 Git 트리에 심볼릭 링크는 없었다.
+- 배포 판단: 조회된 12개 실행에서 시간 중복은 없었다. 거의 동일한 규모의 직전 배포가 성공한 점과 약 10분의 deploy 대기를 근거로 GitHub Pages 동기화 단계 지연 가능성을 우선 제시했다. 용량 초과, 소스 오류, 동시 배포 충돌로 단정할 근거는 없으며 GitHub 내부 원인은 확정하지 않았다. 상세 로그는 인증 없는 API에서 403, Pages 설정 조회는 404로 확인하지 못해 실제 토큰 권한과 소스 폴더 설정은 미확정이다. 이는 실제 배포의 권한 오류를 확인했다는 뜻은 아니다.
+- 배포 후속 안내: 새 커밋을 반복 푸시하기보다 Actions의 실패 실행에서 Re-run failed jobs를 먼저 실행하도록 안내했다. 재발하면 deploy 전체 로그 및 Settings > Pages의 소스 브랜치/폴더, github-pages 환경 설정을 확인해야 한다. 에이전트는 재실행·푸시·설정 변경을 하지 않았다. 사용자가 재실행했는지와 해당 실행의 최종 성공 여부는 후속 화면만으로 확정하지 않았다.
+- Firebase 환경 오류: location.protocol must be http, https or chrome-extension 및 web storage 오류에는 file:// 실행 가능성을 설명하고 scripts/preview.cjs로 HTTP 미리보기를 사용하도록 안내했다. 사용자 실행 환경을 직접 확인한 것은 아니므로 file://를 확정 원인으로 기록하지 않는다.
+- Firebase 승인 도메인: 사용자가 제공한 Console 경고는 harodrawing-cell.github.io가 OAuth 승인 도메인에 없다는 내용이었다. Firebase Console > haro-web-project > Authentication > 설정 > 승인된 도메인에서 도메인을 추가하도록 안내했다. 사용자 후속 스크린샷에서 harodrawing-cell.github.io가 Custom으로 등록된 것을 확인했다. 이는 사용자가 관리 화면에서 수행한 설정이며 에이전트가 변경한 것은 아니다. GitHub 저장소 Website 입력란은 별도 소개 링크 설정임을 구분해 안내했다.
+- 도메인 등록 후 확인: 사용자 제공 홈페이지 스크린샷의 Console에는 해당 Firebase 경고와 빨간 JavaScript 오류가 보이지 않았다. 코드 수정이나 재배포 없이 도메인 등록 후 새로고침하도록 안내했다. 팝업/리디렉션 OAuth 경고가 없어졌다는 화면 증거이며 실제 로그인 전체 기능을 재검증했다는 뜻은 아니다. React 도입이나 별도 도메인 구매는 이 설정에 필요하지 않다.
+- 미해결 JavaScript 오류: 최초 사용자 화면에는 Cannot read properties of undefined (reading 'getAttribute'), 0:1538 오류가 두 번 표시됐다. 오류 링크는 Sources에서 cdn.jsdelivr.net/npm/swiper@12/0 아래로 연결됐으나 소스를 불러오지 못해 실제 호출 스택을 확보하지 못했다. 프로젝트 자체 getAttribute 호출 3곳에는 요소 존재 검사 코드가 있었다. Swiper 초기화는 이모티콘/GOODS에 각각 있으나 해당 라이브러리나 브라우저 확장 프로그램이 원인이라고 확정하지 않았다. 이후 화면에서 오류가 보이지 않아도 완전 해결로 표시하지 않는다. 재발 시 Pause on uncaught exceptions를 체크하고 재현해 실제 코드와 Call Stack을 확보해야 한다. iframe.js:315의 console.warn은 별도의 Firebase 경고 출력 위치였다.
+- 남은 비차단 권고: 사용자 Issues 화면의 Lazy-loaded images should have explicit dimensions는 지연 로딩 이미지에 명시적인 width/height를 지정하라는 권고다. 해당 이미지 목록과 실제 레이아웃 이동은 조사하지 않았으며 이번 작업에서 이미지나 HTML을 수정하지 않았다. 추후 대상 이미지의 원본 종횡비와 기존 반응형 CSS를 확인해 크기 속성을 보완할 수 있다.
+- 남은 검증: 실제 iPhone Safari/카카오톡의 HERO 색상 및 클릭, 실서비스 로그인 실패 1회/2회 안내, 가입 후 로그아웃·헤더 상태, 이모티콘/GOODS 조작과 화면 크기 변경 시 getAttribute 오류 재발 여부는 별도 확인이 필요하다. Firebase 도메인 경고 해결과 Pages deploy 시간 초과, Swiper 관련 의심 오류는 각각 구분한다.
+- 참고 실행: https://github.com/harodrawing-cell/vibe-project-2026-haro/actions/runs/42369752576 / https://github.com/harodrawing-cell/vibe-project-2026-haro/actions/runs/42357068774
+- 변경 파일: task-history/task.md만 추가 기록. prompt.txt 및 기존 소스·배포 설정은 변경하지 않았다.
