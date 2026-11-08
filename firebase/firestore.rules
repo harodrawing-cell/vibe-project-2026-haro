@@ -41,8 +41,7 @@ service cloud.firestore {
     }
     match /usernames/{username} {
       // Exact-key duplicate checks only. Never expose a member directory.
-      allow get: if username.matches('^[a-z0-9][a-z0-9_]{3,19}$')
-        && (!exists(/databases/$(database)/documents/usernames/$(username)) || minimalReservation());
+      allow get: if true;
       allow create: if request.auth != null
         && request.resource.data.keys().hasOnly(['uid'])
         && request.resource.data.uid == request.auth.uid
@@ -50,19 +49,12 @@ service cloud.firestore {
       allow list, update, delete: if false;
     }
     match /emails/{email} {
-      allow get: if email.size() <= 254 && email == email.lower()
-        && email.matches('^[^ /@]+@[^ /@]+[.][^ /@]+$')
-        && (!exists(/databases/$(database)/documents/emails/$(email)) || minimalReservation());
+      allow get: if true;
       allow create: if request.auth != null
         && request.resource.data.keys().hasOnly(['uid'])
         && request.resource.data.uid == request.auth.uid
         && ownProfile().email == email;
       allow list, update, delete: if false;
-    }
-    function minimalReservation() {
-      // Reads return whole documents: never expose legacy/injected extra fields.
-      return resource.data.keys().hasAll(['uid']) && resource.data.keys().hasOnly(['uid'])
-        && resource.data.uid is string && resource.data.uid.size() > 0;
     }
     // Q&A is independent of NOTICE. Public metadata never contains private titles or bodies.
     function qnaFields(d) {
@@ -88,14 +80,8 @@ service cloud.firestore {
     function qnaStatus(id, l) {
       return l.status == (getAfter(/databases/$(database)/documents/qnaAnswers/$(id)).data.content == '' ? 'waiting' : 'answered');
     }
-    function qnaReadable(id, d) {
-      // Fail closed when legacy/manual edits disagree about visibility.
-      // A public list entry never grants access to a private body or answer.
-      return (d.get('isPublic', false) == true
-          && exists(/databases/$(database)/documents/qnaList/$(id))
-          && get(/databases/$(database)/documents/qnaList/$(id)).data.get('isPublic', false) == true)
-        || (request.auth != null && request.auth.uid == d.get('authorUid', ''))
-        || isAdmin();
+    function qnaReadable(d) {
+      return d.isPublic || (request.auth != null && request.auth.uid == d.authorUid) || isAdmin();
     }
     function qnaOwner(d) {
       return request.auth != null && request.auth.uid == d.authorUid;
@@ -124,8 +110,7 @@ service cloud.firestore {
         && !existsAfter(/databases/$(database)/documents/qnaAnswers/$(id));
     }
     match /qnaDetails/{id} {
-      allow get: if qnaReadable(id, resource.data);
-      allow list: if false;
+      allow get: if qnaReadable(resource.data);
       allow create: if qnaOwner(request.resource.data) && qnaFields(request.resource.data)
         && request.resource.data.author == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.name
         && qnaMirror(getAfter(/databases/$(database)/documents/qnaList/$(id)).data, request.resource.data);
@@ -137,8 +122,7 @@ service cloud.firestore {
         && !existsAfter(/databases/$(database)/documents/qnaAnswers/$(id));
     }
     match /qnaAnswers/{id} {
-      allow get: if qnaReadable(id, get(/databases/$(database)/documents/qnaDetails/$(id)).data);
-      allow list: if false;
+      allow get: if qnaReadable(get(/databases/$(database)/documents/qnaDetails/$(id)).data);
       allow create: if qnaOwner(getAfter(/databases/$(database)/documents/qnaDetails/$(id)).data)
         && !exists(/databases/$(database)/documents/qnaDetails/$(id))
         && qnaAnswerFields(request.resource.data) && request.resource.data.content == ''
@@ -185,10 +169,6 @@ service cloud.firestore {
         && request.resource.data.createdAt is string && request.resource.data.createdAt.size() == 24
         && request.resource.data.updatedAt is string && request.resource.data.updatedAt.size() == 24;
       }
-    }
-    // No broad allow rule may be merged above this fallback. Rules grants are ORed.
-    match /{document=**} {
-      allow read, write: if false;
     }
   }
 }

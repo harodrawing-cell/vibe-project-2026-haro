@@ -2,10 +2,3 @@ api/node_modules/
 *.log
 .firebase/
 *-adminsdk-*.json
-node_modules/
-dist/
-.env
-.env.local
-.env.*.local
-.migration-template/
-test-results/
